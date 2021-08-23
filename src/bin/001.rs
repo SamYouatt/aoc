@@ -52,7 +52,7 @@ fn find_triple(numbers: &[i32]) -> (i32, i32, i32) {
     // two remaining pointer should add to 2020 - fixed
     // if all possibilities of left and right pointer tried, move fixed up by 1 and go again
 
-    for fixed in 0..numbers.len() - 3 {
+    for fixed in 0..numbers.len() - 2 {
         let mut left = fixed + 1;
         let mut right = numbers.len() - 1;
 
