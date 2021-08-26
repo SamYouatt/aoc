@@ -1,7 +1,6 @@
 fn main() {
-    let answer1 = part_one();
-
-    println!("Part one: {}", answer1);
+    println!("Part one: {}", part_one());
+    println!("Part two: {}", part_two());
 }
 
 // Important to realise that this problem can essentially boil down to setting binary digits based on the letter
@@ -10,15 +9,10 @@ fn main() {
 // The last part of the id system is to do row * 8 + column
 // This is the same as bit shifting right by 3 (creating space for 3 more bits) and setting the first 3 bits as the column
 fn part_one() -> usize {
-    // get puzzle input as &str
     include_str!("../../inputs/005.txt")
-        // create an iterator with each element split on \n
         .split("\n")
-        // apply transformation to each line (seat)
         .map(|seat| {
-            seat
-                // get iterator over the characters
-                .chars()
+            seat.chars()
                 // fold gives an accumulator with an accumuatlor function
                 .fold(0, |id, char| {
                     // move id left by 1 to set the next bit and or it to set the bit
@@ -35,6 +29,36 @@ fn part_one() -> usize {
         // get the max value
         .max()
         .unwrap()
+}
+
+fn part_two() -> usize {
+    let mut ids = include_str!("../../inputs/005.txt")
+        .split("\n")
+        .map(|seat| {
+            seat.chars().fold(0 as usize, |id, char| {
+                id << 1
+                    | match char {
+                        'B' | 'R' => 1,
+                        'F' | 'L' => 0,
+                        _ => panic!("❗"),
+                    }
+            })
+        })
+        .collect::<Vec<usize>>();
+
+    // sorted so i can compare two ids next to each other
+    ids.sort();
+
+    // windows creates an iterator with array of elements with given size
+    // looking at 2 values we can check the jump between them to find the missing value
+    ids.windows(2)
+        // find returns the first element which matches the criteria
+        // in this case where the second element in the window is the same as the first + 2, i.e. the jump is 2
+        // we can't just check if it greater than the other one by 2 because the ids might be missing at front or back
+        // then we return the first element in that window + 1, the missing id
+        .find(|window| window[1] == (window[0] + 2))
+        .unwrap()[0]
+        + 1
 }
 
 #[test]
