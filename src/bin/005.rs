@@ -1,6 +1,13 @@
+use std::time::Instant;
+
 fn main() {
+    let start = Instant::now();
     println!("Part one: {}", part_one());
+    let mut duration = start.elapsed();
+    println!("Time taken: {:#?}", duration);
     println!("Part two: {}", part_two());
+    duration = start.elapsed() - duration;
+    println!("Time taken: {:#?}", duration);
 }
 
 // Important to realise that this problem can essentially boil down to setting binary digits based on the letter
