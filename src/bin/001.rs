@@ -11,7 +11,7 @@ fn main() {
         .enumerate()
         .for_each(|(i, x)| numbers[i] = x.parse().unwrap());
 
-    numbers.sort();
+    numbers.sort_unstable();
 
     // Part 1
     let start = Instant::now();
@@ -44,7 +44,8 @@ fn find_pair(numbers: &[i32]) -> (i32, i32) {
             left += 1;
         }
     }
-    return (numbers[left], numbers[right]);
+
+    (numbers[left], numbers[right])
 }
 
 fn find_triple(numbers: &[i32]) -> (i32, i32, i32) {
@@ -57,17 +58,17 @@ fn find_triple(numbers: &[i32]) -> (i32, i32, i32) {
         let mut right = numbers.len() - 1;
 
         while left < right && right < numbers.len() {
-            if numbers[left] + numbers[right] == 2020 - numbers[fixed] {
-                return (numbers[fixed], numbers[left], numbers[right]);
-            } else if numbers[left] + numbers[right] < 2020 - numbers[fixed] {
-                left += 1;
-            } else {
-                right -= 1;
+            match (numbers[left] + numbers[right]).cmp(&(2020 - numbers[fixed])) {
+                std::cmp::Ordering::Equal => {
+                    return (numbers[fixed], numbers[left], numbers[right])
+                }
+                std::cmp::Ordering::Greater => right -= 1,
+                std::cmp::Ordering::Less => left += 1,
             }
         }
     }
 
-    return (0, 0, 0);
+    (0, 0, 0)
 }
 
 #[test]
