@@ -38,10 +38,9 @@ fn part_one_bits(input: &str) -> u32 {
         .split("\n\n")
         .map(|group| {
             group
-                // concatenate each line to the same one
-                .replace('\n', "")
                 // get the ascii byte for each character
                 .bytes()
+                .filter(|b| b != &b'\n')
                 // starting with 32 bits with all 0, set the bit at the location for that character in my map
                 // e.g. cba | 101 would mean an a response and a response
                 .fold(0_u32, |responses, byte| responses | 1 << (byte - b'a'))
