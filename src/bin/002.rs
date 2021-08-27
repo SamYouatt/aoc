@@ -1,4 +1,4 @@
-use std::{fs, path::Path, time::Instant};
+use std::{fs, path::Path};
 
 struct PasswordEntry {
     min: usize,
@@ -57,13 +57,10 @@ fn is_pass_correct_part_one(entry: &PasswordEntry) -> bool {
     entry.password.chars().for_each(|c| {
         if c == entry.letter {
             count += 1;
-            if count > entry.max {
-                return;
-            }
         }
     });
 
-    return count >= entry.min && count <= entry.max;
+    count >= entry.min && count <= entry.max
 }
 
 fn is_pass_correct_part_two(entry: &PasswordEntry) -> bool {
@@ -78,15 +75,12 @@ fn test_correct_password() {
     let letter = 'a';
     let password = "abcde".to_string();
 
-    assert_eq!(
-        is_pass_correct_part_one(&PasswordEntry {
-            min,
-            max,
-            letter,
-            password
-        }),
-        true
-    );
+    assert!(is_pass_correct_part_one(&PasswordEntry {
+        min,
+        max,
+        letter,
+        password
+    }))
 }
 
 #[test]
@@ -96,13 +90,10 @@ fn test_incorrect_password() {
     let letter = 'b';
     let password = "cdefg".to_string();
 
-    assert_eq!(
-        is_pass_correct_part_one(&PasswordEntry {
-            min,
-            max,
-            letter,
-            password
-        }),
-        false
-    );
+    assert!(is_pass_correct_part_one(&PasswordEntry {
+        min,
+        max,
+        letter,
+        password
+    }));
 }

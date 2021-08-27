@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fs, time::Instant};
+use std::{collections::HashMap, time::Instant};
 
 use regex::Regex;
 
@@ -13,15 +13,7 @@ fn main() {
 }
 
 fn part_one() {
-    let required_fields: Vec<&str> = vec![
-        "byr".into(),
-        "iyr".into(),
-        "eyr".into(),
-        "hgt".into(),
-        "hcl".into(),
-        "ecl".into(),
-        "pid".into(),
-    ];
+    let required_fields: Vec<&str> = vec!["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"];
 
     println!(
         "Part one: {}",
@@ -49,15 +41,7 @@ fn part_one() {
 }
 
 fn part_two() {
-    let required_fields: Vec<&str> = vec![
-        "byr".into(),
-        "iyr".into(),
-        "eyr".into(),
-        "hgt".into(),
-        "hcl".into(),
-        "ecl".into(),
-        "pid".into(),
-    ];
+    let required_fields: Vec<&str> = vec!["iyr", "byr", "eyr", "hgt", "hcl", "ecl", "pid"];
 
     println!(
         "Part two: {}",

@@ -17,7 +17,7 @@ fn main() {
 // This is the same as bit shifting right by 3 (creating space for 3 more bits) and setting the first 3 bits as the column
 fn part_one() -> usize {
     include_str!("../../inputs/005.txt")
-        .split("\n")
+        .split('\n')
         .map(|seat| {
             seat.chars()
                 // fold gives an accumulator with an accumuatlor function
@@ -40,9 +40,9 @@ fn part_one() -> usize {
 
 fn part_two() -> usize {
     let mut ids = include_str!("../../inputs/005.txt")
-        .split("\n")
+        .split('\n')
         .map(|seat| {
-            seat.chars().fold(0 as usize, |id, char| {
+            seat.chars().fold(0, |id, char| {
                 id << 1
                     | match char {
                         'B' | 'R' => 1,
@@ -54,7 +54,7 @@ fn part_two() -> usize {
         .collect::<Vec<usize>>();
 
     // sorted so i can compare two ids next to each other
-    ids.sort();
+    ids.sort_unstable();
 
     // windows creates an iterator with array of elements with given size
     // looking at 2 values we can check the jump between them to find the missing value
