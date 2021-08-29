@@ -15,11 +15,21 @@ dependencies = [
 name = "aoc2020"
 version = "0.1.0"
 dependencies = [
+ "atoi",
  "chrono",
  "itertools",
  "multimap",
  "peg",
  "regex",
+]
+
+[[package]]
+name = "atoi"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "616896e05fc0e2649463a93a15183c6a16bf03413a7af88ef1285ddedfa9cda5"
+dependencies = [
+ "num-traits",
 ]
 
 [[package]]
