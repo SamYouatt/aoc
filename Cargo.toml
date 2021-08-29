@@ -8,6 +8,7 @@ edition = "2018"
 
 [dependencies]
 chrono = "0.4.0"
+itertools = "0.10.1"
 multimap = "0.8.3"
 peg = "0.7.0"
 regex = "1.5.4"
