@@ -15,10 +15,20 @@ fn main() {
         .collect();
 
     #[rustfmt::skip]
-    let neighbours: Vec<usize, Vec<usize>> = seat_indexes
+    let neighbours: Vec<(usize, Vec<usize>)> = seat_indexes
         .iter()
-        .map(|seat| (0..9)
-            .filter(|i|)
-        )
+        .map(|seat| (*seat, (0..9)
+            .filter(|index| index != &4)
+            .map(|index| ((*seat as isize % cols as isize) + index % 3 - 1, (*seat as isize / cols as isize) + index / 3 - 1))
+            .filter(|(x, y)| *x >= 0 && *x < cols as isize && *y >= 0 && *y < rows as isize)
+            .map(|(x, y)| (y * cols as isize + x) as usize)
+            .collect(),
+        ))
         .collect();
+}
+
+enum State {
+    Occupied,
+    Empty,
+    Floor,
 }
