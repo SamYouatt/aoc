@@ -12,7 +12,7 @@ fn main() {
     let mut memory: HashMap<usize, usize> = HashMap::new();
 
     // using this regex expression can capture the values in the brackets, the memory address and the value
-    let reg = Regex::new(r#"^mem\[(\d+)\] = (\d+)$"#).unwrap();
+    let reg = Regex::new(r"^mem+\[(\d+)\] = (\d+)$").unwrap();
 
     // the first number in the tuple will be all the bits that need to be set (stored as int)
     // second number is all the bits that need to be cleared (again stored as int)
