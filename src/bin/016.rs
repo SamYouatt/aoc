@@ -5,8 +5,57 @@ use regex::Regex;
 fn main() {
     let input = include_str!("../../inputs/016.txt");
 
+    let rules: Vec<Rule> = read_rules(input);
+
+    let my_ticket: Vec<usize> = read_tickets("your ticket:", input).next().unwrap();
+
+    let nearby_tickets: Vec<_> = read_tickets("nearby tickets:", input).collect();
+
+    let start = Instant::now();
+    println!(
+        "Part one: {} in {:#?}",
+        part_one(&nearby_tickets, &rules),
+        start.elapsed()
+    );
+
+    let start = Instant::now();
+    println!(
+        "Part two: {} in {:#?}",
+        part_two(&my_ticket, &nearby_tickets, &rules),
+        start.elapsed()
+    );
+}
+
+fn part_one(tickets: &[Vec<usize>], rules: &[Rule]) -> usize {
+    tickets
+        .iter()
+        .flatten()
+        .filter(|number| {
+            !rules.iter().any(|rule| {
+                (rule.first_range.start..=rule.first_range.end).contains(number)
+                    || (rule.second_range.start..=rule.second_range.end).contains(number)
+            })
+        })
+        .sum::<usize>()
+}
+
+fn part_two(my_ticket: &[usize], tickets: &[Vec<usize>], rules: &[Rule]) -> usize {
+    let valid_nearby_tickets = tickets.iter().filter(|ticket| {
+        ticket.iter().all(|number| {
+            rules.iter().any(|rule| {
+                (rule.first_range.start..=rule.first_range.end).contains(number)
+                    || (rule.second_range.start..=rule.second_range.end).contains(number)
+            })
+        })
+    });
+
+    0
+}
+
+fn read_rules(input: &str) -> Vec<Rule> {
     let reg_rule = Regex::new(r#"^(.*): (\d+)-(\d+) or (\d+)-(\d+)$"#).unwrap();
-    let rules: Vec<Rule> = input
+
+    input
         .lines()
         .take_while(|line| !line.is_empty())
         .map(|rule| {
@@ -24,40 +73,7 @@ fn main() {
                 ),
             }
         })
-        .collect();
-
-    let my_ticket: Vec<usize> = read_tickets("your ticket:", input).next().unwrap();
-
-    let nearby_tickets: Vec<_> = read_tickets("nearby tickets:", input).collect();
-
-    let valid_nearby_tickets = read_tickets("nearby tickets:", input).filter(|ticket| {
-        ticket.iter().all(|number| {
-            rules.iter().any(|rule| {
-                (rule.first_range.start..=rule.first_range.end).contains(number)
-                    || (rule.second_range.start..=rule.second_range.end).contains(number)
-            })
-        })
-    });
-
-    let start = Instant::now();
-    println!(
-        "Part one: {} in {:#?}",
-        part_one(nearby_tickets, &rules),
-        start.elapsed()
-    );
-}
-
-fn part_one(tickets: Vec<Vec<usize>>, rules: &[Rule]) -> usize {
-    tickets
-        .iter()
-        .flatten()
-        .filter(|number| {
-            !rules.iter().any(|rule| {
-                (rule.first_range.start..=rule.first_range.end).contains(number)
-                    || (rule.second_range.start..=rule.second_range.end).contains(number)
-            })
-        })
-        .sum::<usize>()
+        .collect()
 }
 
 // header and input must both have lifetime of static because the returned iterator could live forever (static)
