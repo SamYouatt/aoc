@@ -1,5 +1,3 @@
-use std::{fs, path::Path};
-
 struct PasswordEntry {
     min: usize,
     max: usize,
@@ -25,8 +23,7 @@ impl PasswordEntry {
 }
 
 fn main() {
-    let input = fs::read_to_string(Path::new("/home/sam/Documents/code/aoc2020/inputs/002.txt"))
-        .expect("something went wrong");
+    let input = include_str!("../../inputs/002.txt");
 
     let entries: Vec<PasswordEntry> = input.lines().map(|line| PasswordEntry::new(line)).collect();
 
