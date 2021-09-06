@@ -1,10 +1,9 @@
-use std::{fs, time::Instant};
+use std::time::Instant;
 
 fn main() {
-    let input = fs::read_to_string("/home/sam/Documents/code/aoc2020/inputs/003.txt")
-        .expect("something went wrong");
+    let input = include_str!("../../inputs/003.txt");
 
-    let map = parse_map(&input);
+    let map = parse_map(input);
 
     // Part 1
     let start = Instant::now();
@@ -102,7 +101,7 @@ enum Terrain {
 fn test_question_part_one() {
     let input = "..##.......\n#...#...#..\n.#....#..#.\n..#.#...#.#\n.#...##..#.\n..#.##.....\n.#.#.#....#\n.#........#\n#.##...#...\n#...##....#\n.#..#...#.#";
 
-    let map = parse_map(&input);
+    let map = parse_map(input);
 
     let count = count_trees_encountered(&map);
 
@@ -113,7 +112,7 @@ fn test_question_part_one() {
 fn test_question_part_two() {
     let input = "..##.......\n#...#...#..\n.#....#..#.\n..#.#...#.#\n.#...##..#.\n..#.##.....\n.#.#.#....#\n.#........#\n#.##...#...\n#...##....#\n.#..#...#.#";
 
-    let map = parse_map(&input);
+    let map = parse_map(input);
 
     let product = product_all_route_methods(&map);
 

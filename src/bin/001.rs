@@ -1,10 +1,9 @@
-use std::{fs, path::Path, time::Instant};
+use std::time::Instant;
 
 fn main() {
     let mut numbers: [i32; 200] = [0; 200];
 
-    let input = fs::read_to_string(Path::new("/home/sam/Documents/code/aoc2020/inputs/001.txt"))
-        .expect("something went wrong");
+    let input = include_str!("../../inputs/001.txt");
 
     input
         .lines()
