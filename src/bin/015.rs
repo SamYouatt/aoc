@@ -58,12 +58,7 @@ fn part_two(input: &str) -> u32 {
     // by splitting the storage space between two types of storage we can improve performance
     // an array can be used for the lower, denser, numbers with a hash map for the sparse values
     //
-    // the ratio is going to be based on the amount of memory available
-    // with the current ratio of / 15 the array will contain 2,000,000 u32 values
-    // a u32 value is made of 4 bytes, so this will use 8,000,000 bytes (8GibbyBytes)
-    // array must be stored contigously in memory so even though my system has 32GB of RAM it is unlikely
-    // that this amount will be available contigously so the program will encounter stack overflow despite theoretically
-    // being able to use more resources.
+    // the ratio is chosen based on the amount of memory available in the stack, by default I believe is is 8GB
     //
     // it is hard to know the amount of memory that will be needed for the hashmap which will hold the remaining values
     // without being able to predict what numbers will actually appear. As a conservative estimate that doesn't degrade
