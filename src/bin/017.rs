@@ -48,7 +48,7 @@ fn part_one(input: &[Vec<bool>], cycles: usize) -> usize {
                 [origin - start_side_length / 2 + x] = input[y][x]
         });
 
-    for cycle in 0..=cycles {
+    for cycle in 0..cycles {
         std::mem::swap(&mut current_state, &mut previous_state);
 
         let current_side_length = start_side_length + cycle * 2;
@@ -80,7 +80,7 @@ fn part_one(input: &[Vec<bool>], cycles: usize) -> usize {
                         (2..=3).contains(&num_active)
                     } else {
                         num_active == 3
-                    }
+                    };
                 }
             }
         }
@@ -94,4 +94,15 @@ fn part_one(input: &[Vec<bool>], cycles: usize) -> usize {
             .iter()
             .flat_map(|x| x.iter().filter(|&state| *state))
             .count()
+}
+
+#[test]
+fn part_one_test() {
+    let input: Vec<Vec<bool>> = ".#.\n..#\n###"
+        .as_bytes()
+        .split(|&byte| byte == b'\n')
+        .map(|line| { line.iter().map(|c| matches!(c, b'#')) }.collect())
+        .collect();
+
+    assert_eq!(part_one(&input, 6), 112);
 }
