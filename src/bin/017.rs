@@ -93,6 +93,9 @@ fn part_one(input: &[Vec<bool>], cycles: usize) -> usize {
         }
     }
 
+    // to get the final answer first double the count of active cells, since mirroring improves
+    // speed by 2x
+    // then subtract the middle row as this wouldn't appear twice in the symmetry
     2 * current_state
         .iter()
         .flat_map(|y| y.iter().flat_map(|x| x.iter().filter(|&state| *state)))
