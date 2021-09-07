@@ -14,6 +14,13 @@ fn main() {
         part_one(&input, 6),
         start.elapsed()
     );
+
+    let start = Instant::now();
+    println!(
+        "Part two: {} in {:#?}",
+        part_two(&input, 6),
+        start.elapsed()
+    );
 }
 
 fn part_one(input: &[Vec<bool>], cycles: usize) -> usize {
@@ -94,6 +101,81 @@ fn part_one(input: &[Vec<bool>], cycles: usize) -> usize {
             .iter()
             .flat_map(|x| x.iter().filter(|&state| *state))
             .count()
+}
+
+fn part_two(input: &[Vec<bool>], cycles: usize) -> usize {
+    let start_side_length = input.len();
+    let max_side_length = cycles * 2 + start_side_length;
+
+    // same as before but with additional formula for the 4th dimension
+    let neighbor_offsets: Vec<(isize, isize, isize, isize)> = (0..3 * 3 * 3 * 3)
+        .filter(|&i| i != 3 * 3 * 3 * 3 / 2)
+        .map(|i| (i % 3 - 1, i / 3 % 3 - 1, i / 9 % 3 - 1, i / 27 - 1))
+        .collect();
+
+    let origin = max_side_length / 2;
+
+    let mut current_state = vec![
+        vec![
+            vec![vec![false; max_side_length + 1]; max_side_length + 1];
+            max_side_length / 2 + 1
+        ];
+        max_side_length / 2 + 1
+    ];
+    let mut previous_state = current_state.clone();
+
+    (0..start_side_length)
+        .cartesian_product(0..start_side_length)
+        .for_each(|(x, y)| {
+            current_state[0][0][origin - start_side_length / 2 + y]
+                [origin - start_side_length / 2 + x] = input[y][x]
+        });
+
+    for cycle in 0..cycles {
+        std::mem::swap(&mut current_state, &mut previous_state);
+
+        // same as before but including the extra dimension
+        let size = start_side_length + cycle * 2;
+        for w in 0..=cycle + 1 {
+            for z in 0..=cycle + 1 {
+                for y in 0..=size {
+                    for x in 0..size {
+                        let (y, x) = (origin - size / 2 + y, origin - size / 2 + x);
+                        let o = neighbor_offsets
+                            .iter()
+                            .map(|&r| {
+                                (
+                                    (x as isize + r.0) as usize,
+                                    (y as isize + r.1) as usize,
+                                    (z as isize + r.2).abs() as usize,
+                                    (w as isize + r.3).abs() as usize,
+                                )
+                            })
+                            .filter(|(x, y, z, w)| previous_state[*w][*z][*y][*x])
+                            .count();
+                        current_state[w][z][y][x] = if previous_state[w][z][y][x] {
+                            o == 2 || o == 3
+                        } else {
+                            o == 3
+                        };
+                    }
+                }
+            }
+        }
+    }
+
+    4 * (current_state
+        .iter()
+        .map(|y| {
+            y.iter()
+                .flat_map(|z| z.iter().flat_map(|w| w.iter().filter(|&c| *c)))
+                .count()
+        })
+        .sum::<usize>()
+        - current_state
+            .iter()
+            .map(|x| x[0].iter().flat_map(|z| z.iter().filter(|&c| *c)).count())
+            .sum::<usize>())
 }
 
 #[test]
