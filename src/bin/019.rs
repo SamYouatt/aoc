@@ -20,12 +20,19 @@ fn main() {
     let start = Instant::now();
     println!(
         "Part one: {} in {:#?}",
-        part_one(&rules, strings),
+        part_one(&rules, &strings),
+        start.elapsed()
+    );
+
+    let start = Instant::now();
+    println!(
+        "Part two: {} in {:#?}",
+        part_two(&rules, &strings),
         start.elapsed()
     );
 }
 
-fn part_one(rules: &HashMap<usize, Rule>, strings: Vec<&str>) -> usize {
+fn part_one(rules: &HashMap<usize, Rule>, strings: &[&str]) -> usize {
     strings
         .iter()
         // matches recursively returns the number of letter in the string that were succesfully consumed
@@ -38,16 +45,22 @@ fn part_one(rules: &HashMap<usize, Rule>, strings: Vec<&str>) -> usize {
         .count()
 }
 
+// use the fact that 8 and 11 only appear in 0, and skip them and see if the string would work for those they call
+// which is 42 then 31
+fn part_two(rules: &HashMap<usize, Rule>, strings: &[&str]) -> usize {
+    strings
+        .iter()
+        .filter(|string| works_for_42(string.as_bytes(), rules))
+        .count()
+}
+
 // returns an option containing the number of letters in the string that were succesfully consumed
 // by walking throught the rules
 fn matches(rules: &HashMap<usize, Rule>, string: &[u8], rule_index: usize) -> Option<usize> {
-    // base case, all the string has been consumed
-    if string.is_empty() {
-        return None;
-    }
-
     // get the current rule from the hash map
     match &rules.get(&rule_index) {
+        // base case, all the string has been consumed
+        Some(Rule::Literal(_)) if string.is_empty() => None,
         // if it is a literal test if it matches the first character in the remaining string
         // if it does match then return 1 which is added to the recursion result
         Some(Rule::Literal(c)) if &string[0] == c => Some(1),
@@ -75,6 +88,66 @@ fn matches(rules: &HashMap<usize, Rule>, string: &[u8], rule_index: usize) -> Op
             }),
         None => None,
     }
+}
+
+// a modified matches function which returns an option of the remaining string after consuming a character
+fn matches_consumes<'a>(
+    string: &'a [u8],
+    rule: usize,
+    rules: &HashMap<usize, Rule>,
+) -> Option<&'a [u8]> {
+    match &rules.get(&rule) {
+        // base case, if the string is empty return none
+        Some(Rule::Literal(_)) if string.is_empty() => None,
+        // if the first character matches then consume it
+        Some(Rule::Literal(c)) if &string[0] == c => Some(&string[1..]),
+        // other base case, the first element in the string cannot be consumed, return none
+        Some(Rule::Literal(_)) => None,
+        // the string starts as what was received and over the course of the fold it gets updated
+        // with the consumed values, until the try fold fails
+        Some(Rule::Sequence(a)) => a.iter().try_fold(string, |string, &rule| {
+            matches_consumes(string, rule, rules)
+        }),
+        // same as sequence but trying first sequence first then the second if the first fails
+        Some(Rule::SequenceOr(a, b)) => a
+            .iter()
+            .try_fold(string, |string, &rule| {
+                matches_consumes(string, rule, rules)
+            })
+            .or_else(|| {
+                b.iter()
+                    .try_fold(string, |m, &r| matches_consumes(m, r, rules))
+            }),
+        None => None,
+    }
+}
+
+// starts at 42
+fn works_for_42(string: &[u8], rules: &HashMap<usize, Rule>) -> bool {
+    (0..)
+        .try_fold(string, |string, depth| {
+            match matches_consumes(string, 42, rules) {
+                Some(string) if works_for_31(depth, string, rules) => Err(true),
+                Some(string) => Ok(string),
+                None => Err(false),
+            }
+        })
+        .err()
+        .unwrap()
+}
+
+// starts at 31 and sees if it gets consumed
+fn works_for_31(limit: usize, string: &[u8], rules: &HashMap<usize, Rule>) -> bool {
+    (0..limit)
+        .try_fold(string, |string, _| {
+            match matches_consumes(string, 31, rules) {
+                Some(string) if string.is_empty() => Err(true),
+                Some(string) => Ok(string),
+                None => Err(false),
+            }
+        })
+        .err()
+        .unwrap_or(false)
 }
 
 #[derive(Debug, PartialEq)]
