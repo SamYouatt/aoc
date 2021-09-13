@@ -1,3 +1,10 @@
+use std::{collections::HashMap, time::Instant};
+
+struct Tile {
+    id: usize,
+    edges: [u16; 4],
+}
+
 fn main() {
     let tiles = include_str!("../../inputs/020.txt")
         .split("\n\n")
@@ -26,9 +33,44 @@ fn main() {
                     edge << 1 | if pixel == b'#' { 1 } else { 0 }
                 });
 
-            (id, [top_edge, left_edge, right_edge, bottom_edge])
+            Tile {
+                id,
+                edges: [top_edge, left_edge, right_edge, bottom_edge],
+            }
         })
-        .collect::<Vec<(usize, [u16; 4])>>();
+        .collect::<Vec<Tile>>();
 
-    println!("{:#?}", tiles[0]);
+    let start = Instant::now();
+    println!("Part one: {} in {:#?}", part_one(&tiles), start.elapsed());
+}
+
+fn part_one(tiles: &[Tile]) -> usize {
+    let edge_matches: HashMap<u16, usize> = tiles
+        .iter()
+        .flat_map(|tile| {
+            tile.edges
+                .iter()
+                .map(|&edge| (edge, edge.reverse_bits() >> 6))
+        })
+        .fold(HashMap::new(), |mut map, (original, reversed)| {
+            *map.entry(original).or_default() += 1;
+            *map.entry(reversed).or_default() += 1;
+            map
+        });
+
+    // go through each tile, and for each edge check how many matches
+    // want tiles that have no matches on 2 edges, these are the corners
+    // an edge with no matches will have a value of 1 in the map, itself
+    // then get the product of the ids
+    tiles
+        .iter()
+        .filter(|tile| {
+            tile.edges
+                .iter()
+                .filter(|edge| edge_matches[edge] > 1)
+                .count()
+                == 2
+        })
+        .map(|tile| tile.id)
+        .product::<usize>()
 }
