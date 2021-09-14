@@ -1,7 +1,9 @@
 use std::{
-    collections::{HashMap, LinkedList},
+    collections::{hash_map::Entry, HashMap, LinkedList},
     time::Instant,
 };
+
+use itertools::Itertools;
 
 struct TileEdges {
     id: usize,
@@ -11,7 +13,7 @@ struct TileEdges {
 #[derive(Debug, Clone)]
 struct Tile {
     id: usize,
-    grid: Vec<Vec<u8>>,
+    pixels: Vec<Vec<u8>>,
 }
 
 #[derive(PartialEq, Eq, Hash, Clone, Copy, Debug)]
@@ -102,6 +104,12 @@ fn part_one(input: &str) -> usize {
 }
 
 fn part_two(input: &str) -> usize {
+    // chose to have the sea monster in its own file instead of trying to write it in by hand
+    let sea_monster: Vec<Vec<u8>> = include_str!("../../inputs/monster.txt")
+        .split('\n')
+        .map(|line| line.bytes().collect())
+        .collect();
+
     let mut tiles: Vec<Tile> = input
         .split("\n\n")
         .map(|chunk| {
@@ -113,35 +121,37 @@ fn part_two(input: &str) -> usize {
                 .map(|line| line.bytes().collect())
                 .collect();
 
-            Tile { id, grid: pixels }
+            Tile { id, pixels }
         })
         .collect();
 
-    println!("{}", tiles.len());
-
-    let mut picture = HashMap::<Coord, Tile>::new();
+    // represents the positioned tiles, with the relative coord offset from the first placed
+    // and the tile with the appropriate rotation and flips applied
+    let mut arranged_tiles = HashMap::<Coord, Tile>::new();
     let mut queue = LinkedList::<Coord>::new();
 
-    picture.insert(Coord::from(0, 0), tiles.pop().unwrap());
+    arranged_tiles.insert(Coord::from(0, 0), tiles.pop().unwrap());
     queue.push_back(Coord::from(0, 0));
 
+    // from an offset coord, iterate through every tile and try and place it
+    // with all rotation and flip variations
     while let Some(position) = queue.pop_front() {
-        let mut remove = vec![];
+        let mut ids_to_remove = vec![];
 
-        tiles.iter().enumerate().for_each(|(i, tile)| {
-            let mut pixels = tile.grid.clone();
+        tiles.iter().for_each(|tile| {
+            let mut pixels = tile.pixels.clone();
             'variations: for _flip in 0..=1 {
                 for _rotation in 0..4 {
-                    // see if it fits and if it does add it to the picture at the appropriate relative coords
-                    if let Some(offset) = find_fit(&picture[&position].grid, &pixels) {
+                    if let Some(offset) = find_fit(&arranged_tiles[&position].pixels, &pixels) {
                         let new_position =
                             Coord::from(position.x + offset.x, position.y + offset.y);
 
-                        if let std::collections::hash_map::Entry::Vacant(e) =
-                            picture.entry(new_position)
-                        {
-                            remove.push(i);
-                            e.insert(tile.clone());
+                        if let Entry::Vacant(e) = arranged_tiles.entry(new_position) {
+                            ids_to_remove.push(tile.id);
+                            e.insert(Tile {
+                                id: tile.id,
+                                pixels,
+                            });
                             queue.push_back(new_position);
                             break 'variations;
                         }
@@ -152,73 +162,44 @@ fn part_two(input: &str) -> usize {
             }
         });
 
-        remove.iter().for_each(|id| {
-            tiles.remove(*id);
-        });
+        tiles.retain(|tile| !ids_to_remove.contains(&tile.id));
     }
 
-    let monster: Vec<Vec<u8>> = include_str!("../../inputs/monster.txt")
-        .split('\n')
-        .map(|line| line.bytes().collect())
-        .collect();
+    let min_x = arranged_tiles.iter().min_by_key(|a| a.0.x).unwrap().0.x;
+    let max_x = arranged_tiles.iter().max_by_key(|a| a.0.x).unwrap().0.x;
+    let min_y = arranged_tiles.iter().min_by_key(|a| a.0.y).unwrap().0.y;
+    let max_y = arranged_tiles.iter().max_by_key(|a| a.0.y).unwrap().0.y;
 
-    let mut full_picture = Vec::with_capacity(80);
-
-    let min_x = picture
-        .iter()
-        .min_by_key(|element| element.0.x)
-        .unwrap()
-        .0
-        .x;
-    let max_x = picture
-        .iter()
-        .max_by_key(|element| element.0.x)
-        .unwrap()
-        .0
-        .x;
-    let min_y = picture
-        .iter()
-        .min_by_key(|element| element.0.y)
-        .unwrap()
-        .0
-        .y;
-    let max_y = picture
-        .iter()
-        .max_by_key(|element| element.0.y)
-        .unwrap()
-        .0
-        .y;
-
-    println!("{} {}", max_x, min_x);
-
-    let mut seamonster_location = vec![vec![false; 80]; 80];
-    let mut x = 0;
-    for chunk_x in min_x..=max_x {
-        for tile_x in 1..=8 {
-            // do something
-            full_picture.push(Vec::with_capacity(80));
-            for chunk_y in min_y..=max_y {
-                for tile_y in 1..=8 {
-                    println!("{} {}", chunk_x, chunk_y);
-                    println!("{}", picture.len());
-                    println!("{:?}", picture.keys());
-                    full_picture[x]
-                        .push(picture[&Coord::from(chunk_x, chunk_y)].grid[tile_x][tile_y])
+    // picture is the arranged tiles with the borders trimmed
+    let mut picture = Vec::with_capacity(96);
+    let mut sea_monster_points = vec![vec![false; 96]; 96];
+    // go through the arranged tiles in order and trim the borders and create new picture
+    let mut i = 0;
+    for chunk_y in min_y..=max_y {
+        for tile_y in 1..9 {
+            picture.push(Vec::with_capacity(96));
+            for chunk_x in min_x..=max_x {
+                for tile_x in 1..9 {
+                    picture[i]
+                        .push(arranged_tiles[&Coord::from(chunk_x, chunk_y)].pixels[tile_y][tile_x])
                 }
             }
-            x += 1;
+            i += 1;
         }
     }
 
-    for _ in 0..=1 {
-        for _ in 0..4 {
-            for x in 0..full_picture.len() - monster.len() + 1 {
-                for y in 0..full_picture[0].len() - monster[0].len() + 1 {
+    // for each coordinate of the image, try and place the sea monster in all its variations
+    for _flip in 0..=1 {
+        for _rotation in 0..4 {
+            (0..picture[0].len() - sea_monster[0].len() + 1)
+                .cartesian_product(0..picture.len() - sea_monster.len() + 1)
+                .for_each(|(x, y)| {
+                    // check if the sea monster will fit in that location
                     let mut is_monster = true;
-                    'check_monster: for delta_x in 0..monster.len() {
-                        for delta_y in 0..monster[0].len() {
-                            if monster[delta_x][delta_y] == b'#'
-                                && full_picture[x + delta_x][y + delta_y] != b'#'
+                    'check_monster: for delta_x in 0..sea_monster[0].len() {
+                        for delta_y in 0..sea_monster.len() {
+                            if sea_monster[delta_y][delta_x] == b'#'
+                                && picture[y + delta_y][x + delta_x] != b'#'
                             {
                                 is_monster = false;
                                 break 'check_monster;
@@ -226,37 +207,35 @@ fn part_two(input: &str) -> usize {
                         }
                     }
 
+                    // if it does fit then add it to the list of sea monster points
                     if is_monster {
-                        for delta_x in 0..monster.len() {
-                            for delta_y in 0..monster[0].len() {
-                                if monster[delta_x][delta_y] == b'#' {
-                                    seamonster_location[x + delta_x][y + delta_y] = true;
+                        (0..sea_monster[0].len())
+                            .cartesian_product(0..sea_monster.len())
+                            .for_each(|(dx, dy)| {
+                                if sea_monster[dy][dx] == b'#' {
+                                    sea_monster_points[y + dy][x + dx] = true;
                                 }
-                            }
-                        }
+                            });
                     }
-                }
-            }
-            seamonster_location = rotate(seamonster_location);
-            full_picture = rotate(full_picture);
+                });
+            sea_monster_points = rotate(sea_monster_points);
+            picture = rotate(picture);
         }
-        seamonster_location = flip(seamonster_location);
-        full_picture = flip(full_picture);
+        sea_monster_points = flip(sea_monster_points);
+        picture = flip(picture);
     }
 
-    let mut non_sea_monster_points = 0;
-    for x in 0..full_picture.len() {
-        for y in 0..full_picture[0].len() {
-            non_sea_monster_points +=
-                (full_picture[x][y] == b'#' && !seamonster_location[x][y]) as usize;
-        }
-    }
-
-    println!("{}", non_sea_monster_points);
-    0
+    // go through the image and count the number of points that are not sea monster points
+    (0..picture[0].len())
+        .cartesian_product(0..picture.len())
+        .fold(0, |non_monster, (x, y)| {
+            non_monster + (picture[y][x] == b'#' && !sea_monster_points[y][x]) as usize
+        })
 }
 
 fn find_fit(grid1: &[Vec<u8>], grid2: &[Vec<u8>]) -> Option<Coord> {
+    // note that the y coordinates have positive as down and negative as up
+    // this is because when we work with the vectors the y starts at 0 and goes up
     if grid1.first() == grid2.last() {
         // above
         Some(Coord::from(0, -1))
