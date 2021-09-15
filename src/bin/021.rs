@@ -9,14 +9,23 @@ fn main() {
     let foods = parse_input(input);
 
     let start = Instant::now();
-    println!("Part one: {} in {:#?}", part_one(&foods), start.elapsed());
+    let mapping = get_allergic_ingredients(&foods);
+    println!("Mapped allergens to ingredients in {:#?}", start.elapsed());
+
+    let start = Instant::now();
+    println!(
+        "Part one: {} in {:#?}",
+        part_one(&mapping, &foods),
+        start.elapsed()
+    );
+
+    let start = Instant::now();
+    println!("Part two: {} in {:#?}", part_two(&mapping), start.elapsed());
 }
 
-fn part_one(foods: &[Food]) -> usize {
-    let mapping = get_allergic_ingredients(foods);
-
+fn part_one(allergen_mapping: &HashMap<&str, &str>, foods: &[Food]) -> usize {
     // get a list of all the ingredients that are allergens
-    let allergen_ingredients: Vec<&str> = mapping.into_values().collect();
+    let allergen_ingredients: Vec<&str> = allergen_mapping.clone().into_values().collect();
 
     // count the number of ingredients in the whole foods list that are not in that allergen list
     foods
@@ -28,6 +37,16 @@ fn part_one(foods: &[Food]) -> usize {
                 .count()
         })
         .sum::<usize>()
+}
+
+fn part_two(allergen_mapping: &HashMap<&str, &str>) -> String {
+    let mut mapping = Vec::from_iter(allergen_mapping);
+    mapping.sort_by_key(|x| x.0);
+    mapping
+        .iter()
+        .map(|x| *x.1)
+        .collect::<Vec<&str>>()
+        .join(",")
 }
 
 #[derive(Debug)]
