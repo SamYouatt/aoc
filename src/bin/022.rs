@@ -68,7 +68,7 @@ fn part_one(decks: (&VecDeque<usize>, &VecDeque<usize>)) -> usize {
 }
 
 fn part_two(decks: (&VecDeque<usize>, &VecDeque<usize>)) -> usize {
-    let (_, deck) = recurisve_combat(decks.0, decks.1);
+    let (_, deck) = recurisve_combat(decks.0.clone(), decks.1.clone());
     deck.iter()
         .rev()
         .enumerate()
@@ -76,18 +76,14 @@ fn part_two(decks: (&VecDeque<usize>, &VecDeque<usize>)) -> usize {
         .sum::<usize>()
 }
 
-fn recurisve_combat(deck1: &VecDeque<usize>, deck2: &VecDeque<usize>) -> (Winner, VecDeque<usize>) {
-    let mut deck1 = deck1.clone();
-    let mut deck2 = deck2.clone();
+fn recurisve_combat(deck1: VecDeque<usize>, deck2: VecDeque<usize>) -> (Winner, VecDeque<usize>) {
+    let mut deck1 = deck1;
+    let mut deck2 = deck2;
 
     let mut previous_states = HashSet::new();
 
-    loop {
-        // state has happened before, player 1 wins
-        if !previous_states.insert((deck1.clone(), deck2.clone())) {
-            return (Winner::Player1, deck1);
-        }
-
+    // check if the state has happened before
+    while previous_states.insert((deck1.clone(), deck2.clone())) {
         // if either is empty return the other winner
         if deck1.is_empty() {
             return (Winner::Player2, deck2);
@@ -105,7 +101,8 @@ fn recurisve_combat(deck1: &VecDeque<usize>, deck2: &VecDeque<usize>) -> (Winner
             let copied_deck1 = deck1.iter().take(card1).copied().collect();
             let copied_deck2 = deck2.iter().take(card2).copied().collect();
 
-            match recurisve_combat(&copied_deck1, &copied_deck2) {
+            // find out who won the recursive round
+            match recurisve_combat(copied_deck1, copied_deck2) {
                 (Winner::Player1, _) => {
                     deck1.push_back(card1);
                     deck1.push_back(card2);
@@ -130,4 +127,7 @@ fn recurisve_combat(deck1: &VecDeque<usize>, deck2: &VecDeque<usize>) -> (Winner
             }
         }
     }
+
+    // the previous state existed so return player 1 as the winner
+    (Winner::Player1, deck1)
 }
