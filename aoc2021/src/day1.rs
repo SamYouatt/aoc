@@ -29,15 +29,15 @@ pub fn solve_part2(input: &[u32]) -> u32 {
 mod tests {
     use super::*;
 
-    const input: [u32; 10] = [199, 200, 208, 210, 200, 207, 240, 269, 260, 263];
+    const INPUT: [u32; 10] = [199, 200, 208, 210, 200, 207, 240, 269, 260, 263];
 
     #[test]
     fn test_part1() {
-        assert_eq!(solve_part1(&input), 7);
+        assert_eq!(solve_part1(&INPUT), 7);
     }
 
     #[test]
     fn test_part2() {
-        assert_eq!(solve_part2(&input), 5);
+        assert_eq!(solve_part2(&INPUT), 5);
     }
 }
