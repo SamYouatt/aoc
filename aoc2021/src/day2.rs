@@ -11,11 +11,6 @@ enum Direction {
     Up,
 }
 
-struct Position {
-    horizontal: usize,
-    depth: usize,
-}
-
 #[aoc_generator(day2)]
 pub fn parse_input(input: &str) -> Vec<Command> {
     input
@@ -55,7 +50,16 @@ pub fn solve_part1(input: &[Command]) -> usize {
 
 #[aoc(day2, part2)]
 pub fn solve_part2(input: &[Command]) -> usize {
-    0
+    let position = input
+        .iter()
+        .fold((0_usize, 0_usize, 0_usize), |(f, d, a), cmd| {
+            match cmd.direction {
+                Direction::Forward => (f + cmd.amount, d + a * cmd.amount, a),
+                Direction::Down => (f, d, a + cmd.amount),
+                Direction::Up => (f, d, a - cmd.amount),
+            }
+        });
+    position.0 * position.1
 }
 
 #[cfg(test)]
@@ -68,5 +72,11 @@ mod test {
     fn test_part1() {
         let commands = parse_input(&INPUT);
         assert_eq!(solve_part1(&commands), 150);
+    }
+
+    #[test]
+    fn test_part2() {
+        let commands = parse_input(&INPUT);
+        assert_eq!(solve_part2(&commands), 900);
     }
 }
