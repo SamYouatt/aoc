@@ -11,45 +11,40 @@ fn main() {
 }
 
 fn part_1(input: &str) -> usize {
-    input
-        .lines()
-        .map(|line| {
-            let digits: Vec<char> = line.chars().filter(|char| char.is_digit(10)).collect();
-            let first_digit = digits.first().unwrap_or(&'0');
-            let last_digit = digits.last().unwrap_or(&'0');
+    input.lines().fold(0, |total, line| {
+        let digits: Vec<char> = line.chars().filter(|char| char.is_digit(10)).collect();
+        let first_digit = digits.first().unwrap_or(&'0');
+        let last_digit = digits.last().unwrap_or(&'0');
 
-            format!("{}{}", first_digit, last_digit)
+        total
+            + format!("{}{}", first_digit, last_digit)
                 .parse()
                 .unwrap_or(0)
-        })
-        .sum()
+    })
 }
 
 fn part_2(input: &str) -> usize {
     let find_digit = Regex::new(r#"\d|one|two|three|four|five|six|seven|eight|nine"#).unwrap();
     let find_digit_r = Regex::new(r"\d|eno|owt|eerht|ruof|evif|xis|neves|thgie|enin").unwrap();
 
-    input
-        .lines()
-        .map(|line| {
-            let first_digit =
-                text_to_int(find_digit.find(&line).map(|x| x.as_str()).unwrap_or("0"));
+    input.lines().fold(0, |total, line| {
+        let first_digit = text_to_int(find_digit.find(&line).map(|x| x.as_str()).unwrap_or("0"));
 
-            let last_digit = text_to_int(
-                &find_digit_r
-                    .find(&line.chars().rev().collect::<String>())
-                    .map(|x| x.as_str())
-                    .unwrap_or("0")
-                    .chars()
-                    .rev()
-                    .collect::<String>(),
-            );
+        let last_digit = text_to_int(
+            &find_digit_r
+                .find(&line.chars().rev().collect::<String>())
+                .map(|x| x.as_str())
+                .unwrap_or("0")
+                .chars()
+                .rev()
+                .collect::<String>(),
+        );
 
-            format!("{}{}", first_digit, last_digit)
+        total
+            + format!("{}{}", first_digit, last_digit)
                 .parse()
                 .unwrap_or(0)
-        })
-        .sum()
+    })
 }
 
 fn text_to_int(number: &str) -> usize {
