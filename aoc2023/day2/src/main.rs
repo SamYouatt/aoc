@@ -62,6 +62,24 @@ impl Game {
 
         Game { id, sets }
     }
+
+    fn get_min_set(&self) -> Set {
+        let mut max_red = 0;
+        let mut max_green = 0;
+        let mut max_blue = 0;
+
+        for set in &self.sets {
+            max_red = max_red.max(set.red);
+            max_green = max_green.max(set.green);
+            max_blue = max_blue.max(set.blue);
+        }
+
+        Set {
+            red: max_red,
+            green: max_green,
+            blue: max_blue,
+        }
+    }
 }
 
 fn main() {
@@ -69,12 +87,15 @@ fn main() {
 
     let answer1 = part_1(input);
     println!("Part 1: {}", answer1);
+
+    let answer2 = part_2(input);
+    println!("Part 2: {}", answer2);
 }
 
 fn part_1(input: &str) -> u32 {
     let (red_limit, green_limit, blue_limit) = (12, 13, 14);
 
-    let answer = input
+    input
         .lines()
         .map(|line| Game::from_parse(line))
         .filter(|game| {
@@ -82,7 +103,15 @@ fn part_1(input: &str) -> u32 {
                 .iter()
                 .all(|set| set.is_valid(red_limit, green_limit, blue_limit))
         })
-        .fold(0, |total, game| total + game.id);
+        .fold(0, |total, game| total + game.id)
+}
 
-    answer
+fn part_2(input: &str) -> u32 {
+    input
+        .lines()
+        .map(|line| Game::from_parse(line))
+        .map(|game| game.get_min_set())
+        .fold(0, |total, min_set| {
+            total + (min_set.red * min_set.green * min_set.blue)
+        })
 }
