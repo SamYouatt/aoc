@@ -10,9 +10,9 @@ struct Number {
 
 impl Number {
     fn new(start: usize, end: usize, row: usize, number: usize) -> Number {
-        let start_i = start.try_into().expect("Failed to cast");
-        let end_i = end.try_into().expect("Failed to cast");
-        let row_i = row.try_into().expect("Failed to cast");
+        let start_i = start as i32;
+        let end_i = end as i32;
+        let row_i = row as i32;
 
         Number {
             occupies: (start_i..=end_i)
@@ -59,8 +59,8 @@ fn part_1(input: &str) -> usize {
             match_symbol
                 .find_iter(line)
                 .map(move |symbol_match| Location {
-                    x: symbol_match.start().try_into().expect("Failed to cast"),
-                    y: row_num.try_into().expect("Failed to cast"),
+                    x: symbol_match.start() as i32,
+                    y: row_num as i32,
                 })
         })
         .collect();
