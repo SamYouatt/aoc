@@ -31,17 +31,35 @@ impl Card {
 
 fn main() {
     let input = include_str!("input.txt");
-
-    let answer1 = part_1(input);
-    println!("Part 1: {}", answer1);
-}
-
-fn part_1(input: &str) -> usize {
     let cards: Vec<Card> = input.lines().map(|line| Card::parse(line)).collect();
 
+    let answer1 = part_1(&cards);
+    println!("Part 1: {}", answer1);
+
+    let answer2 = part_2(&cards);
+    println!("Part 2: {}", answer2);
+}
+
+fn part_1(cards: &Vec<Card>) -> usize {
     cards
         .iter()
         .map(|card| card.count_winners())
         .filter(|winners| *winners > 0)
         .fold(0, |total, winners| total + (2usize.pow(winners as u32 - 1)))
+}
+
+fn part_2(cards: &Vec<Card>) -> usize {
+    let card_wins: Vec<usize> = cards.iter().map(|card| card.count_winners()).collect();
+
+    let mut card_copies = vec![1; cards.len()];
+
+    for (card_index, wins) in card_wins.iter().enumerate() {
+        for card_offset in 1..=*wins {
+            let card_copy_won = card_index + card_offset;
+            let num_copies = card_copies[card_index];
+            card_copies[card_copy_won] += num_copies
+        }
+    }
+
+    card_copies.iter().sum()
 }
