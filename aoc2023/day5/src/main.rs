@@ -1,3 +1,5 @@
+use std::{cmp::min, ops::Range};
+
 use regex::Regex;
 
 #[derive(Debug)]
@@ -50,11 +52,13 @@ struct Mapping {
 
 impl Mapping {
     fn parse(group: &str) -> Mapping {
-        let mappings = group
+        let mut mappings = group
             .lines()
             .skip(1)
             .map(|mapping| MapRange::parse(mapping))
-            .collect();
+            .collect::<Vec<MapRange>>();
+
+        mappings.sort_by(|a, b| a.start.cmp(&b.start));
 
         Mapping { mappings }
     }
@@ -68,6 +72,45 @@ impl Mapping {
 
         return source;
     }
+
+    fn mapped_ranges(&self, source_range: Range<isize>) -> Vec<Range<isize>> {
+        let mut new_ranges = vec![];
+        let mut current_start = source_range.start;
+
+        for mapping in self
+            .mappings
+            .iter()
+            .skip_while(|mapping| mapping.end < source_range.start)
+        {
+            if current_start < mapping.start {
+                let new_range = current_start..min(source_range.end, mapping.start);
+                new_ranges.push(new_range);
+                current_start = mapping.start;
+            }
+
+            if current_start >= mapping.end {
+                break;
+            }
+
+            let offset_start = current_start + mapping.offset;
+            let offset_end = min(source_range.end, mapping.end) + mapping.offset;
+            let new_range = offset_start..offset_end;
+            new_ranges.push(new_range);
+
+            current_start = mapping.end;
+
+            if current_start >= source_range.end {
+                break;
+            }
+        }
+
+        if current_start < source_range.end {
+            let new_range = current_start..source_range.end;
+            new_ranges.push(new_range);
+        }
+
+        new_ranges
+    }
 }
 
 fn main() {
@@ -75,6 +118,9 @@ fn main() {
 
     let answer1 = part_1(input);
     println!("Part 1: {}", answer1);
+
+    let answer2 = part_2(input);
+    println!("Part 2: {}", answer2);
 }
 
 fn part_1(input: &str) -> isize {
@@ -106,4 +152,46 @@ fn part_1(input: &str) -> isize {
         })
         .min()
         .unwrap()
+}
+
+fn part_2(input: &str) -> isize {
+    let match_digits = Regex::new(r"\d+").expect("Failed to compile regex");
+
+    let (seeds, rest) = input.split_once("\n\n").unwrap();
+    let seed_ranges: Vec<Range<isize>> = match_digits
+        .find_iter(seeds)
+        .map(|seed| {
+            seed.as_str()
+                .parse::<isize>()
+                .expect("Failed to parse number")
+        })
+        .collect::<Vec<isize>>()
+        .chunks_exact(2)
+        .map(|chunk| chunk[0]..(chunk[0] + chunk[1]))
+        .collect();
+
+    let mappings: Vec<Mapping> = rest
+        .split("\n\n")
+        .map(|group| Mapping::parse(group))
+        .collect();
+
+    let mut mapped_ranges: Vec<Range<isize>> = vec![];
+
+    for seed_range in seed_ranges {
+        let mut current_ranges = vec![seed_range];
+        for mapping in &mappings {
+            let new_ranges = current_ranges
+                .iter()
+                .flat_map(|range| mapping.mapped_ranges(range.clone()))
+                .collect();
+            current_ranges = new_ranges;
+        }
+        mapped_ranges.append(&mut current_ranges);
+    }
+
+    mapped_ranges
+        .iter()
+        .min_by(|a, b| a.start.cmp(&b.start))
+        .unwrap()
+        .start
 }
