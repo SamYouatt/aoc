@@ -11,36 +11,23 @@ struct MapRange {
 
 impl MapRange {
     fn parse(mapping: &str) -> MapRange {
-        let mut numbers = mapping.split_whitespace();
+        let numbers: Vec<_> = mapping.split_whitespace().collect();
 
-        let dest_start = numbers
-            .next()
-            .unwrap()
-            .parse::<isize>()
-            .expect("Failed to parse destination start");
-        let source_start = numbers
-            .next()
-            .unwrap()
-            .parse::<isize>()
-            .expect("Failed to parse source start");
-        let length = numbers
-            .next()
-            .unwrap()
-            .parse::<isize>()
-            .expect("Failed to parse length");
+        let dest_start = numbers[0].parse::<isize>().expect("failed to parse dest");
+        let source_start = numbers[1].parse::<isize>().expect("failed to parse source");
+        let length = numbers[2].parse::<isize>().expect("failed to parse length");
 
-        let start = source_start;
-        let end = source_start + length;
-        let offset = dest_start - source_start;
-
-        MapRange { start, end, offset }
+        MapRange {
+            start: source_start,
+            end: source_start + length,
+            offset: dest_start - source_start,
+        }
     }
 
     fn try_map(&self, source: isize) -> Option<isize> {
         if source >= self.start && source < self.end {
             return Some(source + self.offset);
         }
-
         None
     }
 }
@@ -158,6 +145,7 @@ fn part_2(input: &str) -> isize {
     let match_digits = Regex::new(r"\d+").expect("Failed to compile regex");
 
     let (seeds, rest) = input.split_once("\n\n").unwrap();
+
     let seed_ranges: Vec<Range<isize>> = match_digits
         .find_iter(seeds)
         .map(|seed| {
@@ -165,9 +153,9 @@ fn part_2(input: &str) -> isize {
                 .parse::<isize>()
                 .expect("Failed to parse number")
         })
-        .collect::<Vec<isize>>()
+        .collect::<Vec<_>>()
         .chunks_exact(2)
-        .map(|chunk| chunk[0]..(chunk[0] + chunk[1]))
+        .map(|seed_pair| seed_pair[0]..(seed_pair[0] + seed_pair[1]))
         .collect();
 
     let mappings: Vec<Mapping> = rest
@@ -179,6 +167,7 @@ fn part_2(input: &str) -> isize {
 
     for seed_range in seed_ranges {
         let mut current_ranges = vec![seed_range];
+
         for mapping in &mappings {
             let new_ranges = current_ranges
                 .iter()
@@ -186,6 +175,7 @@ fn part_2(input: &str) -> isize {
                 .collect();
             current_ranges = new_ranges;
         }
+
         mapped_ranges.append(&mut current_ranges);
     }
 
