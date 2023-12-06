@@ -29,14 +29,10 @@ fn part_1(input: &str) -> usize {
     record_distances
         .iter()
         .map(|(time, rec)| {
-            let all_distances: Vec<usize> = (1..*time)
-                .map(|btn_time| {
-                    let remaining = time - btn_time;
-                    remaining * btn_time
-                })
-                .collect();
-
-            all_distances.iter().filter(|dist| dist > &rec).count()
+            (1..*time)
+                .map(|btn_time| (time - btn_time) * btn_time)
+                .filter(|dist| dist > &rec)
+                .count()
         })
         .product()
 }
