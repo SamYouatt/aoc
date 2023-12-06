@@ -10,6 +10,9 @@ fn main() {
 
     let answer2 = part_2(input);
     println!("Part 2: {answer2}");
+
+    let answer2_by_roots = part_2_alt(input);
+    println!("Part 2 via quadratic roots: {answer2_by_roots}");
 }
 
 fn part_1(input: &str) -> usize {
@@ -57,4 +60,38 @@ fn part_2(input: &str) -> usize {
         .map(|btn_time| (time - btn_time) * btn_time)
         .filter(|dist| dist > &record)
         .count()
+}
+
+fn part_2_alt(input: &str) -> usize {
+    let (time, record) = input.split_once('\n').unwrap();
+
+    fn parse_line(line: &str) -> usize {
+        line.split_once(':')
+            .unwrap()
+            .1
+            .trim()
+            .replace(" ", "")
+            .parse()
+            .unwrap()
+    }
+
+    let time = parse_line(time);
+    let record = parse_line(record);
+
+    let (root1, root2) = find_roots(time, record);
+    integers_between(root1, root2)
+}
+
+fn find_roots(time: usize, distance: usize) -> (f64, f64) {
+    let time = time as f64;
+    let distance = distance as f64;
+
+    let root_1 = (time + (time * time - 4.0 * distance).sqrt()) / 2.0;
+    let root_2 = (time - (time * time - 4.0 * distance).sqrt()) / 2.0;
+
+    (root_1, root_2)
+}
+
+fn integers_between(first: f64, second: f64) -> usize {
+    (second.floor() - first.floor()).abs() as usize
 }
