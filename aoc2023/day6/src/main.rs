@@ -7,6 +7,9 @@ fn main() {
 
     let answer1 = part_1(input);
     println!("Part 1: {answer1}");
+
+    let answer2 = part_2(input);
+    println!("Part 2: {answer2}");
 }
 
 fn part_1(input: &str) -> usize {
@@ -36,4 +39,26 @@ fn part_1(input: &str) -> usize {
             all_distances.iter().filter(|dist| dist > &rec).count()
         })
         .product()
+}
+
+fn part_2(input: &str) -> usize {
+    let (time, record) = input.split_once('\n').unwrap();
+
+    fn parse_line(line: &str) -> usize {
+        line.split_once(':')
+            .unwrap()
+            .1
+            .trim()
+            .replace(" ", "")
+            .parse()
+            .unwrap()
+    }
+
+    let time = parse_line(time);
+    let record = parse_line(record);
+
+    (1..time)
+        .map(|btn_time| (time - btn_time) * btn_time)
+        .filter(|dist| dist > &record)
+        .count()
 }
