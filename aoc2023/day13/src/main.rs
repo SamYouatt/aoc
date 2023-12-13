@@ -16,14 +16,14 @@ fn part_1(input: &str) -> usize {
 
     let horizontal_points: Vec<_> = patterns
         .iter()
-        .flat_map(|pattern| find_reflection(pattern))
+        .flat_map(|pattern| find_reflection(pattern, 0))
         .collect();
 
     let transposed: Vec<Vec<_>> = patterns.iter().map(|pattern| transpose(pattern)).collect();
 
     let vertical_points: Vec<_> = transposed
         .iter()
-        .flat_map(|pattern| find_reflection(pattern))
+        .flat_map(|pattern| find_reflection(pattern, 0))
         .collect();
 
     vertical_points.iter().sum::<usize>() + 100 * horizontal_points.iter().sum::<usize>()
@@ -37,42 +37,20 @@ fn part_2(input: &str) -> usize {
 
     let horizontal_points: Vec<_> = patterns
         .iter()
-        .flat_map(|pattern| find_smudged_reflection(pattern))
+        .flat_map(|pattern| find_reflection(pattern, 1))
         .collect();
 
     let transposed: Vec<Vec<_>> = patterns.iter().map(|pattern| transpose(pattern)).collect();
 
     let vertical_points: Vec<_> = transposed
         .iter()
-        .flat_map(|pattern| find_smudged_reflection(pattern))
+        .flat_map(|pattern| find_reflection(pattern, 1))
         .collect();
 
     vertical_points.iter().sum::<usize>() + 100 * horizontal_points.iter().sum::<usize>()
 }
 
-fn find_reflection(pattern: &Vec<String>) -> Option<usize> {
-    'ref_loop: for ref_point in 0..(pattern.len() - 1) {
-        let mut top_pointer = ref_point;
-        let mut bottom_pointer = ref_point + 1;
-
-        loop {
-            if pattern[top_pointer] != pattern[bottom_pointer] {
-                continue 'ref_loop;
-            }
-
-            if top_pointer == 0 || bottom_pointer == (pattern.len() - 1) {
-                return Some(ref_point + 1);
-            }
-
-            top_pointer -= 1;
-            bottom_pointer += 1;
-        }
-    }
-
-    None
-}
-
-fn find_smudged_reflection(pattern: &Vec<String>) -> Option<usize> {
+fn find_reflection(pattern: &Vec<String>, allowed_smudges: usize) -> Option<usize> {
     'ref_loop: for ref_point in 0..(pattern.len() - 1) {
         let mut top_pointer = ref_point;
         let mut bottom_pointer = ref_point + 1;
@@ -83,7 +61,7 @@ fn find_smudged_reflection(pattern: &Vec<String>) -> Option<usize> {
             total_diffs += num_diffs;
 
             if top_pointer == 0 || bottom_pointer == (pattern.len() - 1) {
-                if total_diffs == 1 {
+                if total_diffs == allowed_smudges {
                     return Some(ref_point + 1);
                 } else {
                     continue 'ref_loop;
@@ -134,7 +112,7 @@ fn test_find_horizontal_reflection() {
 
     let pattern = pattern.lines().map(|line| line.chars().collect()).collect();
 
-    assert_eq!(find_reflection(&pattern), Some(4));
+    assert_eq!(find_reflection(&pattern, 0), Some(4));
 }
 
 #[test]
@@ -146,7 +124,7 @@ fn test_no_reflection() {
 
     let pattern = pattern.lines().map(|line| line.chars().collect()).collect();
 
-    assert_eq!(find_reflection(&pattern), None);
+    assert_eq!(find_reflection(&pattern, 0), None);
 }
 
 #[test]
@@ -174,7 +152,7 @@ fn test_find_smudge() {
 
     let pattern = pattern.lines().map(|line| line.chars().collect()).collect();
 
-    assert_eq!(find_smudged_reflection(&pattern), Some(1));
+    assert_eq!(find_reflection(&pattern, 1), Some(1));
 }
 
 #[test]
