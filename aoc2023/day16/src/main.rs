@@ -19,15 +19,72 @@ fn main() {
 
     let answer1 = part_1(input);
     println!("Part 1: {answer1}");
+
+    let answer2 = part_2(input);
+    println!("Part 2: {answer2}");
 }
 
 fn part_1(input: &str) -> usize {
     let grid: Vec<Vec<_>> = input.lines().map(|line| line.as_bytes().into()).collect();
 
-    bounce_light(&grid)
+    bounce_light(&grid, (Coord { x: 0, y: 0 }, Direction::East))
 }
 
-fn bounce_light(grid: &Vec<Vec<u8>>) -> usize {
+fn part_2(input: &str) -> usize {
+    let grid: Vec<Vec<_>> = input.lines().map(|line| line.as_bytes().into()).collect();
+
+    let mut max_energised = 0;
+
+    for y in 0..grid.len() {
+        max_energised = max_energised.max(bounce_light(
+            &grid,
+            (
+                Coord {
+                    x: 0,
+                    y: y as isize,
+                },
+                Direction::East,
+            ),
+        ));
+        max_energised = max_energised.max(bounce_light(
+            &grid,
+            (
+                Coord {
+                    x: (grid[0].len() - 1) as isize,
+                    y: y as isize,
+                },
+                Direction::West,
+            ),
+        ));
+    }
+
+    for x in 0..grid[0].len() {
+        max_energised = max_energised.max(bounce_light(
+            &grid,
+            (
+                Coord {
+                    x: x as isize,
+                    y: 0,
+                },
+                Direction::South,
+            ),
+        ));
+        max_energised = max_energised.max(bounce_light(
+            &grid,
+            (
+                Coord {
+                    x: x as isize,
+                    y: (grid.len() - 1) as isize,
+                },
+                Direction::North,
+            ),
+        ));
+    }
+
+    max_energised
+}
+
+fn bounce_light(grid: &Vec<Vec<u8>>, start: (Coord, Direction)) -> usize {
     let mut stack: VecDeque<(Coord, Direction)> = VecDeque::with_capacity(20_000);
     let mut seen: HashSet<(Coord, Direction)> = HashSet::new();
 
@@ -36,7 +93,7 @@ fn bounce_light(grid: &Vec<Vec<u8>>) -> usize {
 
     let mut energised: Vec<Vec<bool>> = vec![vec![false; cols]; rows];
 
-    stack.push_back((Coord { x: 0, y: 0 }, Direction::East));
+    stack.push_back(start);
 
     while let Some((position, direction)) = stack.pop_front() {
         if (position.y < 0
