@@ -2,7 +2,6 @@
 struct Instruction {
     direction: Direction,
     steps: usize,
-    colour: String,
 }
 
 #[derive(Debug)]
@@ -51,6 +50,9 @@ fn main() {
 
     let answer1 = part_1(input);
     println!("Part 1: {answer1}");
+
+    let answer2 = part_2(input);
+    println!("Part 2: {answer2}");
 }
 
 fn part_1(input: &str) -> isize {
@@ -58,13 +60,43 @@ fn part_1(input: &str) -> isize {
         .lines()
         .map(|line| {
             let (direction, rest) = line.split_once(" ").unwrap();
-            let (steps, rest) = rest.split_once(" (").unwrap();
-            let colour = rest.replace(")", "");
+            let (steps, _rest) = rest.split_once(" (").unwrap();
 
             Instruction {
                 direction: Direction::parse(direction),
                 steps: steps.parse::<usize>().unwrap(),
-                colour,
+            }
+        })
+        .collect();
+
+    let trench = dig_trench(&instructions);
+
+    let area = shoelace_area(&trench);
+
+    area
+}
+
+fn part_2(input: &str) -> isize {
+    let instructions: Vec<_> = input
+        .lines()
+        .map(|line| {
+            let (_rest, hex) = line.split_once("(").unwrap();
+            let hex = hex.replace(")", "");
+
+            let hex_digits: String = hex.chars().collect();
+
+            let distance = usize::from_str_radix(&hex_digits[1..6], 16).unwrap();
+            let direction = match &hex_digits.chars().last().unwrap() {
+                '0' => Direction::East,
+                '1' => Direction::South,
+                '2' => Direction::West,
+                '3' => Direction::North,
+                _ => panic!("Unknown direction"),
+            };
+
+            Instruction {
+                steps: distance,
+                direction,
             }
         })
         .collect();
