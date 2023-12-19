@@ -94,7 +94,6 @@ enum Rule {
 #[derive(Debug)]
 enum Action {
     Accepted,
-    Rejected,
     Goto(String),
 }
 
@@ -144,20 +143,20 @@ impl Workflow {
         }
     }
 
-    fn act(&self, part: &Part) -> Action {
+    fn act(&self, part: &Part) -> Option<Action> {
         for rule in &self.rules {
             match rule {
-                Rule::Accepted => return Action::Accepted,
-                Rule::Rejected => return Action::Rejected,
-                Rule::Goto(x) => return Action::Goto(String::from(x)),
+                Rule::Accepted => return Some(Action::Accepted),
+                Rule::Rejected => return None,
+                Rule::Goto(x) => return Some(Action::Goto(String::from(x))),
                 Rule::Greater(stat, goal, goto) => {
                     let part_stat = part.get_stat(stat);
 
                     if &part_stat > goal {
                         return match goto {
-                            Goto::Loc(x) => Action::Goto(String::from(x)),
-                            Goto::Accepted => Action::Accepted,
-                            Goto::Rejected => Action::Rejected,
+                            Goto::Loc(x) => Some(Action::Goto(String::from(x))),
+                            Goto::Accepted => Some(Action::Accepted),
+                            Goto::Rejected => None,
                         };
                     } else {
                         continue;
@@ -168,9 +167,9 @@ impl Workflow {
 
                     if &part_stat < goal {
                         return match goto {
-                            Goto::Loc(x) => Action::Goto(String::from(x)),
-                            Goto::Accepted => Action::Accepted,
-                            Goto::Rejected => Action::Rejected,
+                            Goto::Loc(x) => Some(Action::Goto(String::from(x))),
+                            Goto::Accepted => Some(Action::Accepted),
+                            Goto::Rejected => None,
                         };
                     } else {
                         continue;
@@ -179,7 +178,7 @@ impl Workflow {
             }
         }
 
-        unreachable!();
+        None
     }
 }
 
@@ -198,15 +197,12 @@ fn part_1(input: &str) -> usize {
     for part in parts {
         let mut current_flow = workflows.get("in").unwrap();
 
-        loop {
-            let action = current_flow.act(&part);
-
+        while let Some(action) = current_flow.act(&part) {
             match action {
                 Action::Accepted => {
                     accepted.push(part.clone());
                     break;
                 }
-                Action::Rejected => break,
                 Action::Goto(x) => current_flow = workflows.get(&x).unwrap(),
             }
         }
