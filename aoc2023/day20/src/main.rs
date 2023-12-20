@@ -5,6 +5,9 @@ fn main() {
 
     let answer1 = part_1(input);
     println!("Part 1: {answer1}");
+
+    let answer2 = part_2(input);
+    println!("Part 2: {answer2}");
 }
 
 #[derive(Debug)]
@@ -75,6 +78,86 @@ fn part_1(input: &str) -> usize {
     }
 
     low_signals * high_signals
+}
+
+fn part_2(input: &str) -> usize {
+    let mut modules = parse_modules(input);
+
+    // in my input the conjugate ll is the only pointer to rx
+    // there are 4 connectors to ll, they are: [kv, vb, kl, vm]
+    // so work out the period of all of its sources becoming high and then find the lcm of those
+    // to work out when they are all high such that ll is low and therefore rx is low
+    let num_ll_sources = 4;
+    let mut ll_source_periods: HashMap<&str, usize> = HashMap::new();
+
+    let mut cycles = 0;
+
+    'search: loop {
+        cycles += 1;
+
+        let mut queue = VecDeque::from_iter([("button", "broadcaster", false)]);
+
+        while let Some((prev, current, signal)) = queue.pop_front() {
+            // check for ll then check the prev to get one of its inputs
+            if current == "ll" && signal {
+                if !ll_source_periods.contains_key(&prev) {
+                    ll_source_periods.insert(&prev, cycles);
+                }
+
+                if ll_source_periods.len() == num_ll_sources {
+                    break 'search;
+                }
+            }
+
+            if let Entry::Occupied(mut current_module) = modules.entry(current) {
+                let current_module = current_module.get_mut();
+
+                match current_module {
+                    Module::Broadcast(destinations) => {
+                        for destination in destinations {
+                            queue.push_back((current, destination, signal));
+                        }
+                    }
+                    Module::FlipFlop(ref mut ff_state, destinations) => {
+                        match (signal, &ff_state) {
+                            // turns off and sends low pulse
+                            (false, true) => {
+                                *ff_state = false;
+                                for destination in destinations {
+                                    queue.push_back((current, destination, false));
+                                }
+                            }
+                            // turns on and sends high pulse
+                            (false, false) => {
+                                *ff_state = true;
+                                for destination in destinations {
+                                    queue.push_back((current, destination, true));
+                                }
+                            }
+                            // high pulse does nothing
+                            _ => {}
+                        }
+                    }
+                    Module::Conjuction(ref mut inputs, destinations) => {
+                        // update its memory for the received signal
+                        inputs.insert(prev, signal);
+
+                        let signal_to_send = !inputs.values().all(|&sig| sig);
+
+                        for destination in destinations {
+                            queue.push_back((current, destination, signal_to_send));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    println!("Periods: {:?}", ll_source_periods);
+
+    ll_source_periods
+        .values()
+        .fold(1, |curr, &running| num::integer::lcm(curr, running))
 }
 
 fn parse_modules(input: &str) -> HashMap<&str, Module> {
