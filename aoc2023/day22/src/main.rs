@@ -17,7 +17,7 @@ struct Brick {
 }
 
 fn both_parts(input: &str) -> (usize, usize) {
-    let bricks: Vec<_> = input
+    let mut bricks: Vec<_> = input
         .lines()
         .map(|line| {
             let (start, end) = line.split_once("~").unwrap();
@@ -27,6 +27,24 @@ fn both_parts(input: &str) -> (usize, usize) {
             build_brick(&start, &end)
         })
         .collect();
+
+    // sort the bricks by the z index of the lowest point
+    bricks.sort_by(|brick_a, brick_b| {
+        let lowest_a = brick_a
+            .footprint
+            .iter()
+            .min_by(|foot_a, foot_b| foot_a.z.cmp(&foot_b.z))
+            .unwrap()
+            .z;
+        let lowest_b = brick_b
+            .footprint
+            .iter()
+            .min_by(|foot_a, foot_b| foot_a.z.cmp(&foot_b.z))
+            .unwrap()
+            .z;
+
+        lowest_a.cmp(&lowest_b)
+    });
 
     let (settled_bricks, _) = simulate(&bricks);
 
