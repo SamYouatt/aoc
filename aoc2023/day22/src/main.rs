@@ -5,8 +5,9 @@ use aoc_util::coordinate::Coordinate3;
 fn main() {
     let input = include_str!("input.txt");
 
-    let answer1 = part_1(input);
+    let (answer1, answer2) = both_parts(input);
     println!("Part 1: {answer1}");
+    println!("Part 2: {answer2}");
 }
 
 #[derive(PartialEq, Eq, Clone, Debug)]
@@ -15,7 +16,7 @@ struct Brick {
     footprint: HashSet<Coordinate3>,
 }
 
-fn part_1(input: &str) -> usize {
+fn both_parts(input: &str) -> (usize, usize) {
     let bricks: Vec<_> = input
         .lines()
         .map(|line| {
@@ -30,6 +31,7 @@ fn part_1(input: &str) -> usize {
     let (settled_bricks, _) = simulate(&bricks);
 
     let mut can_be_removed = 0;
+    let mut total_fell = 0;
 
     for brick_to_remove in &settled_bricks {
         let without_brick: Vec<_> = settled_bricks
@@ -38,14 +40,16 @@ fn part_1(input: &str) -> usize {
             .map(|brick| brick.to_owned())
             .collect();
 
-        let (_, any_moved) = simulate(&without_brick);
+        let (_, num_moved) = simulate(&without_brick);
 
-        if !any_moved {
+        if num_moved == 0 {
             can_be_removed += 1;
         }
+
+        total_fell += num_moved;
     }
 
-    can_be_removed
+    (can_be_removed, total_fell)
 }
 
 fn parse_coord(input: &str) -> Coordinate3 {
@@ -87,7 +91,7 @@ fn build_brick(start: &Coordinate3, end: &Coordinate3) -> Brick {
     Brick { points, footprint }
 }
 
-fn simulate(bricks: &Vec<Brick>) -> (Vec<Brick>, bool) {
+fn simulate(bricks: &Vec<Brick>) -> (Vec<Brick>, usize) {
     let mut bricks = bricks.to_owned();
     let mut world = HashSet::new();
 
@@ -98,12 +102,15 @@ fn simulate(bricks: &Vec<Brick>) -> (Vec<Brick>, bool) {
     }
 
     let mut brick_fell = true;
-    let mut any_moved = false;
+    // needs to be hashset cos a brick might move twice as part of the simulation
+    // but we only want to count it once, don't care how much it moved
+    let mut moved_bricks = HashSet::new();
 
     while brick_fell {
         brick_fell = false;
 
-        for brick in &mut bricks {
+        for i in 0..bricks.len() {
+            let brick = &mut bricks[i];
             let moved_down = move_down(&brick);
 
             if moved_down
@@ -123,12 +130,12 @@ fn simulate(bricks: &Vec<Brick>) -> (Vec<Brick>, bool) {
             }
 
             brick_fell = true;
-            any_moved = true;
+            moved_bricks.insert(i);
             *brick = moved_down;
         }
     }
 
-    (bricks, any_moved)
+    (bricks, moved_bricks.len())
 }
 
 fn move_down(brick: &Brick) -> Brick {
