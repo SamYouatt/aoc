@@ -152,19 +152,15 @@ fn part_2(input: &str) -> usize {
 
     let final_row = grid.len() - 1;
 
-    find_longest_graph_path(
-        &graph,
-        Coordinate::new(1, 0),
-        &mut HashSet::new(),
-        final_row,
-    )
-    .unwrap()
+    let mut visited = vec![vec![false; grid[0].len()]; grid.len()];
+
+    find_longest_graph_path(&graph, Coordinate::new(1, 0), &mut visited, final_row).unwrap()
 }
 
 fn find_longest_graph_path(
     graph: &HashMap<Coordinate, Vec<(Coordinate, usize)>>,
     current_pos: Coordinate,
-    previous: &mut HashSet<Coordinate>,
+    walked_on: &mut Vec<Vec<bool>>,
     final_row: usize,
 ) -> Option<usize> {
     if current_pos.y == final_row as isize {
@@ -174,17 +170,21 @@ fn find_longest_graph_path(
     let mut longest_path = None;
 
     for &(connection, cost) in &graph[&current_pos] {
-        if previous.contains(&connection) {
+        let x = connection.x as usize;
+        let y = connection.y as usize;
+
+        if walked_on[y][x] {
             continue;
         }
 
-        previous.insert(connection);
+        walked_on[y][x] = true;
 
-        if let Some(path_length) = find_longest_graph_path(graph, connection, previous, final_row) {
+        if let Some(path_length) = find_longest_graph_path(graph, connection, walked_on, final_row)
+        {
             longest_path = Some(longest_path.unwrap_or(0).max(path_length + cost))
         }
 
-        previous.remove(&connection);
+        walked_on[y][x] = false;
     }
 
     longest_path
