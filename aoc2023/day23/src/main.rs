@@ -7,6 +7,9 @@ fn main() {
 
     let answer1 = part_1(input);
     println!("Part 1: {answer1}");
+
+    let answer2 = part_2(input);
+    println!("Part 2: {answer2}");
 }
 
 #[derive(PartialEq, Eq, Clone, Copy)]
@@ -49,56 +52,74 @@ fn part_1(input: &str) -> usize {
         (grid.len() - 1) as isize,
     );
 
-    let mut longest_path = 0;
+    let mut path_lengths: Vec<usize> = vec![];
+    find_longest_path(&grid, start, HashSet::new(), 0, &mut path_lengths);
 
-    let mut stack: Vec<(Coordinate, HashSet<Coordinate>, usize)> =
-        Vec::from_iter([(start, HashSet::new(), 0)]);
+    *path_lengths.iter().max().unwrap()
+}
 
-    while let Some((current_pos, previous, path_length)) = stack.pop() {
-        if current_pos == end {
-            if path_length > longest_path {
-                longest_path = path_length;
-            }
-        }
+fn part_2(input: &str) -> usize {
+    let grid: Vec<Vec<_>> = input
+        .lines()
+        .map(|line| {
+            line.chars()
+                .map(|ch| match ch {
+                    '.' | '^' | '>' | 'v' | '<' => Tile::Path,
+                    '#' => Tile::Tree,
+                    _ => panic!("Unknown tile"),
+                })
+                .collect()
+        })
+        .collect();
 
-        let tile = grid[current_pos.y as usize][current_pos.x as usize];
+    let rows = grid.len();
+    let cols = grid[0].len();
 
-        match tile {
-            Tile::Path => {
-                for direction in [
-                    Direction::North,
-                    Direction::East,
-                    Direction::South,
-                    Direction::West,
-                ] {
-                    let next_pos = current_pos.move_dir(&direction);
+    let start = Coordinate::new(
+        grid[0].iter().position(|&tile| tile == Tile::Path).unwrap() as isize,
+        0 as isize,
+    );
+    let end = Coordinate::new(
+        grid[rows - 1]
+            .iter()
+            .position(|&tile| tile == Tile::Path)
+            .unwrap() as isize,
+        (grid.len() - 1) as isize,
+    );
 
-                    if next_pos.x < 0
-                        || next_pos.x >= cols as isize
-                        || next_pos.y < 0
-                        || next_pos.y >= rows as isize
-                    {
-                        continue;
-                    }
+    let mut path_lengths: Vec<usize> = vec![];
+    find_longest_path(&grid, start, HashSet::new(), 0, &mut path_lengths);
 
-                    if previous.contains(&next_pos) {
-                        continue;
-                    }
+    *path_lengths.iter().max().unwrap()
+}
 
-                    let next_tile = grid[next_pos.y as usize][next_pos.x as usize];
+fn find_longest_path(
+    grid: &Vec<Vec<Tile>>,
+    current_pos: Coordinate,
+    previous: HashSet<Coordinate>,
+    path_length: usize,
+    path_lengths: &mut Vec<usize>,
+) {
+    let rows = grid.len();
+    let cols = grid[0].len();
 
-                    if next_tile == Tile::Tree {
-                        continue;
-                    }
+    if current_pos.y as usize == grid.len() - 1 {
+        println!("New path length found: {}", path_length);
+        path_lengths.push(path_length);
+        return;
+    }
 
-                    let mut new_previous = previous.clone();
-                    new_previous.insert(next_pos);
+    let tile = grid[current_pos.y as usize][current_pos.x as usize];
 
-                    stack.push((next_pos, new_previous, path_length + 1));
-                }
-            }
-            Tile::Slope(slope) => {
-                let next_pos = current_pos.move_dir(&slope);
+    match tile {
+        Tile::Path => {
+            for direction in [
+                Direction::North,
+                Direction::East,
+                Direction::South,
+                Direction::West,
+            ] {
+                let next_pos = current_pos.move_dir(&direction);
 
                 if next_pos.x < 0
                     || next_pos.x >= cols as isize
@@ -112,16 +133,40 @@ fn part_1(input: &str) -> usize {
                     continue;
                 }
 
+                let next_tile = grid[next_pos.y as usize][next_pos.x as usize];
+
+                if next_tile == Tile::Tree {
+                    continue;
+                }
+
                 let mut new_previous = previous.clone();
-                new_previous.insert(next_pos);
+                new_previous.insert(current_pos);
 
-                stack.push((next_pos, new_previous, path_length + 1));
+                find_longest_path(&grid, next_pos, new_previous, path_length + 1, path_lengths);
             }
-            _ => panic!("Shouldn't be able to be on a tree"),
         }
-    }
+        Tile::Slope(slope) => {
+            let next_pos = current_pos.move_dir(&slope);
 
-    longest_path
+            if next_pos.x < 0
+                || next_pos.x >= cols as isize
+                || next_pos.y < 0
+                || next_pos.y >= rows as isize
+            {
+                return;
+            }
+
+            if previous.contains(&next_pos) {
+                return;
+            }
+
+            let mut new_previous = previous.clone();
+            new_previous.insert(current_pos);
+
+            find_longest_path(&grid, next_pos, new_previous, path_length + 1, path_lengths);
+        }
+        _ => panic!("Shouldn't be able to be on a tree"),
+    }
 }
 
 #[test]
@@ -153,4 +198,35 @@ fn part_1_example() {
     let answer = part_1(input);
 
     assert_eq!(answer, 94);
+}
+
+#[test]
+fn part_2_example() {
+    let input = "#.#####################
+#.......#########...###
+#######.#########.#.###
+###.....#.>.>.###.#.###
+###v#####.#v#.###.#.###
+###.>...#.#.#.....#...#
+###v###.#.#.#########.#
+###...#.#.#.......#...#
+#####.#.#.#######.#.###
+#.....#.#.#.......#...#
+#.#####.#.#.#########v#
+#.#...#...#...###...>.#
+#.#.#v#######v###.###v#
+#...#.>.#...>.>.#.###.#
+#####v#.#.###v#.#.###.#
+#.....#...#...#.#.#...#
+#.#########.###.#.#.###
+#...###...#...#...#.###
+###.###.#.###v#####v###
+#...#...#.#.>.>.#.>.###
+#.###.###.#.###.#.#v###
+#.....###...###...#...#
+#####################.#";
+
+    let answer = part_2(input);
+
+    assert_eq!(answer, 154);
 }
