@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 use aoc_util::{coordinate::Coordinate, direction::Direction};
 
@@ -64,9 +64,8 @@ fn part_2(input: &str) -> usize {
         .map(|line| {
             line.chars()
                 .map(|ch| match ch {
-                    '.' | '^' | '>' | 'v' | '<' => Tile::Path,
                     '#' => Tile::Tree,
-                    _ => panic!("Unknown tile"),
+                    _ => Tile::Path,
                 })
                 .collect()
         })
@@ -75,22 +74,116 @@ fn part_2(input: &str) -> usize {
     let rows = grid.len();
     let cols = grid[0].len();
 
-    let start = Coordinate::new(
-        grid[0].iter().position(|&tile| tile == Tile::Path).unwrap() as isize,
-        0 as isize,
-    );
-    let end = Coordinate::new(
-        grid[rows - 1]
+    let mut graph = HashMap::<_, Vec<_>>::new();
+
+    // build the initial graph
+    for (y, row) in grid.iter().enumerate() {
+        for (x, tile) in row.iter().enumerate() {
+            let coordinate = Coordinate::new(x as isize, y as isize);
+
+            let neighbours: Vec<Coordinate> = match tile {
+                Tile::Tree => continue,
+                _ => [
+                    Direction::North,
+                    Direction::East,
+                    Direction::South,
+                    Direction::West,
+                ]
+                .iter()
+                .map(|dir| coordinate.move_dir(dir))
+                .collect(),
+            };
+
+            let node = graph.entry(coordinate).or_default();
+
+            for neighbour in neighbours {
+                if neighbour.x < 0
+                    || neighbour.x >= cols as isize
+                    || neighbour.y < 0
+                    || neighbour.y >= rows as isize
+                {
+                    continue;
+                }
+
+                if grid[neighbour.y as usize][neighbour.x as usize] == Tile::Tree {
+                    continue;
+                }
+
+                node.push((neighbour, 1));
+            }
+        }
+    }
+
+    let collapsible_coords: Vec<_> = graph
+        .iter()
+        .filter(|(_, edges)| edges.len() == 2)
+        .map(|(&coord, _cost)| coord)
+        .collect();
+
+    // collapse A-n-B-m-C into A-n+m-C
+    for coord_b in collapsible_coords {
+        // remove the middle node but grab its connections
+        let node_b_connections = graph.remove(&coord_b).unwrap();
+
+        // grab the coordinate and cost of those connections
+        let (coord_a, cost_a) = node_b_connections[0];
+        let (coord_c, cost_c) = node_b_connections[1];
+
+        // for each of the connecting nodes, point them to each other instead of b and update the
+        // cost as the sum of the costs
+        let node_a = graph.get_mut(&coord_a).unwrap();
+        let b_index = node_a
             .iter()
-            .position(|&tile| tile == Tile::Path)
-            .unwrap() as isize,
-        (grid.len() - 1) as isize,
-    );
+            .position(|&connection| connection.0 == coord_b)
+            .unwrap();
+        node_a[b_index] = (coord_c, cost_a + cost_c);
 
-    let mut path_lengths: Vec<usize> = vec![];
-    find_longest_path(&grid, start, HashSet::new(), 0, &mut path_lengths);
+        let node_c = graph.get_mut(&coord_c).unwrap();
+        let b_index = node_c
+            .iter()
+            .position(|&connection| connection.0 == coord_b)
+            .unwrap();
+        node_c[b_index] = (coord_a, cost_a + cost_c);
+    }
 
-    *path_lengths.iter().max().unwrap()
+    let final_row = grid.len() - 1;
+
+    find_longest_graph_path(
+        &graph,
+        Coordinate::new(1, 0),
+        &mut HashSet::new(),
+        final_row,
+    )
+    .unwrap()
+}
+
+fn find_longest_graph_path(
+    graph: &HashMap<Coordinate, Vec<(Coordinate, usize)>>,
+    current_pos: Coordinate,
+    previous: &mut HashSet<Coordinate>,
+    final_row: usize,
+) -> Option<usize> {
+    if current_pos.y == final_row as isize {
+        return Some(0);
+    }
+
+    let mut longest_path = None;
+
+    for &(connection, cost) in &graph[&current_pos] {
+        if previous.contains(&connection) {
+            continue;
+        }
+
+        previous.insert(connection);
+
+        if let Some(path_length) = find_longest_graph_path(graph, connection, previous, final_row) {
+            longest_path = Some(longest_path.unwrap_or(0).max(path_length + cost))
+        }
+
+        previous.remove(&connection);
+    }
+
+    longest_path
 }
 
 fn find_longest_path(
@@ -104,7 +197,6 @@ fn find_longest_path(
     let cols = grid[0].len();
 
     if current_pos.y as usize == grid.len() - 1 {
-        println!("New path length found: {}", path_length);
         path_lengths.push(path_length);
         return;
     }
