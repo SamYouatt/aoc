@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 aoc_util = { git = "https://github.com/samyouatt/aoc_util.git" }
+hashbrown = "0.14.3"
