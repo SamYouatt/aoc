@@ -1,6 +1,10 @@
-use std::collections::{HashMap, HashSet};
+use std::{
+    collections::HashMap,
+    time::{Duration, Instant},
+};
 
 use aoc_util::{coordinate::Coordinate, direction::Direction};
+use hashbrown::HashSet;
 
 fn main() {
     let input = include_str!("input.txt");
