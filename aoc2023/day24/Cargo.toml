@@ -7,3 +7,6 @@ edition = "2021"
 
 [dependencies]
 aoc_util = { git = "https://github.com/samyouatt/aoc_util.git" }
+hashbrown = "0.14.3"
+itertools = "0.12.0"
+rayon = "1.8.0"
