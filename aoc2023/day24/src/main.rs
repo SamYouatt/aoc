@@ -1,5 +1,7 @@
+use std::ops::{Add, Sub};
+
 use aoc_util::coordinate::Coordinate;
-use hashbrown::HashSet;
+use hashbrown::{HashMap, HashSet};
 use itertools::Itertools;
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};
 
@@ -38,11 +40,53 @@ struct Hail {
     v: Vector,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 struct Coordinate3 {
     x: isize,
     y: isize,
     z: isize,
+}
+
+impl Sub for Coordinate3 {
+    type Output = Coordinate3;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Coordinate3 {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+        }
+    }
+}
+
+impl Add for Coordinate3 {
+    type Output = Coordinate3;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Coordinate3 {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+        }
+    }
+}
+
+impl Coordinate3 {
+    fn apply(&self, other: &Coordinate3) -> Coordinate3 {
+        Coordinate3 {
+            x: self.x + other.x,
+            y: self.y + other.y,
+            z: self.z + other.z,
+        }
+    }
+
+    fn multiply(&self, times: isize) -> Coordinate3 {
+        Coordinate3 {
+            x: self.x * times,
+            y: self.y * times,
+            z: self.z * times,
+        }
+    }
 }
 
 #[derive(Debug)]
@@ -162,32 +206,41 @@ fn part_2(input: &str) -> usize {
     let y_velocity = find_only_velocity(&hail, Axis::Y);
     let z_velocity = find_only_velocity(&hail, Axis::Z);
 
-    println!("{} {} {}", x_velocity, y_velocity, z_velocity);
+    let rock_velocity = Coordinate3 {
+        x: x_velocity,
+        y: y_velocity,
+        z: z_velocity,
+    };
 
-    // let rock_velocity = Point3d {
-    //     x: x_velocity as f64,
-    //     y: y_velocity as f64,
-    //     z: z_velocity as f64,
-    // };
+    // adjust the velocities of two other lines by the vector of the rock. Now the persepective is
+    // that the rock is stationary and by working out the point when the adjusted lines intersect,
+    // can then derive the position the rock would be in
+    let first_adjusted_hail = Hail3 {
+        pos: hail[0].pos,
+        vel: hail[0].vel - rock_velocity,
+    };
+    let first_adjusted_hail_p2 = first_adjusted_hail.pos.apply(&first_adjusted_hail.vel);
 
-    // println!("{x_velocity} {y_velocity} {z_velocity}");
+    let second_adjusted_hail = Hail3 {
+        pos: hail[1].pos,
+        vel: hail[1].vel - rock_velocity,
+    };
+    let second_adjusted_hail_p2 = second_adjusted_hail.pos.apply(&second_adjusted_hail.vel);
 
-    // let line1 = Line {
-    //     start_point: lines[0].start_point,
-    //     velocity: lines[0].velocity - rock_velocity,
-    // };
-    // let line2 = Line {
-    //     start_point: lines[1].start_point,
-    //     velocity: lines[1].velocity - rock_velocity,
-    // };
+    // grab the raw ua out of the intersect, this is essentially the 'time' along the line that the
+    // intersection is found
+    let intersect_time = raw_intersect_point(
+        &first_adjusted_hail.pos,
+        &first_adjusted_hail_p2,
+        &second_adjusted_hail.pos,
+        &second_adjusted_hail_p2,
+    )
+    .unwrap();
 
-    // let (t1, _) = line1.intersect_3d(&line2).expect("does not intersect...");
-    // let rock = line1.at(t1);
+    let rock_start =
+        first_adjusted_hail.pos + (first_adjusted_hail.vel.multiply(intersect_time as isize));
 
-    // println!("rock: {rock:?} with velocity: {rock_velocity:?}");
-    // rock.x as i64 + rock.y as i64 + rock.z as i64
-    //
-    todo!()
+    (rock_start.x + rock_start.y + rock_start.z) as usize
 }
 
 enum Axis {
@@ -222,9 +275,7 @@ fn find_only_velocity(hail: &Vec<Hail3>, axis: Axis) -> isize {
         // velocities that can reach between those lines in whole integer increments
         let first_point = matching_velocities[0];
         let second_point = matching_velocities[1];
-        println!("Comparing {:?} to {:?}", first_point, second_point);
         let distance_between = (second_point.0 - first_point.0).abs();
-        println!("Distance {}", distance_between);
 
         // the factors get all the possible integer velocities that would work at some integer time
         // value
@@ -261,7 +312,7 @@ fn get_factors(num: isize) -> Vec<isize> {
 
     (1..=root)
         .into_par_iter()
-        .filter(|x| x % num == 0)
+        .filter(|x| num % x == 0)
         .collect()
 }
 
@@ -287,6 +338,29 @@ fn intersect(
     let y = y1 + ua * (y2 - y1);
 
     Some(Intersect { x, y })
+}
+
+fn raw_intersect_point(
+    a1: &Coordinate3,
+    a2: &Coordinate3,
+    b1: &Coordinate3,
+    b2: &Coordinate3,
+) -> Option<f64> {
+    let (x1, x2, y1, y2) = (a1.x as f64, a2.x as f64, a1.y as f64, a2.y as f64);
+    let (x3, x4, y3, y4) = (b1.x as f64, b2.x as f64, b1.y as f64, b2.y as f64);
+
+    let denominator = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+
+    // parallel
+    if denominator == 0.0 {
+        return None;
+    }
+
+    // there is technically a second solution at the minus denominator point as well but hopefully
+    // I won't need it
+    let ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denominator;
+
+    Some(ua)
 }
 
 #[test]
