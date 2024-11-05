@@ -31,8 +31,7 @@ fn main() {
     match (args.day, args.part) {
         (2, 1) => println!("Day 2 part 1: {}", day2_part1(day2_input)),
         (2, 2) => println!("Day 2 part 2: {}", day2_part2(day2_input)),
-        (5, 1) => day5_part1(day5_input),
-        (5, 2) => todo!(),
+        (5, 1) | (5, 2) => day5(day5_input),
         _ => eprintln!("Pick a proper day and part fool"),
     }
 }
@@ -77,15 +76,11 @@ fn day2_part2(input: &str) -> usize {
     unreachable!("didn't find answer");
 }
 
-fn day5_part1(input: &str) {
+fn day5(input: &str) {
     let tape = parse_tape(input);
     let mut reader = StdInReader;
     let mut writer = StdOutWriter;
 
     let mut computer = Computer::load(&tape, &mut reader, &mut writer);
     computer.run();
-}
-
-fn day5_part2(input: &str) -> usize {
-    todo!()
 }
