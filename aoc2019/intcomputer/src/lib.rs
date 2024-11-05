@@ -1,7 +1,9 @@
 // Opcodes:
-// 99 - Halt
-// 1 - adds the two following reference's values and places in third's referenced location
-// 2 - multiplies the two following reference's values and places in third's referenced location
+// 99           - Halt
+// 1 *a *b out  - adds the two following reference's values and places in third's referenced location
+// 2 *a *b out  - multiplies the two following reference's values and places in third's referenced location
+// 3 *a         - accepts user input and places it in the location specified by the param
+// 4 *a         - outputs the value at the location referenced by its parameter
 
 type Tape = Vec<usize>;
 
