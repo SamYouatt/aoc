@@ -128,7 +128,7 @@ pub fn parse_tape(input: &str) -> Tape {
 }
 
 fn parse_opcode(value: i64) -> usize {
-    ((value as f64 / 100.0).fract() * 100.0) as usize
+    (value % 100) as usize
 }
 
 /// Get the parameter at position [1 based]
