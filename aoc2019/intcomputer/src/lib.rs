@@ -59,6 +59,8 @@ impl<R: Reader, W: Writer> Computer<R, W> {
     /// Runs the program until it halts
     pub fn run(&mut self) {
         while let Some(instruction) = self.next_instruction() {
+            let prev_instruction_head = self.tape[self.head];
+
             match instruction {
                 Instruction::Add(a, b, out) => {
                     let result = self.get_value(a) + self.get_value(b);
@@ -82,7 +84,9 @@ impl<R: Reader, W: Writer> Computer<R, W> {
                 Instruction::Equals(a, b, loc) => todo!(),
             }
 
-            self.advance(&instruction);
+            if self.tape[self.head] == prev_instruction_head {
+                self.advance(&instruction);
+            }
         }
     }
 
@@ -140,7 +144,10 @@ impl<R: Reader, W: Writer> Computer<R, W> {
     /// Advance to the next instruction
     fn advance(&mut self, instruction: &Instruction) {
         let to_advance = match instruction {
-            Instruction::Add(..) | Instruction::Mult(..) | Instruction::LessThan(..) | Instruction::Equals(..) => 4,
+            Instruction::Add(..)
+            | Instruction::Mult(..)
+            | Instruction::LessThan(..)
+            | Instruction::Equals(..) => 4,
             Instruction::JumpIfTrue(..) | Instruction::JumpIfFalse(..) => 3,
             Instruction::Input(..) | Instruction::Output(..) => 2,
         };
