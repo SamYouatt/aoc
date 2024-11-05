@@ -17,9 +17,9 @@ enum Parameter {
 #[derive(Debug, PartialEq, Eq)]
 enum Instruction {
     /// 01 a + b -> c
-    Add(Parameter, Parameter, Parameter),
+    Add(Parameter, Parameter, usize),
     /// 02 a * b -> c
-    Mult(Parameter, Parameter, Parameter),
+    Mult(Parameter, Parameter, usize),
     /// 03 loc
     Input(Parameter),
     /// 04 loc
@@ -54,13 +54,11 @@ impl<R: Reader, W: Writer> Computer<R, W> {
             match instruction {
                 Instruction::Add(a, b, out) => {
                     let result = self.get_value(a) + self.get_value(b);
-                    let out_loc = self.get_value(out) as usize;
-                    self.tape[out_loc] = result;
+                    self.tape[out] = result;
                 }
                 Instruction::Mult(a, b, out) => {
                     let result = self.get_value(a) * self.get_value(b);
-                    let out_loc = self.get_value(out) as usize;
-                    self.tape[out_loc] = result;
+                    self.tape[out] = result;
                 }
                 Instruction::Input(_) => todo!(),
                 Instruction::Output(_) => todo!(),
@@ -77,12 +75,12 @@ impl<R: Reader, W: Writer> Computer<R, W> {
             1 => Some(Instruction::Add(
                 Parameter::Position(self.tape[self.head + 1] as usize),
                 Parameter::Position(self.tape[self.head + 2] as usize),
-                Parameter::Immediate(self.tape[self.head + 3]),
+                self.tape[self.head + 3] as usize,
             )),
             2 => Some(Instruction::Mult(
                 Parameter::Position(self.tape[self.head + 1] as usize),
                 Parameter::Position(self.tape[self.head + 2] as usize),
-                Parameter::Immediate(self.tape[self.head + 3]),
+                self.tape[self.head + 3] as usize,
             )),
             _ => panic!("unexpected instruction code"),
         }
