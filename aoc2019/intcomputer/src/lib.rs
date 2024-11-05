@@ -67,7 +67,7 @@ impl<R: Reader, W: Writer> Computer<R, W> {
                 Instruction::Output(loc) => {
                     let value = self.get_value(loc);
                     self.writer.write_output(value);
-                },
+                }
             }
 
             self.advance(&instruction);
@@ -76,16 +76,18 @@ impl<R: Reader, W: Writer> Computer<R, W> {
 
     /// Parse the instruction at the current head, returns None for Halt
     fn next_instruction(&self) -> Option<Instruction> {
-        match self.tape[self.head] {
+        let opcode = self.tape[self.head];
+        let instruction_code = parse_opcode(opcode);
+        match instruction_code {
             99 => None, // Halt
             1 => Some(Instruction::Add(
-                Parameter::Position(self.tape[self.head + 1] as usize),
-                Parameter::Position(self.tape[self.head + 2] as usize),
+                parse_parameter(opcode, 1, self.tape[self.head + 1]),
+                parse_parameter(opcode, 2, self.tape[self.head + 2]),
                 self.tape[self.head + 3] as usize,
             )),
             2 => Some(Instruction::Mult(
-                Parameter::Position(self.tape[self.head + 1] as usize),
-                Parameter::Position(self.tape[self.head + 2] as usize),
+                parse_parameter(opcode, 1, self.tape[self.head + 1]),
+                parse_parameter(opcode, 2, self.tape[self.head + 2]),
                 self.tape[self.head + 3] as usize,
             )),
             _ => panic!("unexpected instruction code"),
