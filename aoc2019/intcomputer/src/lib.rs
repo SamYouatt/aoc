@@ -118,3 +118,33 @@ pub fn parse_tape(input: &str) -> Tape {
         .map(|x| x.parse().expect("only numbers in input"))
         .collect()
 }
+
+fn parse_opcode(value: i64) -> usize {
+    ((value as f64 / 100.0).fract() * 100.0) as usize
+}
+
+/// Get the parameter at position [1 based]
+fn parse_parameter(opcode: i64, param_pos: usize, value: i64) -> Parameter {
+    let blah = (opcode as f64 / 10f64.powf((param_pos + 1) as f64)).floor() % 2.0;
+    dbg!(blah);
+    dbg!(blah % 2.0);
+    match blah {
+        0.0 => Parameter::Position(value as usize),
+        _ => Parameter::Immediate(value),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parse_parameter_test() {
+        let opcode = 1002;
+        let value = 69;
+
+        assert_eq!(parse_parameter(opcode, 1, value), Parameter::Position(value as usize));
+        assert_eq!(parse_parameter(opcode, 2, value), Parameter::Immediate(value));
+        assert_eq!(parse_parameter(opcode, 3, value), Parameter::Position(value as usize));
+    }
+}
