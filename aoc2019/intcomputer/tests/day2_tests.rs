@@ -1,10 +1,10 @@
-use intcomputer::{parse_tape, reader::StdInReader, Computer};
+use intcomputer::{parse_tape, reader::StdInReader, writer::StdOutWriter, Computer};
 
 #[test]
 fn first_input() {
     let input = "1,9,10,3,2,3,11,0,99,30,40,50";
     let tape = parse_tape(input);
-    let mut computer = Computer::load(&tape, StdInReader);
+    let mut computer = Computer::load(&tape, StdInReader, StdOutWriter);
 
     computer.run();
 
@@ -19,7 +19,7 @@ fn first_input() {
 fn second_input() {
     let input = "1,0,0,0,99";
     let tape = parse_tape(input);
-    let mut computer = Computer::load(&tape, StdInReader);
+    let mut computer = Computer::load(&tape, StdInReader, StdOutWriter);
 
     computer.run();
 
@@ -31,7 +31,7 @@ fn second_input() {
 fn third_input() {
     let input = "2,3,0,3,99";
     let tape = parse_tape(input);
-    let mut computer = Computer::load(&tape, StdInReader);
+    let mut computer = Computer::load(&tape, StdInReader, StdOutWriter);
 
     computer.run();
 
@@ -43,7 +43,7 @@ fn third_input() {
 fn fourth_input() {
     let input = "2,4,4,5,99,0";
     let tape = parse_tape(input);
-    let mut computer = Computer::load(&tape, StdInReader);
+    let mut computer = Computer::load(&tape, StdInReader, StdOutWriter);
 
     computer.run();
 
@@ -55,7 +55,7 @@ fn fourth_input() {
 fn fifth_input() {
     let input = "1,1,1,4,99,5,6,0,99";
     let tape = parse_tape(input);
-    let mut computer = Computer::load(&tape, StdInReader);
+    let mut computer = Computer::load(&tape, StdInReader, StdOutWriter);
 
     computer.run();
 
