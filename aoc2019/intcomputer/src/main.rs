@@ -28,10 +28,13 @@ fn main() {
     let args = Cli::parse();
 
     let day2_input = include_str!("inputs/day2_input.txt");
+    let day5_input = include_str!("inputs/day5_input.txt");
 
     match (args.day, args.part) {
         (2, 1) => println!("Day 2 part 1: {}", day2_part1(day2_input)),
         (2, 2) => println!("Day 2 part 2: {}", day2_part2(day2_input)),
+        (5, 1) => day5_part1(day5_input),
+        (5, 2) => todo!(),
         _ => eprintln!("Pick a proper day and part fool"),
     }
 }
@@ -68,4 +71,14 @@ fn day2_part2(input: &str) -> usize {
     }
 
     unreachable!("didn't find answer");
+}
+
+fn day5_part1(input: &str) {
+    let tape = parse_tape(input);
+    let mut computer = Computer::load(&tape, StdInReader, StdOutWriter);
+    computer.run();
+}
+
+fn day5_part2(input: &str) -> usize {
+    todo!()
 }
