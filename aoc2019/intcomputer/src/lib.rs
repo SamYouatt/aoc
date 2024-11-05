@@ -36,7 +36,7 @@ enum Instruction {
 
 pub struct Computer<'c, R: Reader, W: Writer> {
     tape: Tape,
-    head: usize,
+    instruction_ptr: usize,
     reader: &'c mut R,
     writer: &'c mut W,
 }
@@ -45,7 +45,7 @@ impl<'c, R: Reader, W: Writer> Computer<'c, R, W> {
     pub fn load(tape: &Tape, reader: &'c mut R, writer: &'c mut W) -> Self {
         Self {
             tape: tape.to_owned(),
-            head: 0,
+            instruction_ptr: 0,
             reader,
             writer,
         }
@@ -59,7 +59,7 @@ impl<'c, R: Reader, W: Writer> Computer<'c, R, W> {
     /// Runs the program until it halts
     pub fn run(&mut self) {
         while let Some(instruction) = self.next_instruction() {
-            let prev_instruction_head = self.tape[self.head];
+            let prev_instruction_ptr = self.instruction_ptr;
 
             match instruction {
                 Instruction::Add(a, b, out) => {
@@ -78,13 +78,33 @@ impl<'c, R: Reader, W: Writer> Computer<'c, R, W> {
                     let value = self.get_value(loc);
                     self.writer.write_output(value);
                 }
-                Instruction::JumpIfTrue(cond, loc) => todo!(),
-                Instruction::JumpIfFalse(cond, loc) => todo!(),
-                Instruction::LessThan(a, b, loc) => todo!(),
-                Instruction::Equals(a, b, loc) => todo!(),
+                Instruction::JumpIfTrue(cond, loc) => {
+                    if self.get_value(cond) != 0 {
+                        self.instruction_ptr = self.get_value(loc) as usize;
+                    }
+                },
+                Instruction::JumpIfFalse(cond, loc) => {
+                    if self.get_value(cond) == 0 {
+                        self.instruction_ptr = self.get_value(loc) as usize;
+                    }
+                },
+                Instruction::LessThan(a, b, loc) => {
+                    if self.get_value(a) < self.get_value(b) {
+                        self.tape[loc] = 1;
+                    } else {
+                        self.tape[loc] = 0;
+                    }
+                },
+                Instruction::Equals(a, b, loc) => {
+                    if self.get_value(a) == self.get_value(b) {
+                        self.tape[loc] = 1;
+                    } else {
+                        self.tape[loc] = 0;
+                    }
+                },
             }
 
-            if self.tape[self.head] == prev_instruction_head {
+            if self.instruction_ptr == prev_instruction_ptr {
                 self.advance(&instruction);
             }
         }
@@ -92,43 +112,43 @@ impl<'c, R: Reader, W: Writer> Computer<'c, R, W> {
 
     /// Parse the instruction at the current head, returns None for Halt
     fn next_instruction(&self) -> Option<Instruction> {
-        let opcode = self.tape[self.head];
+        let opcode = self.tape[self.instruction_ptr];
         let instruction_code = parse_opcode(opcode);
         match instruction_code {
             99 => None, // Halt
             1 => Some(Instruction::Add(
-                parse_parameter(opcode, 1, self.tape[self.head + 1]),
-                parse_parameter(opcode, 2, self.tape[self.head + 2]),
-                self.tape[self.head + 3] as usize,
+                parse_parameter(opcode, 1, self.tape[self.instruction_ptr + 1]),
+                parse_parameter(opcode, 2, self.tape[self.instruction_ptr + 2]),
+                self.tape[self.instruction_ptr + 3] as usize,
             )),
             2 => Some(Instruction::Mult(
-                parse_parameter(opcode, 1, self.tape[self.head + 1]),
-                parse_parameter(opcode, 2, self.tape[self.head + 2]),
-                self.tape[self.head + 3] as usize,
+                parse_parameter(opcode, 1, self.tape[self.instruction_ptr + 1]),
+                parse_parameter(opcode, 2, self.tape[self.instruction_ptr + 2]),
+                self.tape[self.instruction_ptr + 3] as usize,
             )),
-            3 => Some(Instruction::Input(self.tape[self.head + 1] as usize)),
+            3 => Some(Instruction::Input(self.tape[self.instruction_ptr + 1] as usize)),
             4 => Some(Instruction::Output(parse_parameter(
                 opcode,
                 1,
-                self.tape[self.head + 1],
+                self.tape[self.instruction_ptr + 1],
             ))),
             5 => Some(Instruction::JumpIfTrue(
-                parse_parameter(opcode, 1, self.tape[self.head + 1]),
-                parse_parameter(opcode, 2, self.tape[self.head + 2]),
+                parse_parameter(opcode, 1, self.tape[self.instruction_ptr + 1]),
+                parse_parameter(opcode, 2, self.tape[self.instruction_ptr + 2]),
             )),
             6 => Some(Instruction::JumpIfFalse(
-                parse_parameter(opcode, 1, self.tape[self.head + 1]),
-                parse_parameter(opcode, 2, self.tape[self.head + 2]),
+                parse_parameter(opcode, 1, self.tape[self.instruction_ptr + 1]),
+                parse_parameter(opcode, 2, self.tape[self.instruction_ptr + 2]),
             )),
             7 => Some(Instruction::LessThan(
-                parse_parameter(opcode, 1, self.tape[self.head + 1]),
-                parse_parameter(opcode, 2, self.tape[self.head + 2]),
-                self.tape[self.head + 3] as usize,
+                parse_parameter(opcode, 1, self.tape[self.instruction_ptr + 1]),
+                parse_parameter(opcode, 2, self.tape[self.instruction_ptr + 2]),
+                self.tape[self.instruction_ptr + 3] as usize,
             )),
             8 => Some(Instruction::Equals(
-                parse_parameter(opcode, 1, self.tape[self.head + 1]),
-                parse_parameter(opcode, 2, self.tape[self.head + 2]),
-                self.tape[self.head + 3] as usize,
+                parse_parameter(opcode, 1, self.tape[self.instruction_ptr + 1]),
+                parse_parameter(opcode, 2, self.tape[self.instruction_ptr + 2]),
+                self.tape[self.instruction_ptr + 3] as usize,
             )),
             _ => panic!("unexpected instruction code"),
         }
@@ -152,7 +172,7 @@ impl<'c, R: Reader, W: Writer> Computer<'c, R, W> {
             Instruction::Input(..) | Instruction::Output(..) => 2,
         };
 
-        self.head += to_advance;
+        self.instruction_ptr += to_advance;
     }
 }
 
