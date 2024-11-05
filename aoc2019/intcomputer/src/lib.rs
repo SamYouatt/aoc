@@ -24,6 +24,14 @@ enum Instruction {
     Input(usize),
     /// 04 loc
     Output(Parameter),
+    /// 05 cond loc
+    JumpIfTrue(Parameter, Parameter),
+    /// 06 cond loc
+    JumpIfFalse(Parameter, Parameter),
+    /// 07 a b loc
+    LessThan(Parameter, Parameter, usize),
+    /// 08 a b loc
+    Equals(Parameter, Parameter, usize),
 }
 
 pub struct Computer<R: Reader, W: Writer> {
@@ -68,6 +76,10 @@ impl<R: Reader, W: Writer> Computer<R, W> {
                     let value = self.get_value(loc);
                     self.writer.write_output(value);
                 }
+                Instruction::JumpIfTrue(cond, loc) => todo!(),
+                Instruction::JumpIfFalse(cond, loc) => todo!(),
+                Instruction::LessThan(a, b, loc) => todo!(),
+                Instruction::Equals(a, b, loc) => todo!(),
             }
 
             self.advance(&instruction);
@@ -96,6 +108,24 @@ impl<R: Reader, W: Writer> Computer<R, W> {
                 1,
                 self.tape[self.head + 1],
             ))),
+            5 => Some(Instruction::JumpIfTrue(
+                parse_parameter(opcode, 1, self.tape[self.head + 1]),
+                parse_parameter(opcode, 2, self.tape[self.head + 2]),
+            )),
+            6 => Some(Instruction::JumpIfFalse(
+                parse_parameter(opcode, 1, self.tape[self.head + 1]),
+                parse_parameter(opcode, 2, self.tape[self.head + 2]),
+            )),
+            7 => Some(Instruction::LessThan(
+                parse_parameter(opcode, 1, self.tape[self.head + 1]),
+                parse_parameter(opcode, 2, self.tape[self.head + 2]),
+                self.tape[self.head + 3] as usize,
+            )),
+            8 => Some(Instruction::Equals(
+                parse_parameter(opcode, 1, self.tape[self.head + 1]),
+                parse_parameter(opcode, 2, self.tape[self.head + 2]),
+                self.tape[self.head + 3] as usize,
+            )),
             _ => panic!("unexpected instruction code"),
         }
     }
@@ -110,7 +140,8 @@ impl<R: Reader, W: Writer> Computer<R, W> {
     /// Advance to the next instruction
     fn advance(&mut self, instruction: &Instruction) {
         let to_advance = match instruction {
-            Instruction::Add(..) | Instruction::Mult(..) => 4,
+            Instruction::Add(..) | Instruction::Mult(..) | Instruction::LessThan(..) | Instruction::Equals(..) => 4,
+            Instruction::JumpIfTrue(..) | Instruction::JumpIfFalse(..) => 3,
             Instruction::Input(..) | Instruction::Output(..) => 2,
         };
 
