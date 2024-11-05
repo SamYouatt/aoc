@@ -3,14 +3,28 @@ use writer::Writer;
 
 pub mod reader;
 pub mod writer;
-// Opcodes:
-// 99           - Halt
-// 1 *a *b out  - adds the two following reference's values and places in third's referenced location
-// 2 *a *b out  - multiplies the two following reference's values and places in third's referenced location
-// 3 *a         - accepts user input and places it in the location specified by the param
-// 4 *a         - outputs the value at the location referenced by its parameter
 
-type Tape = Vec<usize>;
+type Tape = Vec<i64>;
+
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+enum Parameter {
+    /// Must be followed to a location
+    Position(usize),
+    /// Is the value to be used
+    Immediate(i64),
+}
+
+#[derive(Debug, PartialEq, Eq)]
+enum Instruction {
+    /// 01 a + b -> c
+    Add(Parameter, Parameter, Parameter),
+    /// 02 a * b -> c
+    Mult(Parameter, Parameter, Parameter),
+    /// 03 loc
+    Input(Parameter),
+    /// 04 loc
+    Output(Parameter),
+}
 
 pub struct Computer<R: Reader, W: Writer> {
     tape: Tape,
@@ -36,45 +50,59 @@ impl<R: Reader, W: Writer> Computer<R, W> {
 
     /// Runs the program until it halts
     pub fn run(&mut self) {
-        while self.tape[self.head] != 99 {
-            match self.tape[self.head] {
-                1 => {
-                    let first = self.deref_index(self.head + 1);
-                    let second = self.deref_index(self.head + 2);
-
-                    let result = first + second;
-
-                    let result_loc = self.tape[self.head + 3];
-                    self.tape[result_loc] = result;
+        while let Some(instruction) = self.next_instruction() {
+            match instruction {
+                Instruction::Add(a, b, out) => {
+                    let result = self.get_value(a) + self.get_value(b);
+                    let out_loc = self.get_value(out) as usize;
+                    self.tape[out_loc] = result;
                 }
-                2 => {
-                    let first = self.deref_index(self.head + 1);
-                    let second = self.deref_index(self.head + 2);
-
-                    let result = first * second;
-
-                    let result_loc = self.tape[self.head + 3];
-                    self.tape[result_loc] = result;
+                Instruction::Mult(a, b, out) => {
+                    let result = self.get_value(a) * self.get_value(b);
+                    let out_loc = self.get_value(out) as usize;
+                    self.tape[out_loc] = result;
                 }
-                99 => unreachable!(),
-                _ => panic!("unsupported opcode"),
+                Instruction::Input(_) => todo!(),
+                Instruction::Output(_) => todo!(),
             }
 
-            self.advance();
+            self.advance(&instruction);
         }
     }
 
-    /// Given a location in the tape, will inspect that value then follow it to the memory address
-    fn deref_index(&self, reference_index: usize) -> usize {
-        let reference = self.tape[reference_index];
-        let deref = self.tape[reference];
-
-        deref
+    /// Parse the instruction at the current head, returns None for Halt
+    fn next_instruction(&self) -> Option<Instruction> {
+        match self.tape[self.head] {
+            99 => None, // Halt
+            1 => Some(Instruction::Add(
+                Parameter::Position(self.tape[self.head + 1] as usize),
+                Parameter::Position(self.tape[self.head + 2] as usize),
+                Parameter::Immediate(self.tape[self.head + 3]),
+            )),
+            2 => Some(Instruction::Mult(
+                Parameter::Position(self.tape[self.head + 1] as usize),
+                Parameter::Position(self.tape[self.head + 2] as usize),
+                Parameter::Immediate(self.tape[self.head + 3]),
+            )),
+            _ => panic!("unexpected instruction code"),
+        }
     }
 
-    /// Advance to the next opcode
-    fn advance(&mut self) {
-        self.head += 4;
+    fn get_value(&self, parameter: Parameter) -> i64 {
+        match parameter {
+            Parameter::Position(index) => self.tape[index],
+            Parameter::Immediate(x) => x,
+        }
+    }
+
+    /// Advance to the next instruction
+    fn advance(&mut self, instruction: &Instruction) {
+        let to_advance = match instruction {
+            Instruction::Add(..) | Instruction::Mult(..) => 4,
+            Instruction::Input(..) | Instruction::Output(..) => 2,
+        };
+
+        self.head += to_advance;
     }
 }
 
