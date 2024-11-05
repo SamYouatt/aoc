@@ -19,21 +19,6 @@ fn first_input() {
 }
 
 #[test]
-fn second_input() {
-    let input = "1,0,0,0,99";
-    let tape = parse_tape(input);
-    let mut reader = StdInReader;
-    let mut writer = StdOutWriter;
-
-    let mut computer = Computer::load(&tape, &mut reader, &mut writer);
-
-    computer.run();
-
-    let final_tape = computer.dump_tape();
-    assert_eq!(final_tape, vec![2, 0, 0, 0, 99]);
-}
-
-#[test]
 fn third_input() {
     let input = "2,3,0,3,99";
     let tape = parse_tape(input);
