@@ -70,7 +70,8 @@ impl Computer {
 /// Expects comma separated list of numbers
 pub fn parse_tape(input: &str) -> Tape {
     input
+        .trim()
         .split(',')
-        .map(|x| x.parse().expect("expected only integers in input"))
+        .map(|x| x.parse().expect("only numbers in input"))
         .collect()
 }
