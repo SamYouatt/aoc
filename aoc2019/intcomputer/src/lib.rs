@@ -21,7 +21,7 @@ enum Instruction {
     /// 02 a * b -> c
     Mult(Parameter, Parameter, usize),
     /// 03 loc
-    Input(Parameter),
+    Input(usize),
     /// 04 loc
     Output(Parameter),
 }
@@ -60,8 +60,14 @@ impl<R: Reader, W: Writer> Computer<R, W> {
                     let result = self.get_value(a) * self.get_value(b);
                     self.tape[out] = result;
                 }
-                Instruction::Input(_) => todo!(),
-                Instruction::Output(_) => todo!(),
+                Instruction::Input(dest) => {
+                    let input = self.reader.read_input();
+                    self.tape[dest] = input;
+                }
+                Instruction::Output(loc) => {
+                    let value = self.get_value(loc);
+                    self.writer.write_output(value);
+                },
             }
 
             self.advance(&instruction);
