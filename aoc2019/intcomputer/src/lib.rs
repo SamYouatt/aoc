@@ -1,6 +1,8 @@
 use reader::Reader;
+use writer::Writer;
 
 pub mod reader;
+pub mod writer;
 // Opcodes:
 // 99           - Halt
 // 1 *a *b out  - adds the two following reference's values and places in third's referenced location
@@ -10,18 +12,20 @@ pub mod reader;
 
 type Tape = Vec<usize>;
 
-pub struct Computer<R: Reader> {
+pub struct Computer<R: Reader, W: Writer> {
     tape: Tape,
     head: usize,
     reader: R,
+    writer: W,
 }
 
-impl<R: Reader> Computer<R> {
-    pub fn load(tape: &Tape, reader: R) -> Self {
+impl<R: Reader, W: Writer> Computer<R, W> {
+    pub fn load(tape: &Tape, reader: R, writer: W) -> Self {
         Self {
             tape: tape.to_owned(),
             head: 0,
             reader,
+            writer,
         }
     }
 
