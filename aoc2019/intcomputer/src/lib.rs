@@ -90,6 +90,12 @@ impl<R: Reader, W: Writer> Computer<R, W> {
                 parse_parameter(opcode, 2, self.tape[self.head + 2]),
                 self.tape[self.head + 3] as usize,
             )),
+            3 => Some(Instruction::Input(self.tape[self.head + 1] as usize)),
+            4 => Some(Instruction::Output(parse_parameter(
+                opcode,
+                1,
+                self.tape[self.head + 1],
+            ))),
             _ => panic!("unexpected instruction code"),
         }
     }
@@ -145,8 +151,17 @@ mod tests {
         let opcode = 1002;
         let value = 69;
 
-        assert_eq!(parse_parameter(opcode, 1, value), Parameter::Position(value as usize));
-        assert_eq!(parse_parameter(opcode, 2, value), Parameter::Immediate(value));
-        assert_eq!(parse_parameter(opcode, 3, value), Parameter::Position(value as usize));
+        assert_eq!(
+            parse_parameter(opcode, 1, value),
+            Parameter::Position(value as usize)
+        );
+        assert_eq!(
+            parse_parameter(opcode, 2, value),
+            Parameter::Immediate(value)
+        );
+        assert_eq!(
+            parse_parameter(opcode, 3, value),
+            Parameter::Position(value as usize)
+        );
     }
 }
