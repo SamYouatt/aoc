@@ -134,8 +134,6 @@ fn parse_opcode(value: i64) -> usize {
 /// Get the parameter at position [1 based]
 fn parse_parameter(opcode: i64, param_pos: usize, value: i64) -> Parameter {
     let blah = (opcode as f64 / 10f64.powf((param_pos + 1) as f64)).floor() % 2.0;
-    dbg!(blah);
-    dbg!(blah % 2.0);
     match blah {
         0.0 => Parameter::Position(value as usize),
         _ => Parameter::Immediate(value),
