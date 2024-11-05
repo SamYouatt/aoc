@@ -1,10 +1,39 @@
+use std::num::ParseIntError;
+
+use clap::Parser;
 use intcomputer::{parse_tape, reader::StdInReader, writer::StdOutWriter, Computer};
 use itertools::Itertools;
 
+#[derive(Parser)]
+#[command(name = "AoC Intcomputer")]
+struct Cli {
+    #[arg(short, long, value_parser = parse_day)]
+    /// The day of the month (1-24)
+    day: u8,
+
+    #[arg(short, long, value_parser = parse_part)]
+    /// The part of the challenge (1 or 2)
+    part: u8,
+}
+
+fn parse_day(day: &str) -> Result<u8, String> {
+    Ok(day.parse().expect("day should be between 1 and 25"))
+}
+
+fn parse_part(part: &str) -> Result<u8, String> {
+    Ok(part.parse().expect("part should be 1 or 2"))
+}
+
 fn main() {
+    let args = Cli::parse();
+
     let day2_input = include_str!("inputs/day2_input.txt");
-    println!("Day 2 part 1: {}", day2_part1(day2_input));
-    println!("Day 2 part 2: {}", day2_part2(day2_input));
+
+    match (args.day, args.part) {
+        (2, 1) => println!("Day 2 part 1: {}", day2_part1(day2_input)),
+        (2, 2) => println!("Day 2 part 2: {}", day2_part2(day2_input)),
+        _ => eprintln!("Pick a proper day and part fool"),
+    }
 }
 
 fn day2_part1(input: &str) -> usize {
