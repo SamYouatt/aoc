@@ -1,13 +1,13 @@
 use std::io;
 
 pub trait Reader {
-    fn read_input() -> String;
+    fn read_input(&mut self) -> i64;
 }
 
 pub struct StdInReader;
 
 impl Reader for StdInReader {
-    fn read_input() -> String {
+    fn read_input(&mut self) -> i64 {
         println!(">>");
 
         let mut input = String::new();
@@ -15,6 +15,6 @@ impl Reader for StdInReader {
             .read_line(&mut input)
             .expect("Failed to read line");
 
-        input.to_string()
+        input.parse().expect("input should be valid i64")
     }
 }
