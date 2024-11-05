@@ -12,7 +12,7 @@ fn day2_part1(input: &str) -> usize {
     tape[1] = 12;
     tape[2] = 2;
 
-    let mut computer = Computer::new(&tape);
+    let mut computer = Computer::load(&tape);
     computer.run();
 
     let final_tape = computer.dump_tape();
@@ -29,7 +29,7 @@ fn day2_part2(input: &str) -> usize {
         tape[1] = noun;
         tape[2] = verb;
 
-        let mut computer = Computer::new(&tape);
+        let mut computer = Computer::load(&tape);
         computer.run();
 
         let final_tape = computer.dump_tape();

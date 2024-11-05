@@ -11,7 +11,7 @@ pub struct Computer {
 }
 
 impl Computer {
-    pub fn new(tape: &Tape) -> Self {
+    pub fn load(tape: &Tape) -> Self {
         Self {
             tape: tape.to_owned(),
             head: 0,
