@@ -1,5 +1,3 @@
-use std::num::ParseIntError;
-
 use clap::Parser;
 use intcomputer::{parse_tape, reader::StdInReader, writer::StdOutWriter, Computer};
 use itertools::Itertools;
@@ -44,7 +42,10 @@ fn day2_part1(input: &str) -> usize {
     tape[1] = 12;
     tape[2] = 2;
 
-    let mut computer = Computer::load(&tape, StdInReader, StdOutWriter);
+    let mut reader = StdInReader;
+    let mut writer = StdOutWriter;
+
+    let mut computer = Computer::load(&tape, &mut reader, &mut writer);
     computer.run();
 
     let final_tape = computer.dump_tape();
@@ -61,7 +62,10 @@ fn day2_part2(input: &str) -> usize {
         tape[1] = noun;
         tape[2] = verb;
 
-        let mut computer = Computer::load(&tape, StdInReader, StdOutWriter);
+        let mut reader = StdInReader;
+        let mut writer = StdOutWriter;
+
+        let mut computer = Computer::load(&tape, &mut reader, &mut writer);
         computer.run();
 
         let final_tape = computer.dump_tape();
@@ -75,7 +79,10 @@ fn day2_part2(input: &str) -> usize {
 
 fn day5_part1(input: &str) {
     let tape = parse_tape(input);
-    let mut computer = Computer::load(&tape, StdInReader, StdOutWriter);
+    let mut reader = StdInReader;
+    let mut writer = StdOutWriter;
+
+    let mut computer = Computer::load(&tape, &mut reader, &mut writer);
     computer.run();
 }
 
