@@ -34,15 +34,15 @@ enum Instruction {
     Equals(Parameter, Parameter, usize),
 }
 
-pub struct Computer<R: Reader, W: Writer> {
+pub struct Computer<'c, R: Reader, W: Writer> {
     tape: Tape,
     head: usize,
-    reader: R,
-    writer: W,
+    reader: &'c mut R,
+    writer: &'c mut W,
 }
 
-impl<R: Reader, W: Writer> Computer<R, W> {
-    pub fn load(tape: &Tape, reader: R, writer: W) -> Self {
+impl<'c, R: Reader, W: Writer> Computer<'c, R, W> {
+    pub fn load(tape: &Tape, reader: &'c mut R, writer: &'c mut W) -> Self {
         Self {
             tape: tape.to_owned(),
             head: 0,
