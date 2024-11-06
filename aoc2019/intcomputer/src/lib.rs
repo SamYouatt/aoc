@@ -51,6 +51,10 @@ impl Computer {
     pub fn dump_tape(&self) -> Tape {
         self.tape.to_owned()
     }
+    
+    pub fn receiver(&self) -> &Receiver<i64> {
+        &self.receiver
+    }
 
     /// Runs the program until it halts
     pub fn run(&mut self) {
