@@ -10,6 +10,8 @@ enum Parameter {
     Position(usize),
     /// Is the value to be used
     Immediate(i64),
+    /// Like position but from the relative base
+    Relative(i64),
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -30,6 +32,8 @@ enum Instruction {
     LessThan(Parameter, Parameter, usize),
     /// 08 a b loc
     Equals(Parameter, Parameter, usize),
+    /// 09 a
+    AdjustRelativeBase(Parameter),
 }
 
 pub struct Computer {
@@ -37,6 +41,7 @@ pub struct Computer {
     instruction_ptr: usize,
     receiver: Receiver<i64>,
     sender: Sender<i64>,
+    relative_base: usize,
 }
 
 impl Computer {
@@ -46,6 +51,7 @@ impl Computer {
             instruction_ptr: 0,
             receiver,
             sender,
+            relative_base: 0,
         }
     }
 
@@ -53,7 +59,7 @@ impl Computer {
     pub fn dump_tape(&self) -> Tape {
         self.tape.to_owned()
     }
-    
+
     pub fn receiver(&self) -> &Receiver<i64> {
         &self.receiver
     }
@@ -84,26 +90,29 @@ impl Computer {
                     if self.get_value(cond) != 0 {
                         self.instruction_ptr = self.get_value(loc) as usize;
                     }
-                },
+                }
                 Instruction::JumpIfFalse(cond, loc) => {
                     if self.get_value(cond) == 0 {
                         self.instruction_ptr = self.get_value(loc) as usize;
                     }
-                },
+                }
                 Instruction::LessThan(a, b, loc) => {
                     if self.get_value(a) < self.get_value(b) {
                         self.tape[loc] = 1;
                     } else {
                         self.tape[loc] = 0;
                     }
-                },
+                }
                 Instruction::Equals(a, b, loc) => {
                     if self.get_value(a) == self.get_value(b) {
                         self.tape[loc] = 1;
                     } else {
                         self.tape[loc] = 0;
                     }
-                },
+                }
+                Instruction::AdjustRelativeBase(a) => {
+                    self.relative_base = (self.relative_base as i64 + self.get_value(a)) as usize;
+                }
             }
 
             if self.instruction_ptr == prev_instruction_ptr {
@@ -128,7 +137,9 @@ impl Computer {
                 parse_parameter(opcode, 2, self.tape[self.instruction_ptr + 2]),
                 self.tape[self.instruction_ptr + 3] as usize,
             )),
-            3 => Some(Instruction::Input(self.tape[self.instruction_ptr + 1] as usize)),
+            3 => Some(Instruction::Input(
+                self.tape[self.instruction_ptr + 1] as usize,
+            )),
             4 => Some(Instruction::Output(parse_parameter(
                 opcode,
                 1,
@@ -152,6 +163,11 @@ impl Computer {
                 parse_parameter(opcode, 2, self.tape[self.instruction_ptr + 2]),
                 self.tape[self.instruction_ptr + 3] as usize,
             )),
+            9 => Some(Instruction::AdjustRelativeBase(parse_parameter(
+                opcode,
+                1,
+                self.tape[self.instruction_ptr + 1],
+            ))),
             _ => panic!("unexpected instruction code"),
         }
     }
@@ -160,6 +176,7 @@ impl Computer {
         match parameter {
             Parameter::Position(index) => self.tape[index],
             Parameter::Immediate(x) => x,
+            Parameter::Relative(offset) => self.tape[(self.relative_base as i64 + offset) as usize],
         }
     }
 
@@ -171,7 +188,9 @@ impl Computer {
             | Instruction::LessThan(..)
             | Instruction::Equals(..) => 4,
             Instruction::JumpIfTrue(..) | Instruction::JumpIfFalse(..) => 3,
-            Instruction::Input(..) | Instruction::Output(..) => 2,
+            Instruction::Input(..)
+            | Instruction::Output(..)
+            | Instruction::AdjustRelativeBase(..) => 2,
         };
 
         self.instruction_ptr += to_advance;
@@ -193,10 +212,13 @@ fn parse_opcode(value: i64) -> usize {
 
 /// Get the parameter at position [1 based]
 fn parse_parameter(opcode: i64, param_pos: usize, value: i64) -> Parameter {
-    let blah = (opcode as f64 / 10f64.powf((param_pos + 1) as f64)).floor() % 2.0;
-    match blah {
-        0.0 => Parameter::Position(value as usize),
-        _ => Parameter::Immediate(value),
+    let flag = (opcode as f64 / 10f64.powf((param_pos + 1) as f64)).floor();
+    if flag % 10.0 == 0.0 {
+        Parameter::Position(value as usize)
+    } else if flag % 2.0 == 0.0 {
+        Parameter::Relative(value)
+    } else {
+        Parameter::Immediate(value)
     }
 }
 
@@ -220,6 +242,21 @@ mod tests {
         assert_eq!(
             parse_parameter(opcode, 3, value),
             Parameter::Position(value as usize)
+        );
+    }
+
+    #[test]
+    fn parse_relative_test() {
+        let opcode = 2002;
+        let value = 69;
+
+        assert_eq!(
+            parse_parameter(opcode, 1, value),
+            Parameter::Position(value as usize)
+        );
+        assert_eq!(
+            parse_parameter(opcode, 2, value),
+            Parameter::Relative(value)
         );
     }
 }
