@@ -18,11 +18,11 @@ enum Parameter {
 #[derive(Debug, PartialEq, Eq)]
 enum Instruction {
     /// 01 a + b -> c
-    Add(Parameter, Parameter, usize),
+    Add(Parameter, Parameter, Parameter),
     /// 02 a * b -> c
-    Mult(Parameter, Parameter, usize),
+    Mult(Parameter, Parameter, Parameter),
     /// 03 loc
-    Input(usize),
+    Input(Parameter),
     /// 04 loc
     Output(Parameter),
     /// 05 cond loc
@@ -30,9 +30,9 @@ enum Instruction {
     /// 06 cond loc
     JumpIfFalse(Parameter, Parameter),
     /// 07 a b loc
-    LessThan(Parameter, Parameter, usize),
+    LessThan(Parameter, Parameter, Parameter),
     /// 08 a b loc
-    Equals(Parameter, Parameter, usize),
+    Equals(Parameter, Parameter, Parameter),
     /// 09 a
     AdjustRelativeBase(Parameter),
 }
@@ -42,7 +42,7 @@ pub struct Computer {
     instruction_ptr: usize,
     receiver: Receiver<i64>,
     sender: Sender<i64>,
-    relative_base: usize,
+    relative_base: i64,
 }
 
 impl Computer {
@@ -76,15 +76,15 @@ impl Computer {
             match instruction {
                 Instruction::Add(a, b, out) => {
                     let result = self.get_value(a) + self.get_value(b);
-                    self.mem[out] = result;
+                    self.mem[self.get_dest(out)] = result;
                 }
                 Instruction::Mult(a, b, out) => {
                     let result = self.get_value(a) * self.get_value(b);
-                    self.mem[out] = result;
+                    self.mem[self.get_dest(out)] = result;
                 }
                 Instruction::Input(dest) => {
                     let input = self.receiver.recv().expect("rec should never close");
-                    self.mem[dest] = input;
+                    self.mem[self.get_dest(dest)] = input;
                 }
                 Instruction::Output(loc) => {
                     let value = self.get_value(loc);
@@ -102,21 +102,20 @@ impl Computer {
                 }
                 Instruction::LessThan(a, b, loc) => {
                     if self.get_value(a) < self.get_value(b) {
-                        self.mem[loc] = 1;
+                        self.mem[self.get_dest(loc)] = 1;
                     } else {
-                        self.mem[loc] = 0;
+                        self.mem[self.get_dest(loc)] = 0;
                     }
                 }
                 Instruction::Equals(a, b, loc) => {
                     if self.get_value(a) == self.get_value(b) {
-                        self.mem[loc] = 1;
+                        self.mem[self.get_dest(loc)] = 1;
                     } else {
-                        self.mem[loc] = 0;
+                        self.mem[self.get_dest(loc)] = 0;
                     }
                 }
                 Instruction::AdjustRelativeBase(a) => {
-                    let test = (self.relative_base as i64 + self.get_value(a)) as usize;
-                    self.relative_base = (self.relative_base as i64 + self.get_value(a)) as usize;
+                    self.relative_base = self.relative_base + self.get_value(a);
                 }
             }
 
@@ -135,15 +134,15 @@ impl Computer {
             1 => Some(Instruction::Add(
                 parse_parameter(opcode, 1, self.mem[self.instruction_ptr + 1]),
                 parse_parameter(opcode, 2, self.mem[self.instruction_ptr + 2]),
-                self.mem[self.instruction_ptr + 3] as usize,
+                parse_parameter(opcode, 3, self.mem[self.instruction_ptr + 3]),
             )),
             2 => Some(Instruction::Mult(
                 parse_parameter(opcode, 1, self.mem[self.instruction_ptr + 1]),
                 parse_parameter(opcode, 2, self.mem[self.instruction_ptr + 2]),
-                self.mem[self.instruction_ptr + 3] as usize,
+                parse_parameter(opcode, 3, self.mem[self.instruction_ptr + 3]),
             )),
             3 => Some(Instruction::Input(
-                self.mem[self.instruction_ptr + 1] as usize,
+                parse_parameter(opcode, 1 ,self.mem[self.instruction_ptr + 1]),
             )),
             4 => Some(Instruction::Output(parse_parameter(
                 opcode,
@@ -161,12 +160,12 @@ impl Computer {
             7 => Some(Instruction::LessThan(
                 parse_parameter(opcode, 1, self.mem[self.instruction_ptr + 1]),
                 parse_parameter(opcode, 2, self.mem[self.instruction_ptr + 2]),
-                self.mem[self.instruction_ptr + 3] as usize,
+                parse_parameter(opcode, 3, self.mem[self.instruction_ptr + 3]),
             )),
             8 => Some(Instruction::Equals(
                 parse_parameter(opcode, 1, self.mem[self.instruction_ptr + 1]),
                 parse_parameter(opcode, 2, self.mem[self.instruction_ptr + 2]),
-                self.mem[self.instruction_ptr + 3] as usize,
+                parse_parameter(opcode, 3, self.mem[self.instruction_ptr + 3]),
             )),
             9 => Some(Instruction::AdjustRelativeBase(parse_parameter(
                 opcode,
@@ -181,7 +180,16 @@ impl Computer {
         match parameter {
             Parameter::Position(index) => self.mem[index],
             Parameter::Immediate(x) => x,
-            Parameter::Relative(offset) => self.mem[(self.relative_base as i64 + offset) as usize],
+            Parameter::Relative(offset) => self.mem[(self.relative_base + offset) as usize],
+        }
+    }
+
+    /// For use by instructions with a write parameter
+    fn get_dest(&self, parameter: Parameter) -> usize {
+        match parameter {
+            Parameter::Position(index) => index,
+            Parameter::Immediate(x) => panic!("immediate params not valid for dest params"),
+            Parameter::Relative(offset) => (self.relative_base + offset) as usize,
         }
     }
 
@@ -217,13 +225,12 @@ fn parse_opcode(value: i64) -> usize {
 
 /// Get the parameter at position [1 based]
 fn parse_parameter(opcode: i64, param_pos: usize, value: i64) -> Parameter {
-    let flag = (opcode as f64 / 10f64.powf((param_pos + 1) as f64)).floor();
-    if flag % 10.0 == 0.0 {
-        Parameter::Position(value as usize)
-    } else if flag % 2.0 == 0.0 {
-        Parameter::Relative(value)
-    } else {
-        Parameter::Immediate(value)
+    let flag = (opcode / 10i64.pow(param_pos as u32 + 1)) % 10;
+    match flag {
+        0 => Parameter::Position(value as usize),
+        1 => Parameter::Immediate(value),
+        2 => Parameter::Relative(value),
+        _ => panic!("unknown parameter mode {}", flag),
     }
 }
 
