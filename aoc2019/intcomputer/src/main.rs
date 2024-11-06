@@ -1,4 +1,4 @@
-use std::sync::mpsc;
+use std::{sync::mpsc, thread};
 
 use clap::Parser;
 use intcomputer::{parse_tape, Computer};
@@ -29,12 +29,14 @@ fn main() {
 
     let day2_input = include_str!("inputs/day2_input.txt");
     let day5_input = include_str!("inputs/day5_input.txt");
+    let day7_input = include_str!("inputs/day7_input.txt");
 
     match (args.day, args.part) {
         (2, 1) => println!("Day 2 part 1: {}", day2_part1(day2_input)),
         (2, 2) => println!("Day 2 part 2: {}", day2_part2(day2_input)),
         (5, 1) => println!("Day 5 part 1: {}", day5(day5_input, 1)),
         (5, 2) => println!("Day 5 part 2: {}", day5(day5_input, 5)),
+        (7, 1) => println!("Day 7 part 1: {}", day7_part1(day7_input)),
         _ => eprintln!("Pick a proper day and part fool"),
     }
 }
@@ -88,4 +90,44 @@ fn day5(input: &str, user_input: i64) -> usize {
     computer.run();
 
     out_receiver.recv().expect("recv should never close") as usize
+}
+
+fn day7_part1(input: &str) -> usize {
+    let tape = parse_tape(input);
+
+    let mut max_signal = 0;
+
+    for permutation in (0i64..5).permutations(5) {
+        let (mut current_sender, mut current_receiver) = mpsc::channel();
+        // Used to kickstart process
+        let first_sender = current_sender.clone();
+        let mut amplifiers = Vec::new();
+
+        for phase_setting in permutation.iter() {
+            current_sender
+                .send(*phase_setting)
+                .expect("send should never close");
+
+            let (next_sender, next_receiver) = mpsc::channel();
+
+            let amplifier = Computer::load(&tape, current_receiver, next_sender.clone());
+
+            amplifiers.push(amplifier);
+
+            (current_receiver, current_sender) = (next_receiver, next_sender);
+        }
+
+        first_sender
+            .send(0)
+            .expect("first channel should never close");
+
+        for mut amplifier in amplifiers {
+            amplifier.run();
+        }
+
+        let circuit_signal = current_receiver.recv().expect("recv should never close");
+        max_signal = max_signal.max(circuit_signal);
+    }
+
+    max_signal as usize
 }
