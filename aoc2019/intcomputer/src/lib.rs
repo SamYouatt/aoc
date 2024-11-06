@@ -1,5 +1,7 @@
 use std::sync::mpsc::{Receiver, Sender};
 
+pub mod days;
+
 type Tape = Vec<i64>;
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
