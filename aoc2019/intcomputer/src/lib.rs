@@ -2,7 +2,8 @@ use std::sync::mpsc::{Receiver, Sender};
 
 pub mod days;
 
-type Tape = Vec<i64>;
+const MAX_MEMORY: usize = 10_000;
+type Memory = [i64; MAX_MEMORY];
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 enum Parameter {
@@ -37,7 +38,7 @@ enum Instruction {
 }
 
 pub struct Computer {
-    tape: Tape,
+    mem: Memory,
     instruction_ptr: usize,
     receiver: Receiver<i64>,
     sender: Sender<i64>,
@@ -45,9 +46,12 @@ pub struct Computer {
 }
 
 impl Computer {
-    pub fn load(tape: &Tape, receiver: Receiver<i64>, sender: Sender<i64>) -> Self {
+    pub fn load(tape: &[i64], receiver: Receiver<i64>, sender: Sender<i64>) -> Self {
+        let mut mem = vec![0; 10_000];
+        mem[0..tape.len()].clone_from_slice(tape);
+
         Self {
-            tape: tape.to_owned(),
+            mem: mem.try_into().expect("memory too big"),
             instruction_ptr: 0,
             receiver,
             sender,
@@ -56,8 +60,8 @@ impl Computer {
     }
 
     /// Dumps the current state of the tape
-    pub fn dump_tape(&self) -> Tape {
-        self.tape.to_owned()
+    pub fn dump_tape(&self) -> Memory {
+        self.mem.to_owned()
     }
 
     pub fn receiver(&self) -> &Receiver<i64> {
@@ -72,15 +76,15 @@ impl Computer {
             match instruction {
                 Instruction::Add(a, b, out) => {
                     let result = self.get_value(a) + self.get_value(b);
-                    self.tape[out] = result;
+                    self.mem[out] = result;
                 }
                 Instruction::Mult(a, b, out) => {
                     let result = self.get_value(a) * self.get_value(b);
-                    self.tape[out] = result;
+                    self.mem[out] = result;
                 }
                 Instruction::Input(dest) => {
                     let input = self.receiver.recv().expect("rec should never close");
-                    self.tape[dest] = input;
+                    self.mem[dest] = input;
                 }
                 Instruction::Output(loc) => {
                     let value = self.get_value(loc);
@@ -98,19 +102,20 @@ impl Computer {
                 }
                 Instruction::LessThan(a, b, loc) => {
                     if self.get_value(a) < self.get_value(b) {
-                        self.tape[loc] = 1;
+                        self.mem[loc] = 1;
                     } else {
-                        self.tape[loc] = 0;
+                        self.mem[loc] = 0;
                     }
                 }
                 Instruction::Equals(a, b, loc) => {
                     if self.get_value(a) == self.get_value(b) {
-                        self.tape[loc] = 1;
+                        self.mem[loc] = 1;
                     } else {
-                        self.tape[loc] = 0;
+                        self.mem[loc] = 0;
                     }
                 }
                 Instruction::AdjustRelativeBase(a) => {
+                    let test = (self.relative_base as i64 + self.get_value(a)) as usize;
                     self.relative_base = (self.relative_base as i64 + self.get_value(a)) as usize;
                 }
             }
@@ -123,50 +128,50 @@ impl Computer {
 
     /// Parse the instruction at the current head, returns None for Halt
     fn next_instruction(&self) -> Option<Instruction> {
-        let opcode = self.tape[self.instruction_ptr];
+        let opcode = self.mem[self.instruction_ptr];
         let instruction_code = parse_opcode(opcode);
         match instruction_code {
             99 => None, // Halt
             1 => Some(Instruction::Add(
-                parse_parameter(opcode, 1, self.tape[self.instruction_ptr + 1]),
-                parse_parameter(opcode, 2, self.tape[self.instruction_ptr + 2]),
-                self.tape[self.instruction_ptr + 3] as usize,
+                parse_parameter(opcode, 1, self.mem[self.instruction_ptr + 1]),
+                parse_parameter(opcode, 2, self.mem[self.instruction_ptr + 2]),
+                self.mem[self.instruction_ptr + 3] as usize,
             )),
             2 => Some(Instruction::Mult(
-                parse_parameter(opcode, 1, self.tape[self.instruction_ptr + 1]),
-                parse_parameter(opcode, 2, self.tape[self.instruction_ptr + 2]),
-                self.tape[self.instruction_ptr + 3] as usize,
+                parse_parameter(opcode, 1, self.mem[self.instruction_ptr + 1]),
+                parse_parameter(opcode, 2, self.mem[self.instruction_ptr + 2]),
+                self.mem[self.instruction_ptr + 3] as usize,
             )),
             3 => Some(Instruction::Input(
-                self.tape[self.instruction_ptr + 1] as usize,
+                self.mem[self.instruction_ptr + 1] as usize,
             )),
             4 => Some(Instruction::Output(parse_parameter(
                 opcode,
                 1,
-                self.tape[self.instruction_ptr + 1],
+                self.mem[self.instruction_ptr + 1],
             ))),
             5 => Some(Instruction::JumpIfTrue(
-                parse_parameter(opcode, 1, self.tape[self.instruction_ptr + 1]),
-                parse_parameter(opcode, 2, self.tape[self.instruction_ptr + 2]),
+                parse_parameter(opcode, 1, self.mem[self.instruction_ptr + 1]),
+                parse_parameter(opcode, 2, self.mem[self.instruction_ptr + 2]),
             )),
             6 => Some(Instruction::JumpIfFalse(
-                parse_parameter(opcode, 1, self.tape[self.instruction_ptr + 1]),
-                parse_parameter(opcode, 2, self.tape[self.instruction_ptr + 2]),
+                parse_parameter(opcode, 1, self.mem[self.instruction_ptr + 1]),
+                parse_parameter(opcode, 2, self.mem[self.instruction_ptr + 2]),
             )),
             7 => Some(Instruction::LessThan(
-                parse_parameter(opcode, 1, self.tape[self.instruction_ptr + 1]),
-                parse_parameter(opcode, 2, self.tape[self.instruction_ptr + 2]),
-                self.tape[self.instruction_ptr + 3] as usize,
+                parse_parameter(opcode, 1, self.mem[self.instruction_ptr + 1]),
+                parse_parameter(opcode, 2, self.mem[self.instruction_ptr + 2]),
+                self.mem[self.instruction_ptr + 3] as usize,
             )),
             8 => Some(Instruction::Equals(
-                parse_parameter(opcode, 1, self.tape[self.instruction_ptr + 1]),
-                parse_parameter(opcode, 2, self.tape[self.instruction_ptr + 2]),
-                self.tape[self.instruction_ptr + 3] as usize,
+                parse_parameter(opcode, 1, self.mem[self.instruction_ptr + 1]),
+                parse_parameter(opcode, 2, self.mem[self.instruction_ptr + 2]),
+                self.mem[self.instruction_ptr + 3] as usize,
             )),
             9 => Some(Instruction::AdjustRelativeBase(parse_parameter(
                 opcode,
                 1,
-                self.tape[self.instruction_ptr + 1],
+                self.mem[self.instruction_ptr + 1],
             ))),
             _ => panic!("unexpected instruction code"),
         }
@@ -174,9 +179,9 @@ impl Computer {
 
     fn get_value(&self, parameter: Parameter) -> i64 {
         match parameter {
-            Parameter::Position(index) => self.tape[index],
+            Parameter::Position(index) => self.mem[index],
             Parameter::Immediate(x) => x,
-            Parameter::Relative(offset) => self.tape[(self.relative_base as i64 + offset) as usize],
+            Parameter::Relative(offset) => self.mem[(self.relative_base as i64 + offset) as usize],
         }
     }
 
@@ -198,7 +203,7 @@ impl Computer {
 }
 
 /// Expects comma separated list of numbers
-pub fn parse_tape(input: &str) -> Tape {
+pub fn parse_tape(input: &str) -> Vec<i64> {
     input
         .trim()
         .split(',')
