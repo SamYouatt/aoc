@@ -1,3 +1,5 @@
+use std::sync::mpsc;
+
 use clap::Parser;
 use intcomputer::{parse_tape, reader::StdInReader, writer::StdOutWriter, Computer};
 use itertools::Itertools;
@@ -31,7 +33,8 @@ fn main() {
     match (args.day, args.part) {
         (2, 1) => println!("Day 2 part 1: {}", day2_part1(day2_input)),
         (2, 2) => println!("Day 2 part 2: {}", day2_part2(day2_input)),
-        (5, 1) | (5, 2) => day5(day5_input),
+        (5, 1) => println!("Day 5 part 1: {}", day5(day5_input, 1)),
+        (5, 2) => println!("Day 5 part 2: {}", day5(day5_input, 5)),
         _ => eprintln!("Pick a proper day and part fool"),
     }
 }
@@ -41,10 +44,9 @@ fn day2_part1(input: &str) -> usize {
     tape[1] = 12;
     tape[2] = 2;
 
-    let mut reader = StdInReader;
-    let mut writer = StdOutWriter;
+    let (sender, receiver) = mpsc::channel();
 
-    let mut computer = Computer::load(&tape, &mut reader, &mut writer);
+    let mut computer = Computer::load(&tape, receiver, sender);
     computer.run();
 
     let final_tape = computer.dump_tape();
@@ -61,10 +63,9 @@ fn day2_part2(input: &str) -> usize {
         tape[1] = noun;
         tape[2] = verb;
 
-        let mut reader = StdInReader;
-        let mut writer = StdOutWriter;
+        let (sender, receiver) = mpsc::channel();
 
-        let mut computer = Computer::load(&tape, &mut reader, &mut writer);
+        let mut computer = Computer::load(&tape, receiver, sender);
         computer.run();
 
         let final_tape = computer.dump_tape();
@@ -76,11 +77,15 @@ fn day2_part2(input: &str) -> usize {
     unreachable!("didn't find answer");
 }
 
-fn day5(input: &str) {
+fn day5(input: &str, user_input: i64) -> usize {
     let tape = parse_tape(input);
-    let mut reader = StdInReader;
-    let mut writer = StdOutWriter;
 
-    let mut computer = Computer::load(&tape, &mut reader, &mut writer);
+    let (in_sender, in_receiver) = mpsc::channel();
+    let (out_sender, out_receiver) = mpsc::channel();
+
+    let mut computer = Computer::load(&tape, in_receiver, out_sender.clone());
+    in_sender.send(user_input).expect("send should never close");
     computer.run();
+
+    out_receiver.recv().expect("recv should never close") as usize
 }
