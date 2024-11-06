@@ -1,3 +1,5 @@
+use std::sync::mpsc::{Receiver, Sender};
+
 use reader::Reader;
 use writer::Writer;
 
@@ -34,20 +36,20 @@ enum Instruction {
     Equals(Parameter, Parameter, usize),
 }
 
-pub struct Computer<'c, R: Reader, W: Writer> {
+pub struct Computer {
     tape: Tape,
     instruction_ptr: usize,
-    reader: &'c mut R,
-    writer: &'c mut W,
+    receiver: Receiver<i64>,
+    sender: Sender<i64>,
 }
 
-impl<'c, R: Reader, W: Writer> Computer<'c, R, W> {
-    pub fn load(tape: &Tape, reader: &'c mut R, writer: &'c mut W) -> Self {
+impl Computer {
+    pub fn load(tape: &Tape, receiver: Receiver<i64>, sender: Sender<i64>) -> Self {
         Self {
             tape: tape.to_owned(),
             instruction_ptr: 0,
-            reader,
-            writer,
+            receiver,
+            sender,
         }
     }
 
@@ -71,12 +73,12 @@ impl<'c, R: Reader, W: Writer> Computer<'c, R, W> {
                     self.tape[out] = result;
                 }
                 Instruction::Input(dest) => {
-                    let input = self.reader.read_input();
+                    let input = self.receiver.recv().expect("rec should never close");
                     self.tape[dest] = input;
                 }
                 Instruction::Output(loc) => {
                     let value = self.get_value(loc);
-                    self.writer.write_output(value);
+                    self.sender.send(value).expect("send should never close");
                 }
                 Instruction::JumpIfTrue(cond, loc) => {
                     if self.get_value(cond) != 0 {
