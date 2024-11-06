@@ -1,11 +1,5 @@
 use std::sync::mpsc::{Receiver, Sender};
 
-use reader::Reader;
-use writer::Writer;
-
-pub mod reader;
-pub mod writer;
-
 type Tape = Vec<i64>;
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]

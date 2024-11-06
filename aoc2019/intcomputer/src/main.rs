@@ -1,7 +1,7 @@
 use std::sync::mpsc;
 
 use clap::Parser;
-use intcomputer::{parse_tape, reader::StdInReader, writer::StdOutWriter, Computer};
+use intcomputer::{parse_tape, Computer};
 use itertools::Itertools;
 
 #[derive(Parser)]
