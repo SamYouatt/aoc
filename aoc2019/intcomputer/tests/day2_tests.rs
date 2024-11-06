@@ -1,13 +1,14 @@
-use intcomputer::{parse_tape, reader::StdInReader, writer::StdOutWriter, Computer};
+use std::sync::mpsc;
+
+use intcomputer::{parse_tape, Computer};
 
 #[test]
 fn first_input() {
     let input = "1,9,10,3,2,3,11,0,99,30,40,50";
     let tape = parse_tape(input);
-    let mut reader = StdInReader;
-    let mut writer = StdOutWriter;
+    let (sender, receiver) = mpsc::channel();
 
-    let mut computer = Computer::load(&tape, &mut reader, &mut writer);
+    let mut computer = Computer::load(&tape, receiver, sender);
 
     computer.run();
 
@@ -22,10 +23,9 @@ fn first_input() {
 fn third_input() {
     let input = "2,3,0,3,99";
     let tape = parse_tape(input);
-    let mut reader = StdInReader;
-    let mut writer = StdOutWriter;
+    let (sender, receiver) = mpsc::channel();
 
-    let mut computer = Computer::load(&tape, &mut reader, &mut writer);
+    let mut computer = Computer::load(&tape, receiver, sender);
 
     computer.run();
 
@@ -37,10 +37,9 @@ fn third_input() {
 fn fourth_input() {
     let input = "2,4,4,5,99,0";
     let tape = parse_tape(input);
-    let mut reader = StdInReader;
-    let mut writer = StdOutWriter;
+    let (sender, receiver) = mpsc::channel();
 
-    let mut computer = Computer::load(&tape, &mut reader, &mut writer);
+    let mut computer = Computer::load(&tape, receiver, sender);
 
     computer.run();
 
@@ -52,10 +51,9 @@ fn fourth_input() {
 fn fifth_input() {
     let input = "1,1,1,4,99,5,6,0,99";
     let tape = parse_tape(input);
-    let mut reader = StdInReader;
-    let mut writer = StdOutWriter;
+    let (sender, receiver) = mpsc::channel();
 
-    let mut computer = Computer::load(&tape, &mut reader, &mut writer);
+    let mut computer = Computer::load(&tape, receiver, sender);
 
     computer.run();
 
