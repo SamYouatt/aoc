@@ -27,3 +27,16 @@ fn example_that_makes_large_middle_num() {
 
     assert_eq!(out_receiver.recv().expect("no output"), tape[1]); 
 }
+
+#[test]
+fn example_that_outputs_16dig_number() {
+    let input = "1102,34915192,34915192,7,4,7,99,0";
+    let tape = parse_tape(input);
+    let (_in_sender, in_receiver) = mpsc::channel();
+    let (out_sender, out_receiver) = mpsc::channel();
+
+    let mut computer = Computer::load(&tape, in_receiver, out_sender);
+    computer.run();
+
+    assert!(out_receiver.recv().expect("no output") > 999999999999999); 
+}
