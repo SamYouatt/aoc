@@ -1,6 +1,6 @@
 use std::sync::mpsc;
 
-use crate::{parse_tape, Computer};
+use crate::computer::{parse_tape, Computer};
 
 pub fn both_parts(input: &str, user_input: i64) -> usize {
     let tape = parse_tape(input);

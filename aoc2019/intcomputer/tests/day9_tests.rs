@@ -1,6 +1,6 @@
 use std::sync::mpsc;
 
-use intcomputer::{parse_tape, Computer};
+use intcomputer::computer::{parse_tape, Computer};
 
 #[test]
 fn example_that_produces_self() {

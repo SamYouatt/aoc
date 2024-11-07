@@ -1,6 +1,6 @@
 use std::sync::mpsc;
 
-use intcomputer::{parse_tape, Computer};
+use intcomputer::computer::{parse_tape, Computer};
 
 #[test]
 fn beefy_example_input_below_8() {

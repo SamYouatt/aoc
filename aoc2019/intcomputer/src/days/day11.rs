@@ -4,7 +4,7 @@ use std::{
     thread,
 };
 
-use crate::{parse_tape, Computer};
+use crate::computer::{parse_tape, Computer};
 
 #[derive(PartialEq, Eq, Hash, Clone, Copy, Debug)]
 struct Point {
