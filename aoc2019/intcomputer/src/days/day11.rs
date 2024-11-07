@@ -4,19 +4,7 @@ use std::{
     thread,
 };
 
-use crate::computer::{parse_tape, Computer};
-
-#[derive(PartialEq, Eq, Hash, Clone, Copy, Debug)]
-struct Point {
-    x: i64,
-    y: i64,
-}
-
-impl Point {
-    pub fn new(x: i64, y: i64) -> Self {
-        Self { x, y }
-    }
-}
+use crate::{computer::{parse_tape, Computer}, Point};
 
 #[derive(Debug)]
 enum Colour {
