@@ -52,6 +52,43 @@ pub fn part1(input: &str) -> usize {
     visited.len()
 }
 
+pub fn part2(input: &str) {
+    let tape = parse_tape(input);
+    let (computer_sender, computer_receiver) = mpsc::channel();
+    let (robot_sender, robot_receiver) = mpsc::channel();
+
+    let mut grid: HashMap<Point, Colour> = HashMap::new();
+    let mut computer = Computer::load(&tape, computer_receiver, robot_sender);
+
+    grid.insert(Point::new(0, 0), Colour::White);
+
+    // Hoping this will close the robot's sender and so it will know to stop
+    thread::spawn(move || {
+        computer.run();
+        drop(computer);
+    });
+
+    robot(computer_sender, robot_receiver, &mut grid);
+
+    let min_x = grid.keys().min_by(|a, b| a.x.cmp(&b.x)).expect("should be a point").x;
+    let max_x = grid.keys().max_by(|a, b| a.x.cmp(&b.x)).expect("should be a point").x;
+    let min_y = grid.keys().min_by(|a, b| a.y.cmp(&b.y)).expect("should be a point").y;
+    let max_y = grid.keys().max_by(|a, b| a.y.cmp(&b.y)).expect("should be a point").y;
+
+    for y in (min_y..=max_y).rev() {
+        let mut row = String::new();
+        for x in min_x..=max_x {
+            let point = Point::new(x, y);     
+            let cell = match grid.get(&point) {
+                Some(Colour::White) => '#',
+                Some(Colour::Black) | None => ' ',
+            };
+            row.push(cell);
+        }
+        println!("{row}");
+    }
+}
+
 fn robot(sender: Sender<i64>, receiver: Receiver<i64>, grid: &mut HashMap<Point, Colour>) {
     let mut position = Point::new(0, 0);
     let mut facing = Direction::Up;
