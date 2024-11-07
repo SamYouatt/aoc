@@ -40,6 +40,10 @@ fn main() {
         (9, 1) => println!("Day 9 part 1: {}", day9::part1(day9_input)),
         (9, 2) => println!("Day 9 part 2: {}", day9::part2(day9_input)),
         (11, 1) => println!("Day 11 part 1: {}", day11::part1(day11_input)),
+        (11, 2) => {
+            println!("Day 11 part 2...");
+            day11::part2(day11_input);
+        }
         _ => eprintln!("Pick a proper day and part fool"),
     }
 }
