@@ -2,7 +2,7 @@ use std::sync::mpsc;
 
 use itertools::Itertools;
 
-use crate::{parse_tape, Computer};
+use crate::computer::{parse_tape, Computer};
 
 pub fn part1(input: &str) -> usize {
     let mut tape = parse_tape(input);
