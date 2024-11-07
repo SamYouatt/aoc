@@ -29,6 +29,7 @@ fn main() {
     let day7_input = include_str!("inputs/day7_input.txt");
     let day9_input = include_str!("inputs/day9_input.txt");
     let day11_input = include_str!("inputs/day11_input.txt");
+    let day13_input = include_str!("inputs/day13_input.txt");
 
     match (args.day, args.part) {
         (2, 1) => println!("Day 2 part 1: {}", day2::part1(day2_input)),
@@ -44,6 +45,7 @@ fn main() {
             println!("Day 11 part 2...");
             day11::part2(day11_input);
         }
+        (13, 1) => println!("Day 13 part 1: {}", day13::part1(day13_input)),
         _ => eprintln!("Pick a proper day and part fool"),
     }
 }
