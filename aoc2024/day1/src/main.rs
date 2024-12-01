@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use itertools::Itertools;
 
 fn main() {
     let input = include_str!("input.txt");
@@ -31,10 +31,7 @@ fn part2(input: &str) -> usize {
         .map(|(x, y)| (x.parse::<usize>().unwrap(), y.parse::<usize>().unwrap()))
         .unzip();
 
-    let list_y_freq = list_y.into_iter().fold(HashMap::new(), |mut acc, y| {
-        *acc.entry(y).or_insert(0) += 1;
-        acc
-    });
+    let list_y_freq = list_y.iter().counts();
 
     list_x
         .iter()
