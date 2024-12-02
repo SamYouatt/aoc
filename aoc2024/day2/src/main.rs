@@ -49,16 +49,11 @@ fn safe_with_dampening(report: &[usize]) -> bool {
         return true;
     }
 
-    for to_remove in 0..report.len() {
+    (0..report.len()).any(|to_remove| {
         let mut with_removed = report.to_vec();
         with_removed.remove(to_remove);
-
-        if is_safe(&with_removed) {
-            return true;
-        }
-    }
-
-    false
+        is_safe(&with_removed)
+    })
 }
 
 #[cfg(test)]
