@@ -1,4 +1,3 @@
 (executable
- (public_name ocaml2024)
- (name main)
- (libraries ocaml2024))
+  (public_name day1)
+  (libraries ocaml2024))
