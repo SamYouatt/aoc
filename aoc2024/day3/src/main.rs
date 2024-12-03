@@ -6,7 +6,7 @@ fn main() {
 }
 
 fn part_1(input: &str) -> usize {
-    let regex = regex::Regex::new(r#"mul\((\d+,\d+)\)"#).expect("invalid regex dummy");
+    let regex = regex::Regex::new(r"mul\((\d+,\d+)\)").expect("invalid regex dummy");
 
     regex
         .captures_iter(input)
@@ -22,7 +22,7 @@ fn part_1(input: &str) -> usize {
 
 fn part_2(input: &str) -> usize {
     let regex =
-        regex::Regex::new(r#"mul\((\d+,\d+)\)|(do\(\))|(don't\(\))"#).expect("invalid regex dummy");
+        regex::Regex::new(r"mul\((\d+,\d+)\)|(do\(\))|(don't\(\))").expect("invalid regex dummy");
 
     let mut total = 0;
     let mut enabled = true;
