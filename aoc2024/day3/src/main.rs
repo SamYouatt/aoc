@@ -9,8 +9,8 @@ fn part_1(input: &str) -> usize {
     let regex = regex::Regex::new(r"mul\((\d+,\d+)\)").expect("invalid regex dummy");
 
     regex
-        .captures_iter(input)
-        .map(|c| c.extract::<1>().0)
+        .find_iter(input)
+        .map(|m| m.as_str())
         .map(|content| {
             let (_, rem) = content.split_once('(').unwrap();
             let (rem, _) = rem.split_once(')').unwrap();
@@ -27,17 +27,14 @@ fn part_2(input: &str) -> usize {
     let mut total = 0;
     let mut enabled = true;
 
-    for capture in regex.captures_iter(input).map(|c| c.extract::<1>().0) {
-        if capture.starts_with("do(") {
-            enabled = true;
-            continue;
-        }
-        if capture.starts_with("don't") {
-            enabled = false;
-            continue;
-        }
+    for capture in regex.find_iter(input).map(|m| m.as_str()) {
+        enabled = match capture {
+            "do()" => true,
+            "don't()" => false,
+            _ => enabled,
+        };
 
-        if enabled {
+        if enabled && capture.starts_with("mul") {
             let (_, rem) = capture.split_once('(').unwrap();
             let (rem, _) = rem.split_once(')').unwrap();
             let (x, y) = rem.split_once(',').unwrap();
