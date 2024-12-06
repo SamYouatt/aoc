@@ -2,10 +2,13 @@ use std::collections::{HashMap, HashSet};
 
 fn main() {
     let input = include_str!("input.txt");
+    let (map, guard) = parse(input);
 
-    println!("Part 1: {}", part_1(input));
+    println!("Part 1: {}", part_1(map.clone(), guard));
+    println!("Part 2: {}", part_2(map, guard));
 }
 
+#[derive(Clone)]
 enum Tile {
     Obstacle,
     Free,
@@ -34,6 +37,7 @@ impl Coord {
     }
 }
 
+#[derive(Clone)]
 struct Map {
     tiles: HashMap<Coord, Tile>,
     width: isize,
@@ -62,9 +66,13 @@ impl Map {
             None => false,
         }
     }
+
+    fn set_tile(&mut self, position: Coord, tile: Tile) {
+        self.tiles.insert(position, tile);
+    }
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
 enum Direction {
     Up,
     Down,
@@ -98,7 +106,85 @@ struct Guard {
     facing: Direction,
 }
 
-fn part_1(input: &str) -> usize {
+fn part_1(map: Map, mut guard: Guard) -> usize {
+    let mut visited = HashSet::new();
+    visited.insert(guard.pos);
+
+    loop {
+        if map.facing_obstacle(guard.pos, guard.facing) {
+            guard.facing = guard.facing.turn_right();
+        }
+
+        guard.pos = guard.pos.forwards(guard.facing);
+
+        if !map.in_bounds(guard.pos) {
+            break;
+        }
+
+        visited.insert(guard.pos);
+    }
+
+    visited.len()
+}
+
+fn part_2(mut map: Map, mut guard: Guard) -> usize {
+    let guard_start = guard.pos;
+
+    let mut initially_visited = HashSet::new();
+    initially_visited.insert(guard.pos);
+
+    loop {
+        if map.facing_obstacle(guard.pos, guard.facing) {
+            guard.facing = guard.facing.turn_right();
+        }
+
+        guard.pos = guard.pos.forwards(guard.facing);
+
+        if !map.in_bounds(guard.pos) {
+            break;
+        }
+
+        initially_visited.insert(guard.pos);
+    }
+
+    initially_visited.remove(&guard_start);
+
+    guard.pos = guard_start;
+    guard.facing = Direction::Up;
+
+    let mut valid_locations = 0;
+    for &possible_obstacle in initially_visited.iter() {
+        let mut visited = HashSet::<(Coord, Direction)>::new();
+        map.set_tile(possible_obstacle, Tile::Obstacle);
+
+        loop {
+            while map.facing_obstacle(guard.pos, guard.facing) {
+                guard.facing = guard.facing.turn_right();
+            }
+
+            guard.pos = guard.pos.forwards(guard.facing);
+
+            if !map.in_bounds(guard.pos) {
+                break;
+            }
+
+            if visited.contains(&(guard.pos, guard.facing)) {
+                valid_locations += 1;
+                break;
+            }
+            visited.insert((guard.pos, guard.facing));
+        }
+
+        guard.pos = guard_start;
+        guard.facing = Direction::Up;
+        map.set_tile(possible_obstacle, Tile::Free);
+        visited.clear();
+    }
+
+    valid_locations
+}
+
+fn parse(input: &str) -> (Map, Guard) {
     let mut tiles = HashMap::new();
     let mut guard = Guard {
         pos: Coord::new(0, 0),
@@ -129,22 +215,5 @@ fn part_1(input: &str) -> usize {
 
     let map = Map::new(tiles, width as isize, height as isize);
 
-    let mut visited = HashSet::new();
-    visited.insert(guard.pos);
-
-    loop {
-        if map.facing_obstacle(guard.pos, guard.facing) {
-            guard.facing = guard.facing.turn_right();
-        }
-
-        guard.pos = guard.pos.forwards(guard.facing);
-
-        if !map.in_bounds(guard.pos) {
-            break;
-        }
-
-        visited.insert(guard.pos);
-    }
-
-    visited.len()
+    (map, guard)
 }
