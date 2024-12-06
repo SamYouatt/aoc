@@ -1,4 +1,9 @@
-use std::collections::{HashMap, HashSet};
+use std::{
+    collections::{HashMap, HashSet},
+    sync::atomic::AtomicUsize,
+};
+
+use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
 fn main() {
     let input = include_str!("input.txt");
@@ -127,7 +132,7 @@ fn part_1(map: Map, mut guard: Guard) -> usize {
     visited.len()
 }
 
-fn part_2(mut map: Map, mut guard: Guard) -> usize {
+fn part_2(map: Map, mut guard: Guard) -> usize {
     let guard_start = guard.pos;
 
     let mut initially_visited = HashSet::new();
@@ -152,36 +157,33 @@ fn part_2(mut map: Map, mut guard: Guard) -> usize {
     guard.pos = guard_start;
     guard.facing = Direction::Up;
 
-    let mut valid_locations = 0;
-    for &possible_obstacle in initially_visited.iter() {
+    let valid_locations = AtomicUsize::new(0);
+    initially_visited.par_iter().for_each(|&obstacle_location| {
+        let mut this_guard = guard.clone();
+        let mut this_map = map.clone();
         let mut visited = HashSet::<(Coord, Direction)>::new();
-        map.set_tile(possible_obstacle, Tile::Obstacle);
+        this_map.set_tile(obstacle_location, Tile::Obstacle);
 
         loop {
-            while map.facing_obstacle(guard.pos, guard.facing) {
-                guard.facing = guard.facing.turn_right();
+            while this_map.facing_obstacle(this_guard.pos, this_guard.facing) {
+                this_guard.facing = this_guard.facing.turn_right();
             }
 
-            guard.pos = guard.pos.forwards(guard.facing);
+            this_guard.pos = this_guard.pos.forwards(this_guard.facing);
 
-            if !map.in_bounds(guard.pos) {
+            if !this_map.in_bounds(this_guard.pos) {
                 break;
             }
 
-            if visited.contains(&(guard.pos, guard.facing)) {
-                valid_locations += 1;
+            if visited.contains(&(this_guard.pos, this_guard.facing)) {
+                valid_locations.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
                 break;
             }
-            visited.insert((guard.pos, guard.facing));
+            visited.insert((this_guard.pos, this_guard.facing));
         }
+    });
 
-        guard.pos = guard_start;
-        guard.facing = Direction::Up;
-        map.set_tile(possible_obstacle, Tile::Free);
-        visited.clear();
-    }
-
-    valid_locations
+    valid_locations.load(std::sync::atomic::Ordering::Relaxed)
 }
 
 fn parse(input: &str) -> (Map, Guard) {
