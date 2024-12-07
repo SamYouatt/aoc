@@ -66,12 +66,8 @@ fn can_work(nums: Vec<usize>, operator: Operator, desired: usize, allow_concat: 
         return false;
     }
 
-    if nums.len() == 1 && nums[0] == desired {
-        return true;
-    }
-
-    if nums.len() == 1 && nums[0] != desired {
-        return false;
+    if nums.len() == 1 {
+        return nums[0] == desired;
     }
 
     let head = match operator {
