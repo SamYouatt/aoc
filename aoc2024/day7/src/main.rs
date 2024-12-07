@@ -1,3 +1,5 @@
+use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
+
 fn main() {
     let input = include_str!("input.txt");
 
@@ -43,13 +45,14 @@ fn part_2(input: &str) -> usize {
         .collect::<Vec<_>>();
 
     equations
-        .into_iter()
+        .par_iter()
         .filter(|(result, nums)| {
-            can_work(nums.clone(), Operator::Plus, *result, true)
+            can_work(nums.to_vec(), Operator::Plus, *result, true)
                 || can_work(nums.to_vec(), Operator::Mult, *result, true)
                 || can_work(nums.to_vec(), Operator::Concat, *result, true)
         })
-        .fold(0, |acc, (result, _)| acc + result)
+        .map(|(result, _)| *result)
+        .reduce(|| 0, |acc, result| acc + result)
 }
 
 enum Operator {
@@ -59,6 +62,10 @@ enum Operator {
 }
 
 fn can_work(nums: Vec<usize>, operator: Operator, desired: usize, allow_concat: bool) -> bool {
+    if nums[0] > desired {
+        return false;
+    }
+
     if nums.len() == 1 && nums[0] == desired {
         return true;
     }
