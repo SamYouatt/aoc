@@ -1,1 +1,1 @@
-let () = print_endline "Hello, World!"
+let () = Files.readfile "input.txt"

@@ -1,4 +1,4 @@
 (executable
- (public_name aocaml2024)
+ (public_name main)
  (name main)
- (libraries aocaml2024))
+ (libraries files))
