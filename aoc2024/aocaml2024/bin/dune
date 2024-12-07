@@ -1,7 +1,7 @@
 (executable
  (public_name day1)
  (name day1)
- (libraries files))
+ (libraries files strings))
 
 (executable
  (public_name day2)
