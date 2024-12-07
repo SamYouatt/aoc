@@ -18,3 +18,4 @@ input.txt
 
 # Ignore ocaml
 _build/
+inputs/
