@@ -1,3 +1,0 @@
-(executable
-  (public_name day1)
-  (libraries ocaml2024))
