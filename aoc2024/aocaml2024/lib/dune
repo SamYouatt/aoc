@@ -1,0 +1,5 @@
+(library
+ (name aocaml2024))
+
+(library
+ (name files))
