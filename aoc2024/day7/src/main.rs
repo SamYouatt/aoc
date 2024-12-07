@@ -23,10 +23,7 @@ fn part_1(input: &str) -> usize {
 
     equations
         .into_iter()
-        .filter(|(result, nums)| {
-            can_work(nums[0], &nums[1..], Operator::Plus, *result, false)
-                || can_work(nums[0], &nums[1..], Operator::Mult, *result, false)
-        })
+        .filter(|(result, nums)| solvable(*result, &nums, nums.len() - 1, false))
         .fold(0, |acc, (result, _)| acc + result)
 }
 
@@ -46,50 +43,54 @@ fn part_2(input: &str) -> usize {
 
     equations
         .par_iter()
-        .filter(|(result, nums)| {
-            can_work(nums[0], &nums[1..], Operator::Plus, *result, true)
-                || can_work(nums[0], &nums[1..], Operator::Mult, *result, true)
-                || can_work(nums[0], &nums[1..], Operator::Concat, *result, true)
-        })
+        .filter(|(result, nums)| solvable(*result, &nums, nums.len() - 1, true))
         .map(|(result, _)| *result)
         .reduce(|| 0, |acc, result| acc + result)
 }
 
-enum Operator {
-    Plus,
-    Mult,
-    Concat,
-}
-
-fn can_work(
-    head: usize,
-    tail: &[usize],
-    operator: Operator,
-    desired: usize,
-    allow_concat: bool,
-) -> bool {
-    if head > desired {
-        return false;
+fn solvable(remainder: usize, numbers: &[usize], tail_ptr: usize, allow_concat: bool) -> bool {
+    if tail_ptr == 0 {
+        return remainder == numbers[0];
     }
 
-    if tail.len() == 0 {
-        return head == desired;
+    if remainder % numbers[tail_ptr] == 0
+        && solvable(
+            remainder / numbers[tail_ptr],
+            numbers,
+            tail_ptr - 1,
+            allow_concat,
+        )
+    {
+        return true;
     }
 
-    let new_head = match operator {
-        Operator::Plus => head + tail[0],
-        Operator::Mult => head * tail[0],
-        Operator::Concat => format!("{}{}", head, tail[0]).parse::<usize>().unwrap(),
-    };
+    if remainder >= numbers[tail_ptr]
+        && solvable(
+            remainder - numbers[tail_ptr],
+            numbers,
+            tail_ptr - 1,
+            allow_concat,
+        )
+    {
+        return true;
+    }
 
-    return can_work(new_head, &tail[1..], Operator::Plus, desired, allow_concat)
-        || can_work(new_head, &tail[1..], Operator::Mult, desired, allow_concat)
-        || (allow_concat
-            && can_work(
-                new_head,
-                &tail[1..],
-                Operator::Concat,
-                desired,
-                allow_concat,
-            ));
+    let remainder_str = remainder.to_string();
+    let tail_num_str = numbers[tail_ptr].to_string();
+    if allow_concat
+        && remainder > numbers[tail_ptr]
+        && remainder_str.ends_with(&tail_num_str)
+        && solvable(
+            remainder_str[0..(remainder_str.len() - tail_num_str.len())]
+                .parse::<usize>()
+                .unwrap(),
+            numbers,
+            tail_ptr - 1,
+            allow_concat,
+        )
+    {
+        return true;
+    }
+
+    false
 }
