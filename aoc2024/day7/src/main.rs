@@ -24,8 +24,8 @@ fn part_1(input: &str) -> usize {
     equations
         .into_iter()
         .filter(|(result, nums)| {
-            can_work(nums.clone(), Operator::Plus, *result, false)
-                || can_work(nums.to_vec(), Operator::Mult, *result, false)
+            can_work(nums[0], &nums[1..], Operator::Plus, *result, false)
+                || can_work(nums[0], &nums[1..], Operator::Mult, *result, false)
         })
         .fold(0, |acc, (result, _)| acc + result)
 }
@@ -47,9 +47,9 @@ fn part_2(input: &str) -> usize {
     equations
         .par_iter()
         .filter(|(result, nums)| {
-            can_work(nums.to_vec(), Operator::Plus, *result, true)
-                || can_work(nums.to_vec(), Operator::Mult, *result, true)
-                || can_work(nums.to_vec(), Operator::Concat, *result, true)
+            can_work(nums[0], &nums[1..], Operator::Plus, *result, true)
+                || can_work(nums[0], &nums[1..], Operator::Mult, *result, true)
+                || can_work(nums[0], &nums[1..], Operator::Concat, *result, true)
         })
         .map(|(result, _)| *result)
         .reduce(|| 0, |acc, result| acc + result)
@@ -61,25 +61,35 @@ enum Operator {
     Concat,
 }
 
-fn can_work(nums: Vec<usize>, operator: Operator, desired: usize, allow_concat: bool) -> bool {
-    if nums[0] > desired {
+fn can_work(
+    head: usize,
+    tail: &[usize],
+    operator: Operator,
+    desired: usize,
+    allow_concat: bool,
+) -> bool {
+    if head > desired {
         return false;
     }
 
-    if nums.len() == 1 {
-        return nums[0] == desired;
+    if tail.len() == 0 {
+        return head == desired;
     }
 
-    let head = match operator {
-        Operator::Plus => nums[0] + nums[1],
-        Operator::Mult => nums[0] * nums[1],
-        Operator::Concat => format!("{}{}", nums[0], nums[1]).parse::<usize>().unwrap(),
+    let new_head = match operator {
+        Operator::Plus => head + tail[0],
+        Operator::Mult => head * tail[0],
+        Operator::Concat => format!("{}{}", head, tail[0]).parse::<usize>().unwrap(),
     };
 
-    let mut new_nums = vec![head];
-    new_nums.extend_from_slice(&nums[2..]);
-
-    return can_work(new_nums.clone(), Operator::Plus, desired, allow_concat)
-        || can_work(new_nums.clone(), Operator::Mult, desired, allow_concat)
-        || (allow_concat && can_work(new_nums, Operator::Concat, desired, allow_concat));
+    return can_work(new_head, &tail[1..], Operator::Plus, desired, allow_concat)
+        || can_work(new_head, &tail[1..], Operator::Mult, desired, allow_concat)
+        || (allow_concat
+            && can_work(
+                new_head,
+                &tail[1..],
+                Operator::Concat,
+                desired,
+                allow_concat,
+            ));
 }
