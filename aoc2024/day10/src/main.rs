@@ -15,7 +15,7 @@ struct Trail {
 }
 
 fn both_parts(input: &str) -> (usize, usize) {
-    let mut starts = Vec::new();
+    let mut trails = Vec::new();
     let map: Vec<Vec<_>> = input
         .lines()
         .enumerate()
@@ -24,8 +24,14 @@ fn both_parts(input: &str) -> (usize, usize) {
                 .enumerate()
                 .map(|(x, char)| {
                     if char == '0' {
-                        starts.push((x as isize, y as isize));
+                        let start = (x as isize, y as isize);
+                        trails.push(Trail {
+                            start,
+                            current: start,
+                            previous: HashSet::from([start]),
+                        });
                     }
+
                     char.to_digit(10).unwrap() as isize
                 })
                 .collect()
@@ -35,25 +41,18 @@ fn both_parts(input: &str) -> (usize, usize) {
     let width = input.lines().nth(1).unwrap().chars().count();
     let height = input.lines().count();
 
-    let mut trails = starts
-        .into_iter()
-        .map(|start| Trail {
-            start,
-            current: start,
-            previous: HashSet::from([start]),
-        })
-        .collect::<Vec<_>>();
-
     let mut finished_trails: HashMap<(isize, isize), HashSet<(isize, isize)>> = HashMap::new();
     let mut finished_trail_routes: HashMap<(isize, isize), usize> = HashMap::new();
 
     while let Some(trail) = trails.pop() {
         let current_grad = map[trail.current.1 as usize][trail.current.0 as usize];
+
         if current_grad == 9 {
             finished_trails
                 .entry(trail.start)
                 .or_insert(HashSet::new())
                 .insert(trail.current);
+
             *finished_trail_routes.entry(trail.start).or_insert(0) += 1;
 
             continue;
