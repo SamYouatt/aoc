@@ -21,6 +21,28 @@ impl Coord {
     }
 }
 
+pub struct Delta {
+    pub dx: isize,
+    pub dy: isize,
+}
+
+impl Delta {
+    pub fn new(dx: isize, dy: isize) -> Self {
+        Self { dx, dy }
+    }
+}
+
+/// Will cast x and y to isize, will panic if this is bad
+/// Example: delta!(-1, 2)
+macro_rules! delta {
+    ($dx:expr, $dy:expr) => {
+        Delta {
+            dx: $x as isize,
+            dy: $y as isize,
+        }
+    };
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
