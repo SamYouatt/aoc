@@ -19,6 +19,13 @@ impl Coord {
     pub fn new(x: isize, y: isize) -> Self {
         Self { x, y }
     }
+
+    pub fn apply_delta(&self, delta: &Delta) -> Self {
+        Self {
+            x: self.x + delta.dx,
+            y: self.y + delta.dy,
+        }
+    }
 }
 
 pub struct Delta {
