@@ -3,7 +3,8 @@ use std::collections::{HashMap, HashSet};
 fn main() {
     let input = include_str!("input.txt");
 
-    println!("Part 1: {}", part_1(input));
+    println!("Part 1: {}", both_parts(input).0);
+    println!("Part 2: {}", both_parts(input).1);
 }
 
 #[derive(Debug)]
@@ -14,7 +15,7 @@ struct Trail {
     previous: HashSet<(isize, isize)>,
 }
 
-fn part_1(input: &str) -> usize {
+fn both_parts(input: &str) -> (usize, usize) {
     let mut starts = Vec::new();
     let map: Vec<Vec<_>> = input
         .lines()
@@ -46,6 +47,7 @@ fn part_1(input: &str) -> usize {
         .collect::<Vec<_>>();
 
     let mut finished_trails: HashMap<(isize, isize), HashSet<(isize, isize)>> = HashMap::new();
+    let mut finished_trail_routes: HashMap<(isize, isize), usize> = HashMap::new();
 
     while let Some(trail) = trails.pop() {
         if map[trail.current.1 as usize][trail.current.0 as usize] == 9 {
@@ -53,6 +55,7 @@ fn part_1(input: &str) -> usize {
                 .entry(trail.start)
                 .or_insert(HashSet::new())
                 .insert(trail.current);
+            *finished_trail_routes.entry(trail.start).or_insert(0) += 1;
             continue;
         }
 
@@ -83,7 +86,10 @@ fn part_1(input: &str) -> usize {
         }
     }
 
-    finished_trails.iter().fold(0, |acc, (_k, v)| acc + v.len())
+    (
+        finished_trails.iter().fold(0, |acc, (_k, v)| acc + v.len()),
+        finished_trail_routes.iter().fold(0, |acc, (_k, v)| acc + v),
+    )
 }
 
 fn in_bounds(point: (isize, isize), width: usize, height: usize) -> bool {
