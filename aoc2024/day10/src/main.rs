@@ -11,7 +11,6 @@ fn main() {
 struct Trail {
     start: (isize, isize),
     current: (isize, isize),
-    previous: HashSet<(isize, isize)>,
 }
 
 fn both_parts(input: &str) -> (usize, usize) {
@@ -28,7 +27,6 @@ fn both_parts(input: &str) -> (usize, usize) {
                         trails.push(Trail {
                             start,
                             current: start,
-                            previous: HashSet::from([start]),
                         });
                     }
 
@@ -62,16 +60,11 @@ fn both_parts(input: &str) -> (usize, usize) {
             let next = (trail.current.0 + delta.0, trail.current.1 + delta.1);
 
             if in_bounds(next, width, height)
-                && !trail.previous.contains(&next)
                 && (map[next.1 as usize][next.0 as usize] - current_grad) == 1
             {
-                let mut visited = trail.previous.clone();
-                visited.insert(next);
-
                 trails.push(Trail {
                     start: trail.start,
                     current: next,
-                    previous: visited,
                 });
             }
         }
