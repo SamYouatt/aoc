@@ -1,7 +1,7 @@
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Coord {
-    x: isize,
-    y: isize,
+    pub x: isize,
+    pub y: isize,
 }
 
 /// Will cast x and y to isize, will panic if this is bad
