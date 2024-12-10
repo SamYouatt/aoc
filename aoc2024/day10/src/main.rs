@@ -11,7 +11,6 @@ fn main() {
 struct Trail {
     start: (isize, isize),
     current: (isize, isize),
-    length: usize,
     previous: HashSet<(isize, isize)>,
 }
 
@@ -41,7 +40,6 @@ fn both_parts(input: &str) -> (usize, usize) {
         .map(|start| Trail {
             start,
             current: start,
-            length: 0,
             previous: HashSet::from([start]),
         })
         .collect::<Vec<_>>();
@@ -50,38 +48,32 @@ fn both_parts(input: &str) -> (usize, usize) {
     let mut finished_trail_routes: HashMap<(isize, isize), usize> = HashMap::new();
 
     while let Some(trail) = trails.pop() {
-        if map[trail.current.1 as usize][trail.current.0 as usize] == 9 {
+        let current_grad = map[trail.current.1 as usize][trail.current.0 as usize];
+        if current_grad == 9 {
             finished_trails
                 .entry(trail.start)
                 .or_insert(HashSet::new())
                 .insert(trail.current);
             *finished_trail_routes.entry(trail.start).or_insert(0) += 1;
+
             continue;
         }
 
-        for delta_y in -1_isize..2 {
-            for delta_x in -1_isize..2 {
-                if (delta_y == 0 && delta_x == 0) || (delta_y != 0 && delta_x != 0) {
-                    continue;
-                }
+        for delta in [(-1, 0), (1, 0), (0, -1), (0, 1)] {
+            let next = (trail.current.0 + delta.0, trail.current.1 + delta.1);
 
-                let next = (trail.current.0 + delta_x, trail.current.1 + delta_y);
-                if in_bounds(next, width, height)
-                    && !trail.previous.contains(&next)
-                    && (map[next.1 as usize][next.0 as usize]
-                        - map[trail.current.1 as usize][trail.current.0 as usize])
-                        == 1
-                {
-                    let mut visited = trail.previous.clone();
-                    visited.insert(next);
+            if in_bounds(next, width, height)
+                && !trail.previous.contains(&next)
+                && (map[next.1 as usize][next.0 as usize] - current_grad) == 1
+            {
+                let mut visited = trail.previous.clone();
+                visited.insert(next);
 
-                    trails.push(Trail {
-                        start: trail.start,
-                        current: next,
-                        length: trail.length + 1,
-                        previous: visited,
-                    });
-                }
+                trails.push(Trail {
+                    start: trail.start,
+                    current: next,
+                    previous: visited,
+                });
             }
         }
     }
