@@ -39,15 +39,17 @@ fn blink(
 
     let result = match stone {
         0 => blink(1, blink_n + 1, limit, cache),
-        x if x.to_string().len() % 2 == 0 => {
-            let as_string = stone.to_string();
-            let mid = (as_string.len() - 1) / 2;
-            let stone1 = as_string[..=mid].parse::<usize>().unwrap();
-            let stone2 = as_string[mid + 1..].parse::<usize>().unwrap();
-
-            blink(stone1, blink_n + 1, limit, cache) + blink(stone2, blink_n + 1, limit, cache)
+        _ => {
+            let digits = stone.ilog10() + 1;
+            if digits % 2 == 0 {
+                let stone1 = stone as isize / 10_isize.pow(digits / 2);
+                let stone2 = stone as isize % 10_isize.pow(digits / 2);
+                blink(stone1 as usize, blink_n + 1, limit, cache)
+                    + blink(stone2 as usize, blink_n + 1, limit, cache)
+            } else {
+                blink(stone * 2024, blink_n + 1, limit, cache)
+            }
         }
-        _ => blink(stone * 2024, blink_n + 1, limit, cache),
     };
 
     cache.insert((stone, blink_n), result);
