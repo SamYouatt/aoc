@@ -53,7 +53,7 @@ fn build_region(
     while let Some(next_loc) = work.pop_front() {
         region.insert(next_loc);
 
-        let neighbours = map.matching_neighbours(next_loc);
+        let neighbours = map.matching_neighbours(next_loc).collect::<Vec<_>>();
         perimeter += 4 - neighbours.len();
 
         for neighbour in neighbours.into_iter() {
@@ -70,7 +70,7 @@ fn build_region(
 fn get_sides(area: &HashSet<Coord>) -> usize {
     let mut side_count = 0;
 
-    for direction in Direction::deltas().iter() {
+    for direction in Direction::deltas() {
         let mut external_pos = HashSet::new();
         for pos in area {
             let applied = pos.apply_delta(direction);
