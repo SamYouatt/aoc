@@ -1,4 +1,4 @@
-use crate::{coord::Coord, delta, directions::Direction};
+use crate::{coord::Coord, directions::Direction};
 
 pub struct Grid<T> {
     pub width: usize,
@@ -43,28 +43,24 @@ impl<T: PartialEq> Grid<T> {
     }
 
     // TODO: make this an iterator
-    pub fn neighbours(&self, current: Coord) -> Vec<Coord> {
+    pub fn neighbours<'a>(&'a self, current: Coord) -> impl Iterator<Item = Coord> + 'a {
         let mut neighbours = Vec::new();
-        for delta in [delta!(-1, 0), delta!(1, 0), delta!(0, -1), delta!(0, 1)].iter() {
-            let applied = current.apply_delta(&delta);
+        for delta in Direction::deltas() {
+            let applied = current.apply_delta(delta);
             if self.in_bounds(&applied) {
                 neighbours.push(applied);
             }
         }
 
-        neighbours
+        neighbours.into_iter()
     }
 
     // TODO: make this an iterator
     /// Like neighbours but only the ones with the same value as the current
-    pub fn matching_neighbours(&self, current: Coord) -> Vec<Coord> {
-        let neighbours = self.neighbours(current);
+    pub fn matching_neighbours<'a>(&'a self, current: Coord) -> impl Iterator<Item = Coord> + 'a {
         let current_val = self.get(&current);
-        neighbours
-            .iter()
-            .filter(|&x| self.get(x) == current_val)
-            .map(|x| x.to_owned())
-            .collect()
+        self.neighbours(current)
+            .filter(move |x| self.get(&x) == current_val)
     }
 
     pub fn move_direction(&self, current: &Coord, direction: &Direction) -> Option<Coord> {
