@@ -21,7 +21,7 @@ impl Coord {
         Self { x, y }
     }
 
-    pub fn apply_delta(&self, delta: &Delta) -> Self {
+    pub fn apply_delta(&self, delta: Delta) -> Self {
         Self {
             x: self.x + delta.dx,
             y: self.y + delta.dy,
