@@ -29,6 +29,7 @@ impl Coord {
     }
 }
 
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 pub struct Delta {
     pub dx: isize,
     pub dy: isize,
