@@ -8,7 +8,7 @@ pub enum Direction {
 }
 
 impl Direction {
-    pub fn deltas() -> Vec<Delta> {
-        [delta!(-1, 0), delta!(1, 0), delta!(0, -1), delta!(0, 1)].to_vec()
+    pub fn deltas() -> impl Iterator<Item=Delta> {
+        [delta!(-1, 0), delta!(1, 0), delta!(0, -1), delta!(0, 1)].into_iter()
     }
 }
