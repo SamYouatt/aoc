@@ -4,4 +4,4 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-santa_claws = { path = "../../santa_claws" }
+santas_little_helpers = { path = "../../santas_little_helpers" }
