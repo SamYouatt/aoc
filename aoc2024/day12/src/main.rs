@@ -1,5 +1,6 @@
-use santa_claws::coord;
 use santa_claws::coord::Coord;
+use santa_claws::directions::Direction;
+use santa_claws::{coord, delta};
 use std::collections::{HashSet, VecDeque};
 
 use santa_claws::grid::Grid;
@@ -8,6 +9,7 @@ fn main() {
     let input = include_str!("input.txt");
 
     println!("Part 1: {}", part_1(input));
+    println!("Part 2: {}", part_2(input));
 }
 
 fn part_1(input: &str) -> usize {
@@ -24,7 +26,7 @@ fn part_1(input: &str) -> usize {
         for x in 0..map.width {
             let pos = coord!(x, y);
             if !visited.contains(&pos) {
-                let (area, perim) = build_region(pos, &map, &mut visited);
+                let (area, perim, _) = build_region(pos, &map, &mut visited);
                 cost += area * perim;
             }
         }
@@ -33,7 +35,34 @@ fn part_1(input: &str) -> usize {
     cost
 }
 
-fn build_region(start: Coord, map: &Grid<char>, visited: &mut HashSet<Coord>) -> (usize, usize) {
+fn part_2(input: &str) -> usize {
+    let map: Grid<char> = input
+        .lines()
+        .map(|line| line.chars().collect())
+        .collect::<Vec<Vec<_>>>()
+        .into();
+
+    let mut visited: HashSet<Coord> = HashSet::new();
+
+    let mut cost = 0;
+    for y in 0..map.height {
+        for x in 0..map.width {
+            let pos = coord!(x, y);
+            if !visited.contains(&pos) {
+                let (area, _, region) = build_region(pos, &map, &mut visited);
+                cost += area * get_sides(&region);
+            }
+        }
+    }
+
+    cost
+}
+
+fn build_region(
+    start: Coord,
+    map: &Grid<char>,
+    visited: &mut HashSet<Coord>,
+) -> (usize, usize, HashSet<Coord>) {
     let mut work = VecDeque::new();
     let mut region = HashSet::new();
     let mut perimeter = 0;
@@ -55,5 +84,32 @@ fn build_region(start: Coord, map: &Grid<char>, visited: &mut HashSet<Coord>) ->
         }
     }
 
-    (region.len(), perimeter)
+    (region.len(), perimeter, region)
+}
+
+fn get_sides(area: &HashSet<Coord>) -> usize {
+    let mut side_count = 0;
+
+    for direction in Direction::deltas().iter() {
+        let mut external_pos = HashSet::new();
+        for pos in area {
+            let applied = pos.apply_delta(direction);
+            if !area.contains(&applied) {
+                external_pos.insert(applied);
+            }
+        }
+
+        let mut redundant_positions = HashSet::new();
+        for ext_pos in &external_pos {
+            let mut next_on_edge = coord!(ext_pos.x + direction.dy, ext_pos.y + direction.dx);
+            while external_pos.contains(&next_on_edge) {
+                redundant_positions.insert(next_on_edge);
+                next_on_edge = coord!(next_on_edge.x + direction.dy, next_on_edge.y + direction.dx);
+            }
+        }
+
+        side_count += external_pos.len() - redundant_positions.len();
+    }
+
+    side_count
 }
