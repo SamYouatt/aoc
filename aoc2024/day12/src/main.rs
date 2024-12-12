@@ -1,18 +1,19 @@
-use santa_claws::coord::Coord;
-use santa_claws::directions::Direction;
-use santa_claws::{coord, delta};
 use std::collections::{HashSet, VecDeque};
 
+use santa_claws::coord;
+use santa_claws::coord::Coord;
+use santa_claws::directions::Direction;
 use santa_claws::grid::Grid;
 
 fn main() {
     let input = include_str!("input.txt");
+    let (p1, p2) = both_parts(input);
 
-    println!("Part 1: {}", part_1(input));
-    println!("Part 2: {}", part_2(input));
+    println!("Part 1: {}", p1);
+    println!("Part 2: {}", p2);
 }
 
-fn part_1(input: &str) -> usize {
+fn both_parts(input: &str) -> (usize, usize) {
     let map: Grid<char> = input
         .lines()
         .map(|line| line.chars().collect())
@@ -21,41 +22,20 @@ fn part_1(input: &str) -> usize {
 
     let mut visited: HashSet<Coord> = HashSet::new();
 
-    let mut cost = 0;
+    let mut part_1_cost = 0;
+    let mut part_2_cost = 0;
     for y in 0..map.height {
         for x in 0..map.width {
             let pos = coord!(x, y);
             if !visited.contains(&pos) {
-                let (area, perim, _) = build_region(pos, &map, &mut visited);
-                cost += area * perim;
+                let (area, perim, region) = build_region(pos, &map, &mut visited);
+                part_1_cost += area * perim;
+                part_2_cost += area * get_sides(&region);
             }
         }
     }
 
-    cost
-}
-
-fn part_2(input: &str) -> usize {
-    let map: Grid<char> = input
-        .lines()
-        .map(|line| line.chars().collect())
-        .collect::<Vec<Vec<_>>>()
-        .into();
-
-    let mut visited: HashSet<Coord> = HashSet::new();
-
-    let mut cost = 0;
-    for y in 0..map.height {
-        for x in 0..map.width {
-            let pos = coord!(x, y);
-            if !visited.contains(&pos) {
-                let (area, _, region) = build_region(pos, &map, &mut visited);
-                cost += area * get_sides(&region);
-            }
-        }
-    }
-
-    cost
+    (part_1_cost, part_2_cost)
 }
 
 fn build_region(
