@@ -6,9 +6,10 @@ pub struct Coord {
 
 /// Will cast x and y to isize, will panic if this is bad
 /// Example: coord!(3, 2)
+#[macro_export]
 macro_rules! coord {
     ($x:expr, $y:expr) => {
-        Coord {
+        crate::coord::Coord {
             x: $x as isize,
             y: $y as isize,
         }
@@ -41,11 +42,12 @@ impl Delta {
 
 /// Will cast x and y to isize, will panic if this is bad
 /// Example: delta!(-1, 2)
+#[macro_export]
 macro_rules! delta {
     ($dx:expr, $dy:expr) => {
-        Delta {
-            dx: $x as isize,
-            dy: $y as isize,
+        crate::coord::Delta {
+            dx: $dx as isize,
+            dy: $dy as isize,
         }
     };
 }
