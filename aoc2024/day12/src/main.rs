@@ -1,9 +1,9 @@
 use std::collections::{HashSet, VecDeque};
 
-use santa_claws::coord;
-use santa_claws::coord::Coord;
-use santa_claws::directions::Direction;
-use santa_claws::grid::Grid;
+use santas_little_helpers::coord;
+use santas_little_helpers::coord::Coord;
+use santas_little_helpers::directions::Direction;
+use santas_little_helpers::grid::Grid;
 
 fn main() {
     let input = include_str!("input.txt");
