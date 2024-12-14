@@ -46,7 +46,7 @@ impl<T: PartialEq> Grid<T> {
     pub fn neighbours<'a>(&'a self, current: Coord) -> impl Iterator<Item = Coord> + 'a {
         let mut neighbours = Vec::new();
         for delta in Direction::deltas() {
-            let applied = current.apply_delta(delta);
+            let applied = current + delta;
             if self.in_bounds(&applied) {
                 neighbours.push(applied);
             }

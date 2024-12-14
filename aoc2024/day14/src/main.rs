@@ -109,7 +109,7 @@ fn parse_robots(input: &str) -> Vec<Robot> {
 }
 
 fn apply_wrapping(pos: Coord, delta: Delta, width: usize, height: usize) -> Coord {
-    let new = pos.apply_delta(delta);
+    let new = pos + delta;
     let wrapped_x = new.x.rem_euclid(width as isize);
     let wrapped_y = new.y.rem_euclid(height as isize);
 

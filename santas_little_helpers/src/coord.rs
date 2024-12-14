@@ -1,3 +1,5 @@
+use std::ops::Add;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Coord {
     pub x: isize,
@@ -51,6 +53,28 @@ macro_rules! delta {
             dy: $dy as isize,
         }
     };
+}
+
+impl Add<Coord> for Delta {
+    type Output = Coord;
+
+    fn add(self, coord: Coord) -> Coord {
+        Coord {
+            x: self.dx + coord.x,
+            y: self.dy + coord.y,
+        }
+    }
+}
+
+impl Add<Delta> for Coord {
+    type Output = Coord;
+
+    fn add(self, delta: Delta) -> Coord {
+        Coord {
+            x: self.x + delta.dx,
+            y: self.y + delta.dy,
+        }
+    }
 }
 
 #[cfg(test)]
