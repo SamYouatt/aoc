@@ -69,6 +69,20 @@ fn part_2(mut robots: Vec<Robot>) -> usize {
         iteration += 1;
     }
 
+    for y in 0..height {
+        for x in 0..width {
+            if all_robots
+                .iter()
+                .any(|rob| rob.x == x as isize && rob.y == y as isize)
+            {
+                print!("#");
+            } else {
+                print!(" ");
+            }
+        }
+        print!("\n");
+    }
+
     iteration
 }
 
