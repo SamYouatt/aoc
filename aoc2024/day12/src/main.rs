@@ -73,7 +73,7 @@ fn get_sides(area: &HashSet<Coord>) -> usize {
     for direction in Direction::deltas() {
         let mut external_pos = HashSet::new();
         for pos in area {
-            let applied = pos.apply_delta(direction);
+            let applied = *pos + direction;
             if !area.contains(&applied) {
                 external_pos.insert(applied);
             }
