@@ -8,38 +8,19 @@ use santas_little_helpers::{
 
 fn main() {
     let input = include_str!("input.txt");
+    let robots = parse_robots(input);
 
-    println!("Part 1: {}", part_1(input));
-    println!("Part 2: {}", part_2(input));
+    println!("Part 1: {}", part_1(robots.clone()));
+    println!("Part 2: {}", part_2(robots));
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct Robot {
     pos: Coord,
     vel: Delta,
 }
 
-fn part_1(input: &str) -> usize {
-    let mut robots = input
-        .lines()
-        .map(|line| {
-            let (left, right) = line.split_once(' ').unwrap();
-
-            let (_, robot) = left.split_once('=').unwrap();
-            let (x, y) = robot.split_once(',').unwrap();
-            let (x, y) = (x.parse::<isize>().unwrap(), y.parse::<isize>().unwrap());
-
-            let (_, vel) = right.split_once('=').unwrap();
-            let (vx, vy) = vel.split_once(',').unwrap();
-            let (vx, vy) = (vx.parse::<isize>().unwrap(), vy.parse::<isize>().unwrap());
-
-            Robot {
-                pos: coord!(x, y),
-                vel: delta!(vx, vy),
-            }
-        })
-        .collect::<Vec<_>>();
-
+fn part_1(mut robots: Vec<Robot>) -> usize {
     let width = 101;
     let height = 103;
 
@@ -69,27 +50,7 @@ fn part_1(input: &str) -> usize {
     q1 * q2 * q3 * q4
 }
 
-fn part_2(input: &str) -> usize {
-    let mut robots = input
-        .lines()
-        .map(|line| {
-            let (left, right) = line.split_once(' ').unwrap();
-
-            let (_, robot) = left.split_once('=').unwrap();
-            let (x, y) = robot.split_once(',').unwrap();
-            let (x, y) = (x.parse::<isize>().unwrap(), y.parse::<isize>().unwrap());
-
-            let (_, vel) = right.split_once('=').unwrap();
-            let (vx, vy) = vel.split_once(',').unwrap();
-            let (vx, vy) = (vx.parse::<isize>().unwrap(), vy.parse::<isize>().unwrap());
-
-            Robot {
-                pos: coord!(x, y),
-                vel: delta!(vx, vy),
-            }
-        })
-        .collect::<Vec<_>>();
-
+fn part_2(mut robots: Vec<Robot>) -> usize {
     let width = 101;
     let height = 103;
 
@@ -109,6 +70,28 @@ fn part_2(input: &str) -> usize {
     }
 
     iteration
+}
+
+fn parse_robots(input: &str) -> Vec<Robot> {
+    input
+        .lines()
+        .map(|line| {
+            let (left, right) = line.split_once(' ').unwrap();
+
+            let (_, robot) = left.split_once('=').unwrap();
+            let (x, y) = robot.split_once(',').unwrap();
+            let (x, y) = (x.parse::<isize>().unwrap(), y.parse::<isize>().unwrap());
+
+            let (_, vel) = right.split_once('=').unwrap();
+            let (vx, vy) = vel.split_once(',').unwrap();
+            let (vx, vy) = (vx.parse::<isize>().unwrap(), vy.parse::<isize>().unwrap());
+
+            Robot {
+                pos: coord!(x, y),
+                vel: delta!(vx, vy),
+            }
+        })
+        .collect()
 }
 
 fn apply_wrapping(pos: Coord, delta: Delta, width: usize, height: usize) -> Coord {
