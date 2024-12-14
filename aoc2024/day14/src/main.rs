@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use santas_little_helpers::{
     coord,
     coord::{Coord, Delta},
@@ -8,6 +10,7 @@ fn main() {
     let input = include_str!("input.txt");
 
     println!("Part 1: {}", part_1(input));
+    println!("Part 2: {}", part_2(input));
 }
 
 #[derive(Debug)]
@@ -64,6 +67,48 @@ fn part_1(input: &str) -> usize {
     }
 
     q1 * q2 * q3 * q4
+}
+
+fn part_2(input: &str) -> usize {
+    let mut robots = input
+        .lines()
+        .map(|line| {
+            let (left, right) = line.split_once(' ').unwrap();
+
+            let (_, robot) = left.split_once('=').unwrap();
+            let (x, y) = robot.split_once(',').unwrap();
+            let (x, y) = (x.parse::<isize>().unwrap(), y.parse::<isize>().unwrap());
+
+            let (_, vel) = right.split_once('=').unwrap();
+            let (vx, vy) = vel.split_once(',').unwrap();
+            let (vx, vy) = (vx.parse::<isize>().unwrap(), vy.parse::<isize>().unwrap());
+
+            Robot {
+                pos: coord!(x, y),
+                vel: delta!(vx, vy),
+            }
+        })
+        .collect::<Vec<_>>();
+
+    let width = 101;
+    let height = 103;
+
+    let mut iteration = 0;
+    let mut all_robots = Vec::new();
+    let mut hash_robots = HashSet::new();
+
+    while all_robots.len() != hash_robots.len() || iteration == 0 {
+        for robot in robots.iter_mut() {
+            let new_pos = apply_wrapping(robot.pos, robot.vel, width, height);
+            robot.pos = new_pos;
+        }
+
+        all_robots = robots.iter().map(|rob| rob.pos).collect();
+        hash_robots = HashSet::from_iter(all_robots.clone());
+        iteration += 1;
+    }
+
+    iteration
 }
 
 fn apply_wrapping(pos: Coord, delta: Delta, width: usize, height: usize) -> Coord {
