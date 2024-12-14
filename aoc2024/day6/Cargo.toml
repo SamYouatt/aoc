@@ -5,3 +5,4 @@ edition = "2021"
 
 [dependencies]
 rayon = "1.10.0"
+santas_little_helpers = { path = "../../santas_little_helpers" }
