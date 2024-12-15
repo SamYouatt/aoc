@@ -143,23 +143,30 @@ fn part_2(input: &str) -> usize {
         println!("Moving {:?}", instruction);
         match instruction {
             Direction::Up | Direction::Down => {
-                shove_vertical(robot, instruction.delta(), &mut map);
-                robot = robot + instruction.delta();
+                shove_vertical(&mut robot, instruction.delta(), &mut map);
             }
             Direction::Left | Direction::Right => {
-                shove_horiz(robot, instruction.delta(), &mut map);
-                robot = robot + instruction.delta();
+                shove_horiz(&mut robot, instruction.delta(), &mut map);
             }
         }
         print_grid(&map);
         println!("");
     }
 
-    todo!()
+    let mut total = 0;
+    for (y, line) in map.grid.iter().enumerate() {
+        for (x, tile) in line.iter().enumerate() {
+            if tile == &Tile2::BoxL {
+                total += 100 * y + x;
+            }
+        }
+    }
+
+    total
 }
 
-fn shove_horiz(start: Coord, delta: Delta, map: &mut Grid<Tile2>) {
-    let mut next = start + delta;
+fn shove_horiz(robot: &mut Coord, delta: Delta, map: &mut Grid<Tile2>) {
+    let mut next = *robot + delta;
     let mut tiles_covered = 2;
 
     loop {
@@ -174,7 +181,7 @@ fn shove_horiz(start: Coord, delta: Delta, map: &mut Grid<Tile2>) {
     }
 
     let mut prev = Tile2::Floor;
-    let mut pos = start;
+    let mut pos = *robot;
     //println!("found empty at {:?}", next);
 
     for _ in 0..tiles_covered {
@@ -183,39 +190,53 @@ fn shove_horiz(start: Coord, delta: Delta, map: &mut Grid<Tile2>) {
         //println!("swapped to {:?} and {:?}", map.get_mut(pos), prev);
         pos = pos + delta;
     }
+
+    *robot = *robot + delta;
 }
 
-fn shove_vertical(start: Coord, delta: Delta, map: &mut Grid<Tile2>) {
-    let mut work = vec![start];
+fn shove_vertical(robot: &mut Coord, delta: Delta, map: &mut Grid<Tile2>) {
+    let mut work = vec![*robot];
     let mut completed_work = Vec::new();
+    let mut seen = HashSet::new();
 
     // BFS over coords that need updating
     while let Some(next_work) = work.pop() {
-        let next = next_work + delta;
+        completed_work.push(next_work);
 
-        let other_half_delta = match map.get(&next) {
-            Tile2::BoxL => Direction::Right.delta(),
-            Tile2::BoxR => Direction::Left.delta(),
+        let next = next_work + delta;
+        //println!("Working on {:?}", next);
+
+        let other_next = match map.get(&next) {
+            Tile2::BoxL => next + Direction::Right.delta(),
+            Tile2::BoxR => next + Direction::Left.delta(),
             Tile2::Wall => return,
             _ => continue,
         };
 
-        if !work.contains(&next) {
+        if !seen.contains(&next) {
             work.push(next);
+            seen.insert(next);
         }
 
-        let other_next = next + other_half_delta;
-        if !work.contains(&other_next) {
+        if !seen.contains(&other_next) {
             work.push(other_next);
+            seen.insert(other_next);
         }
-
-        completed_work.push(next_work);
     }
 
     // Update the coords in REVERSE order they were found
+    //println!("{:?}", completed_work);
     for coord in completed_work.iter().rev() {
+        //println!(
+        //    "Swapping {:?} and {:?}",
+        //    map.get(&(*coord + delta)),
+        //    map.get(&coord)
+        //);
         map.set(*coord + delta, *map.get(&coord));
+        map.set(*coord, Tile2::Floor);
     }
+
+    *robot = *robot + delta;
 }
 
 fn to_instruction(byte: u8) -> Direction {
