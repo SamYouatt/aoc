@@ -28,6 +28,14 @@ impl<T: PartialEq> Grid<T> {
         &self.grid[coord.y as usize][coord.x as usize]
     }
 
+    pub fn get_mut(&mut self, coord: Coord) -> &mut T {
+        &mut self.grid[coord.y as usize][coord.x as usize]
+    }
+
+    pub fn set(&mut self, coord: Coord, tile: T) {
+        self.grid[coord.y as usize][coord.x as usize] = tile;
+    }
+
     /// Will return none if out of bounds
     pub fn try_get(&self, coord: &Coord) -> Option<&T> {
         let y: usize = coord.y.try_into().ok()?;
