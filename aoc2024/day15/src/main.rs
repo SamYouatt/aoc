@@ -138,9 +138,9 @@ fn part_2(input: &str) -> usize {
         .filter(|b| *b != b'\n')
         .map(to_instruction);
 
-    print_grid(&map);
+    //print_grid(&map);
     for instruction in instructions {
-        println!("Moving {:?}", instruction);
+        //println!("Moving {:?}", instruction);
         match instruction {
             Direction::Up | Direction::Down => {
                 shove_vertical(&mut robot, instruction.delta(), &mut map);
@@ -149,8 +149,8 @@ fn part_2(input: &str) -> usize {
                 shove_horiz(&mut robot, instruction.delta(), &mut map);
             }
         }
-        print_grid(&map);
-        println!("");
+        //print_grid(&map);
+        //println!("");
     }
 
     let mut total = 0;
@@ -196,12 +196,13 @@ fn shove_horiz(robot: &mut Coord, delta: Delta, map: &mut Grid<Tile2>) {
 
 fn shove_vertical(robot: &mut Coord, delta: Delta, map: &mut Grid<Tile2>) {
     let mut work = vec![*robot];
-    let mut completed_work = Vec::new();
+    let mut completed_work = vec![*robot];
     let mut seen = HashSet::new();
 
     // BFS over coords that need updating
+    //println!("{:?}", work);
     while let Some(next_work) = work.pop() {
-        completed_work.push(next_work);
+        //println!("Working on {:?}", next_work);
 
         let next = next_work + delta;
         //println!("Working on {:?}", next);
@@ -216,24 +217,31 @@ fn shove_vertical(robot: &mut Coord, delta: Delta, map: &mut Grid<Tile2>) {
         if !seen.contains(&next) {
             work.push(next);
             seen.insert(next);
+            completed_work.push(next);
         }
 
         if !seen.contains(&other_next) {
             work.push(other_next);
             seen.insert(other_next);
+            completed_work.push(other_next);
         }
+
+        //println!("{:?}", work);
     }
 
     // Update the coords in REVERSE order they were found
-    //println!("{:?}", completed_work);
+    //println!("work to do: {:?}", completed_work);
     for coord in completed_work.iter().rev() {
         //println!(
-        //    "Swapping {:?} and {:?}",
+        //    "Swapping [{:?}]{:?} and [{:?}]{:?}",
+        //    *coord + delta,
         //    map.get(&(*coord + delta)),
+        //    coord,
         //    map.get(&coord)
         //);
         map.set(*coord + delta, *map.get(&coord));
         map.set(*coord, Tile2::Floor);
+        //print_grid(&map);
     }
 
     *robot = *robot + delta;
