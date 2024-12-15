@@ -1,11 +1,17 @@
 use std::collections::HashSet;
 
-use santas_little_helpers::{coord, coord::Coord, directions::Direction, grid::Grid};
+use santas_little_helpers::{
+    coord,
+    coord::{Coord, Delta},
+    directions::Direction,
+    grid::Grid,
+};
 
 fn main() {
     let input = include_str!("input.txt");
 
     println!("Part 1: {}", part_1(input));
+    println!("Part 2: {}", part_2(input));
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -74,6 +80,144 @@ fn part_1(input: &str) -> usize {
     boxes.iter().map(|b| (100 * b.y + b.x) as usize).sum()
 }
 
+struct Box(Vec<Coord>);
+
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+enum Tile2 {
+    Wall,
+    Floor,
+    Robot,
+    BoxL,
+    BoxR,
+}
+
+fn part_2(input: &str) -> usize {
+    let (map_raw, instructions) = input.split_once("\n\n").unwrap();
+
+    let mut map = Vec::new();
+    let mut robot = coord!(0, 0);
+
+    let (mut x, mut y) = (0, 0);
+    for line_raw in map_raw.lines() {
+        x = 0;
+
+        let mut line = Vec::new();
+        for tile in line_raw.trim().bytes() {
+            match tile {
+                b'#' => {
+                    line.push(Tile2::Wall);
+                    line.push(Tile2::Wall);
+                }
+                b'.' => {
+                    line.push(Tile2::Floor);
+                    line.push(Tile2::Floor);
+                }
+                b'O' => {
+                    line.push(Tile2::BoxL);
+                    line.push(Tile2::BoxR);
+                }
+                b'@' => {
+                    line.push(Tile2::Robot);
+                    line.push(Tile2::Floor);
+                    robot = coord!(x, y);
+                }
+                _ => unreachable!("bad tile"),
+            }
+
+            x += 2;
+        }
+
+        y += 1;
+        map.push(line);
+    }
+
+    let mut map = Grid::from_vecs(map);
+
+    let instructions = instructions
+        .bytes()
+        .filter(|b| *b != b'\n')
+        .map(to_instruction);
+
+    print_grid(&map);
+    for instruction in instructions {
+        println!("Moving {:?}", instruction);
+        match instruction {
+            Direction::Up | Direction::Down => {
+                shove_vertical(robot, instruction.delta(), &mut map);
+                robot = robot + instruction.delta();
+            }
+            Direction::Left | Direction::Right => {
+                shove_horiz(robot, instruction.delta(), &mut map);
+                robot = robot + instruction.delta();
+            }
+        }
+        print_grid(&map);
+        println!("");
+    }
+
+    todo!()
+}
+
+fn shove_horiz(start: Coord, delta: Delta, map: &mut Grid<Tile2>) {
+    let mut next = start + delta;
+    let mut tiles_covered = 2;
+
+    loop {
+        match map.get(&next) {
+            Tile2::Wall => return,
+            Tile2::Floor => break,
+            _ => {
+                next = next + delta;
+                tiles_covered += 1;
+            }
+        }
+    }
+
+    let mut prev = Tile2::Floor;
+    let mut pos = start;
+    //println!("found empty at {:?}", next);
+
+    for _ in 0..tiles_covered {
+        //println!("sawpping {:?} and {:?}", prev, map.get_mut(pos));
+        std::mem::swap(&mut prev, &mut map.get_mut(pos));
+        //println!("swapped to {:?} and {:?}", map.get_mut(pos), prev);
+        pos = pos + delta;
+    }
+}
+
+fn shove_vertical(start: Coord, delta: Delta, map: &mut Grid<Tile2>) {
+    let mut work = vec![start];
+    let mut completed_work = Vec::new();
+
+    // BFS over coords that need updating
+    while let Some(next_work) = work.pop() {
+        let next = next_work + delta;
+
+        let other_half_delta = match map.get(&next) {
+            Tile2::BoxL => Direction::Right.delta(),
+            Tile2::BoxR => Direction::Left.delta(),
+            Tile2::Wall => return,
+            _ => continue,
+        };
+
+        if !work.contains(&next) {
+            work.push(next);
+        }
+
+        let other_next = next + other_half_delta;
+        if !work.contains(&other_next) {
+            work.push(other_next);
+        }
+
+        completed_work.push(next_work);
+    }
+
+    // Update the coords in REVERSE order they were found
+    for coord in completed_work.iter().rev() {
+        map.set(*coord + delta, *map.get(&coord));
+    }
+}
+
 fn to_instruction(byte: u8) -> Direction {
     match byte {
         b'>' => Direction::Right,
@@ -102,5 +246,20 @@ fn space_in_direction(
         }
 
         next = next + direction.delta();
+    }
+}
+
+fn print_grid(map: &Grid<Tile2>) {
+    for line in map.grid.iter() {
+        for char in line.iter() {
+            match char {
+                Tile2::Wall => print!("#"),
+                Tile2::Floor => print!("."),
+                Tile2::Robot => print!("@"),
+                Tile2::BoxL => print!("["),
+                Tile2::BoxR => print!("]"),
+            }
+        }
+        print!("\n");
     }
 }
