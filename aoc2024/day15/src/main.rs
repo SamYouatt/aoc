@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashSet, VecDeque};
 
 use santas_little_helpers::{
     coord,
@@ -149,8 +149,10 @@ fn part_2(input: &str) -> usize {
                 shove_horiz(&mut robot, instruction.delta(), &mut map);
             }
         }
-        //print_grid(&map);
-        //println!("");
+        print_grid(&map);
+        println!("");
+
+        assert_grid(&map);
     }
 
     let mut total = 0;
@@ -161,6 +163,8 @@ fn part_2(input: &str) -> usize {
             }
         }
     }
+
+    //print_grid(&map);
 
     total
 }
@@ -195,13 +199,13 @@ fn shove_horiz(robot: &mut Coord, delta: Delta, map: &mut Grid<Tile2>) {
 }
 
 fn shove_vertical(robot: &mut Coord, delta: Delta, map: &mut Grid<Tile2>) {
-    let mut work = vec![*robot];
+    let mut work = VecDeque::from(vec![*robot]);
     let mut completed_work = vec![*robot];
     let mut seen = HashSet::new();
 
     // BFS over coords that need updating
     //println!("{:?}", work);
-    while let Some(next_work) = work.pop() {
+    while let Some(next_work) = work.pop_front() {
         //println!("Working on {:?}", next_work);
 
         let next = next_work + delta;
@@ -215,13 +219,13 @@ fn shove_vertical(robot: &mut Coord, delta: Delta, map: &mut Grid<Tile2>) {
         };
 
         if !seen.contains(&next) {
-            work.push(next);
+            work.push_back(next);
             seen.insert(next);
             completed_work.push(next);
         }
 
         if !seen.contains(&other_next) {
-            work.push(other_next);
+            work.push_back(other_next);
             seen.insert(other_next);
             completed_work.push(other_next);
         }
@@ -292,3 +296,32 @@ fn print_grid(map: &Grid<Tile2>) {
         print!("\n");
     }
 }
+
+fn assert_grid(map: &Grid<Tile2>) {
+    for line in map.grid.iter() {
+        let mut string = String::new();
+        for char in line.iter() {
+            match char {
+                Tile2::Wall => string.push_str("#"),
+                Tile2::Floor => string.push_str("."),
+                Tile2::Robot => string.push_str("@"),
+                Tile2::BoxL => string.push_str("["),
+                Tile2::BoxR => string.push_str("]"),
+            }
+        }
+
+        if string.contains("]]") || string.contains(".]") || string.contains("[[") || string.contains("[.") {
+            panic!()
+        }
+    }
+}
+
+//#[cfg(test)]
+//mod tests {
+//    use super::*;
+//
+//    #[test]
+//    fn help_me() {
+//        let grid = 
+//    }
+//}
