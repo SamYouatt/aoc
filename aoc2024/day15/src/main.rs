@@ -187,7 +187,7 @@ fn shove_horiz(robot: &mut Coord, delta: Delta, map: &mut Grid<Tile2>) {
 
 fn shove_vertical(robot: &mut Coord, delta: Delta, map: &mut Grid<Tile2>) {
     let mut work = VecDeque::from(vec![*robot]);
-    let mut completed_work = vec![*robot];
+    let mut tiles_to_update = vec![*robot];
     let mut seen = HashSet::new();
 
     while let Some(next_work) = work.pop_front() {
@@ -200,20 +200,18 @@ fn shove_vertical(robot: &mut Coord, delta: Delta, map: &mut Grid<Tile2>) {
             _ => continue,
         };
 
-        if !seen.contains(&next) {
+        if seen.insert(next) {
             work.push_back(next);
-            seen.insert(next);
-            completed_work.push(next);
+            tiles_to_update.push(next);
         }
 
-        if !seen.contains(&other_next) {
+        if seen.insert(other_next) {
             work.push_back(other_next);
-            seen.insert(other_next);
-            completed_work.push(other_next);
+            tiles_to_update.push(other_next);
         }
     }
 
-    for coord in completed_work.iter().rev() {
+    for coord in tiles_to_update.iter().rev() {
         map.set(*coord + delta, *map.get(&coord));
         map.set(*coord, Tile2::Floor);
     }
