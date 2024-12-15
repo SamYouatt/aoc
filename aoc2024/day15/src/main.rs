@@ -54,32 +54,22 @@ fn part_1(input: &str) -> usize {
 
     for instruction in instructions {
         if let Some(space) = space_in_direction(robot, instruction, &boxes, &map) {
-            println!("Can move {:?}", instruction);
-            println!("Found space {:?}", space);
             let delta = instruction.delta();
             robot = robot + delta;
 
-            let mut next = robot; // Robot's new position - possibly a box
+            let mut next = robot;
+
             while next != space {
-                println!("shifting {:?}", next);
                 boxes.insert(next + delta);
-                if !boxes.contains(&(next - delta)) {
-                    println!("last in line so removing behind {:?}", next);
-                    boxes.remove(&robot);
-                }
                 next = next + delta;
             }
 
-            println!("Robot: {:?}", robot);
-            println!("Num boxes: {}", boxes.len());
-            println!("Boxes: {:?}\n", boxes);
-        } else {
-            println!("Can't move {:?}\n", instruction);
+            // Remove trailing box if its the last one in the line
+            if !boxes.contains(&(robot - delta)) {
+                boxes.remove(&robot);
+            }
         }
     }
-
-    println!("Robot: {:?}", robot);
-    println!("Boxes: {:?}", boxes);
 
     boxes.iter().map(|b| (100 * b.y + b.x) as usize).sum()
 }
