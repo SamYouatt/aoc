@@ -1,4 +1,4 @@
-use std::ops::Add;
+use std::ops::{Add, Sub};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Coord {
@@ -66,6 +66,28 @@ impl Add<Delta> for Coord {
         Coord {
             x: self.x + delta.dx,
             y: self.y + delta.dy,
+        }
+    }
+}
+
+impl Sub<Coord> for Delta {
+    type Output = Coord;
+
+    fn sub(self, coord: Coord) -> Coord {
+        Coord {
+            x: self.dx - coord.x,
+            y: self.dy - coord.y,
+        }
+    }
+}
+
+impl Sub<Delta> for Coord {
+    type Output = Coord;
+
+    fn sub(self, delta: Delta) -> Coord {
+        Coord {
+            x: self.x - delta.dx,
+            y: self.y - delta.dy,
         }
     }
 }
