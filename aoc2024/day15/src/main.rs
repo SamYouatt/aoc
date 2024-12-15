@@ -80,8 +80,6 @@ fn part_1(input: &str) -> usize {
     boxes.iter().map(|b| (100 * b.y + b.x) as usize).sum()
 }
 
-struct Box(Vec<Coord>);
-
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 enum Tile2 {
     Wall,
@@ -138,9 +136,7 @@ fn part_2(input: &str) -> usize {
         .filter(|b| *b != b'\n')
         .map(to_instruction);
 
-    //print_grid(&map);
     for instruction in instructions {
-        //println!("Moving {:?}", instruction);
         match instruction {
             Direction::Up | Direction::Down => {
                 shove_vertical(&mut robot, instruction.delta(), &mut map);
@@ -149,10 +145,6 @@ fn part_2(input: &str) -> usize {
                 shove_horiz(&mut robot, instruction.delta(), &mut map);
             }
         }
-        print_grid(&map);
-        println!("");
-
-        assert_grid(&map);
     }
 
     let mut total = 0;
@@ -163,8 +155,6 @@ fn part_2(input: &str) -> usize {
             }
         }
     }
-
-    //print_grid(&map);
 
     total
 }
@@ -186,12 +176,9 @@ fn shove_horiz(robot: &mut Coord, delta: Delta, map: &mut Grid<Tile2>) {
 
     let mut prev = Tile2::Floor;
     let mut pos = *robot;
-    //println!("found empty at {:?}", next);
 
     for _ in 0..tiles_covered {
-        //println!("sawpping {:?} and {:?}", prev, map.get_mut(pos));
         std::mem::swap(&mut prev, &mut map.get_mut(pos));
-        //println!("swapped to {:?} and {:?}", map.get_mut(pos), prev);
         pos = pos + delta;
     }
 
@@ -203,13 +190,8 @@ fn shove_vertical(robot: &mut Coord, delta: Delta, map: &mut Grid<Tile2>) {
     let mut completed_work = vec![*robot];
     let mut seen = HashSet::new();
 
-    // BFS over coords that need updating
-    //println!("{:?}", work);
     while let Some(next_work) = work.pop_front() {
-        //println!("Working on {:?}", next_work);
-
         let next = next_work + delta;
-        //println!("Working on {:?}", next);
 
         let other_next = match map.get(&next) {
             Tile2::BoxL => next + Direction::Right.delta(),
@@ -229,23 +211,11 @@ fn shove_vertical(robot: &mut Coord, delta: Delta, map: &mut Grid<Tile2>) {
             seen.insert(other_next);
             completed_work.push(other_next);
         }
-
-        //println!("{:?}", work);
     }
 
-    // Update the coords in REVERSE order they were found
-    //println!("work to do: {:?}", completed_work);
     for coord in completed_work.iter().rev() {
-        //println!(
-        //    "Swapping [{:?}]{:?} and [{:?}]{:?}",
-        //    *coord + delta,
-        //    map.get(&(*coord + delta)),
-        //    coord,
-        //    map.get(&coord)
-        //);
         map.set(*coord + delta, *map.get(&coord));
         map.set(*coord, Tile2::Floor);
-        //print_grid(&map);
     }
 
     *robot = *robot + delta;
@@ -315,13 +285,3 @@ fn assert_grid(map: &Grid<Tile2>) {
         }
     }
 }
-
-//#[cfg(test)]
-//mod tests {
-//    use super::*;
-//
-//    #[test]
-//    fn help_me() {
-//        let grid = 
-//    }
-//}
