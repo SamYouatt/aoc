@@ -114,26 +114,22 @@ fn both_parts(input: &str) -> (usize, usize) {
     heap.push(Reverse(current.counter_clockwise()));
 
     while let Some(Reverse(node)) = heap.pop() {
+        if node.pos == end {
+            if node.total > best {
+                break;
+            }
+
+            best = node.total;
+            benches.extend(node.path);
+            continue;
+        }
+
         if !seen.contains_key(&(node.pos, node.facing)) {
             seen.insert((node.pos, node.facing), node.total);
         } else {
             if seen.get(&(node.pos, node.facing)).unwrap() < &node.total {
                 continue;
             }
-        }
-
-        if node.pos == end {
-            best = best.min(node.total);
-
-            if best == node.total {
-                benches.extend(node.path);
-            }
-
-            continue;
-        }
-
-        if node.total > best {
-            continue;
         }
 
         if map.get(&node.pos) == &Tile::Wall {
