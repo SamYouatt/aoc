@@ -7,15 +7,18 @@ use santas_little_helpers::{coord, coord::Coord, directions::Direction, grid::Gr
 
 fn main() {
     let input = include_str!("input.txt");
+    let (p1, p2) = both_parts(input);
 
-    println!("Part 1: {}", part_1(input));
+    println!("Part 1: {}", p1);
+    println!("Part 2: {}", p2);
 }
 
-#[derive(PartialEq, Eq, Clone, Copy, Hash, Debug)]
-struct Current {
+#[derive(PartialEq, Eq, Clone, Hash, Debug)]
+struct Node {
     pos: Coord,
     facing: Direction,
     total: usize,
+    path: Vec<Coord>,
 }
 
 #[derive(PartialEq, Eq)]
@@ -24,45 +27,52 @@ enum Tile {
     Wall,
 }
 
-impl Current {
-    fn clockwise(self: &Current) -> Self {
+impl Node {
+    fn clockwise(self: &Node) -> Self {
         Self {
             pos: self.pos,
             facing: self.facing.turn_right(),
             total: self.total + 1000,
+            path: self.path.clone(),
         }
     }
 
-    fn counter_clockwise(self: &Current) -> Self {
+    fn counter_clockwise(self: &Node) -> Self {
         Self {
             pos: self.pos,
             facing: self.facing.turn_left(),
             total: self.total + 1000,
+            path: self.path.clone(),
         }
     }
 
-    fn mv(self: &Current) -> Self {
+    fn mv(self: &Node) -> Self {
+        let new_pos = self.pos + self.facing.delta();
+        let mut path = self.path.clone();
+        path.push(new_pos);
+
         Self {
-            pos: self.pos + self.facing.delta(),
+            pos: new_pos,
             facing: self.facing,
             total: self.total + 1,
+            path,
         }
     }
 }
 
-impl Ord for Current {
+impl Ord for Node {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         self.total.cmp(&other.total)
     }
 }
 
-impl PartialOrd for Current {
+impl PartialOrd for Node {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         Some(self.total.cmp(&other.total))
     }
 }
 
-fn part_1(input: &str) -> usize {
+fn both_parts(input: &str) -> (usize, usize) {
     let mut map = Vec::new();
     let mut start = coord!(0, 0);
     let mut end = coord!(0, 0);
@@ -88,27 +98,42 @@ fn part_1(input: &str) -> usize {
     }
 
     let map = Grid::from_vecs(map);
-    let current = Current {
+    let current = Node {
         pos: start,
         facing: Direction::Right,
         total: 0,
+        path: vec![start],
     };
     let mut best = usize::MAX;
 
     let mut heap = BinaryHeap::new();
-    let mut seen = HashSet::new();
+    let mut seen = HashMap::new();
+    let mut benches = HashSet::new();
     heap.push(Reverse(current.mv()));
     heap.push(Reverse(current.clockwise()));
     heap.push(Reverse(current.counter_clockwise()));
 
     while let Some(Reverse(node)) = heap.pop() {
-        if !seen.insert((node.pos, node.facing)) {
-            continue;
+        if !seen.contains_key(&(node.pos, node.facing)) {
+            seen.insert((node.pos, node.facing), node.total);
+        } else {
+            if seen.get(&(node.pos, node.facing)).unwrap() < &node.total {
+                continue;
+            }
         }
 
         if node.pos == end {
-            best = node.total;
-            break;
+            best = best.min(node.total);
+
+            if best == node.total {
+                benches.extend(node.path);
+            }
+
+            continue;
+        }
+
+        if node.total > best {
+            continue;
         }
 
         if map.get(&node.pos) == &Tile::Wall {
@@ -120,5 +145,5 @@ fn part_1(input: &str) -> usize {
         heap.push(Reverse(node.counter_clockwise()));
     }
 
-    best
+    (best, benches.len())
 }
