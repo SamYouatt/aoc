@@ -1,6 +1,6 @@
 use crate::{coord::Delta, delta};
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum Direction {
     Up,
     Down,
@@ -28,6 +28,15 @@ impl Direction {
             Direction::Down => Direction::Left,
             Direction::Left => Direction::Up,
             Direction::Right => Direction::Down,
+        }
+    }
+
+    pub fn turn_left(self) -> Self {
+        match self {
+            Direction::Up => Direction::Left,
+            Direction::Down => Direction::Right,
+            Direction::Left => Direction::Down,
+            Direction::Right => Direction::Up,
         }
     }
 }
