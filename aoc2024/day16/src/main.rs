@@ -124,12 +124,12 @@ fn both_parts(input: &str) -> (usize, usize) {
             continue;
         }
 
-        if !seen.contains_key(&(node.pos, node.facing)) {
-            seen.insert((node.pos, node.facing), node.total);
-        } else {
-            if seen.get(&(node.pos, node.facing)).unwrap() < &node.total {
+        if let Some(&existing_total) = seen.get(&(node.pos, node.facing)) {
+            if existing_total < node.total {
                 continue;
             }
+        } else {
+            seen.insert((node.pos, node.facing), node.total);
         }
 
         if map.get(&node.pos) == &Tile::Wall {
