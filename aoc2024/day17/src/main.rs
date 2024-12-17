@@ -44,12 +44,14 @@ impl Puter {
     }
 
     fn run(&mut self) -> bool {
-        let instruction = match self.program.get(self.ins_ptr) {
-            Some(ins) => ins,
-            None => return true,
+        let (instruction, operand) = match (
+            self.program.get(self.ins_ptr),
+            self.program.get(self.ins_ptr + 1),
+        ) {
+            (Some(ins), Some(op)) => (*ins, *op),
+            _ => return true,
         };
 
-        let operand = self.program[self.ins_ptr + 1];
         self.ins_ptr += 2;
 
         match instruction {
