@@ -17,21 +17,18 @@ struct Puter {
 
 impl Puter {
     fn parse(input: &str) -> Self {
-        let (first, rest) = input.split_once('\n').unwrap();
-        let (_, a) = first.split_once(": ").unwrap();
+        let lines = input.lines().collect::<Vec<_>>();
+        let (_, a) = lines[0].split_once(": ").unwrap();
         let a = a.parse::<usize>().unwrap();
 
-        let (second, rest) = rest.split_once('\n').unwrap();
-        let (_, b) = second.split_once(": ").unwrap();
+        let (_, b) = lines[1].split_once(": ").unwrap();
         let b = b.parse::<usize>().unwrap();
 
-        let (third, rest) = rest.split_once("\n\n").unwrap();
-        let (_, c) = third.split_once(": ").unwrap();
+        let (_, c) = lines[2].split_once(": ").unwrap();
         let c = c.parse::<usize>().unwrap();
 
-        let (_, program) = rest.split_once(": ").unwrap();
+        let (_, program) = lines[4].split_once(": ").unwrap();
         let program = program
-            .trim()
             .split(',')
             .map(|p| p.parse::<usize>().unwrap())
             .collect::<Vec<_>>();
