@@ -8,9 +8,9 @@ fn main() {
 #[derive(Debug, Clone)]
 struct Puter {
     ins_ptr: usize,
-    reg_a: usize,
-    reg_b: usize,
-    reg_c: usize,
+    a: usize,
+    b: usize,
+    c: usize,
     program: Vec<usize>,
     out: Vec<usize>,
 }
@@ -35,9 +35,9 @@ impl Puter {
 
         Self {
             ins_ptr: 0,
-            reg_a: a,
-            reg_b: b,
-            reg_c: c,
+            a,
+            b,
+            c,
             program,
             out: vec![],
         }
@@ -55,32 +55,15 @@ impl Puter {
         self.ins_ptr += 2;
 
         match instruction {
-            0 => {
-                self.reg_a = self.reg_a / 2_usize.pow(self.combo(operand) as u32);
-            }
-            1 => {
-                self.reg_b = self.reg_b ^ operand;
-            }
-            2 => {
-                self.reg_b = self.combo(operand) % 8;
-            }
-            3 => {
-                if self.reg_a != 0 {
-                    self.ins_ptr = operand;
-                }
-            }
-            4 => {
-                self.reg_b = self.reg_b ^ self.reg_c;
-            }
-            5 => {
-                self.out.push(self.combo(operand) % 8);
-            }
-            6 => {
-                self.reg_b = self.reg_a / 2_usize.pow(self.combo(operand) as u32);
-            }
-            7 => {
-                self.reg_c = self.reg_a / 2_usize.pow(self.combo(operand) as u32);
-            }
+            0 => self.a = self.a / 2_usize.pow(self.combo(operand) as u32),
+            1 => self.b = self.b ^ operand,
+            2 => self.b = self.combo(operand) % 8,
+            3 if self.a != 0 => self.ins_ptr = operand,
+            3 => {}
+            4 => self.b = self.b ^ self.c,
+            5 => self.out.push(self.combo(operand) % 8),
+            6 => self.b = self.a / 2_usize.pow(self.combo(operand) as u32),
+            7 => self.c = self.a / 2_usize.pow(self.combo(operand) as u32),
             x => panic!("invalid opcode {x}"),
         }
 
@@ -89,9 +72,9 @@ impl Puter {
 
     fn combo(&self, operand: usize) -> usize {
         match operand {
-            4 => self.reg_a,
-            5 => self.reg_b,
-            6 => self.reg_c,
+            4 => self.a,
+            5 => self.b,
+            6 => self.c,
             x if x < 4 => x,
             _ => panic!("bad divide combo"),
         }
@@ -168,7 +151,7 @@ fn find_suitable_a(
     loop {
         let x = program.len() - matched_nums;
         let mut puter = base_puter.clone();
-        puter.reg_a = a;
+        puter.a = a;
 
         while !puter.run() {}
 
