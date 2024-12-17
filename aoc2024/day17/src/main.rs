@@ -51,54 +51,38 @@ impl Puter {
             Some(ins) => ins,
             None => return true,
         };
+
         let operand = self.program[self.ins_ptr + 1];
+        self.ins_ptr += 2;
 
         match instruction {
             0 => {
-                let numerator = self.reg_a;
-                let denom = 2_isize.pow(self.combo(operand) as u32);
-                self.reg_a = numerator / denom as usize;
-                self.ins_ptr += 2;
+                self.reg_a = self.reg_a / 2_usize.pow(self.combo(operand) as u32);
             }
             1 => {
                 self.reg_b = self.reg_b ^ operand;
-                self.ins_ptr += 2;
             }
             2 => {
-                let combo = self.combo(operand);
-                self.reg_b = combo % 8;
-                self.ins_ptr += 2;
+                self.reg_b = self.combo(operand) % 8;
             }
             3 => {
                 if self.reg_a != 0 {
-                    let jump = operand;
-                    self.ins_ptr = jump;
-                } else {
-                    self.ins_ptr += 2;
+                    self.ins_ptr = operand;
                 }
             }
             4 => {
                 self.reg_b = self.reg_b ^ self.reg_c;
-                self.ins_ptr += 2;
             }
             5 => {
-                let combo = self.combo(operand);
-                self.out.push(combo % 8);
-                self.ins_ptr += 2;
+                self.out.push(self.combo(operand) % 8);
             }
             6 => {
-                let numerator = self.reg_a;
-                let denom = 2_isize.pow(self.combo(operand) as u32);
-                self.reg_b = numerator / denom as usize;
-                self.ins_ptr += 2;
+                self.reg_b = self.reg_a / 2_usize.pow(self.combo(operand) as u32);
             }
             7 => {
-                let numerator = self.reg_a;
-                let denom = 2_isize.pow(self.combo(operand) as u32);
-                self.reg_c = numerator / denom as usize;
-                self.ins_ptr += 2;
+                self.reg_c = self.reg_a / 2_usize.pow(self.combo(operand) as u32);
             }
-            x => unreachable!("invalid opcode {x}"),
+            x => panic!("invalid opcode {x}"),
         }
 
         false
@@ -106,14 +90,11 @@ impl Puter {
 
     fn combo(&self, operand: usize) -> usize {
         match operand {
-            0 => 0,
-            1 => 1,
-            2 => 2,
-            3 => 3,
             4 => self.reg_a,
             5 => self.reg_b,
             6 => self.reg_c,
-            _ => unreachable!("bad divide combo"),
+            x if x < 4 => x,
+            _ => panic!("bad divide combo"),
         }
     }
 }
@@ -131,7 +112,7 @@ fn part_1(input: &str) -> String {
         .join(",")
 }
 
-fn part_2(input: &str) -> String {
+fn part_2(input: &str) -> usize {
     let base_puter = Puter::parse(input);
 
     // Observations:
@@ -168,11 +149,11 @@ fn part_2(input: &str) -> String {
     let mut start_a = 0;
     for matching_nums in 1..=16 {
         let a = find_suitable_a(start_a, matching_nums, &base_puter.program, &base_puter);
-        if matching_nums != 16 {
-            start_a = 8 * a;
-        } else {
-            return a.to_string();
+
+        if matching_nums == 16 {
+            return a;
         }
+        start_a = 8 * a;
     }
 
     unreachable!("never found answer");
