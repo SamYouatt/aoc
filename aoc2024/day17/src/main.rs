@@ -114,6 +114,16 @@ fn part_2(input: &str) -> usize {
     // Second last number stays on the same cycle but one tier down
     // So stays on 0 in region 8>64 or 8^(length)
     //
+    // Program:
+    // b <- a % 8
+    // b <- b ^ 1
+    // c <- a / 2^b
+    // b <- b ^ b
+    // b <- b ^ c
+    // out <- b & 8
+    // a <- a / 2^3
+    // jnz 0 if a > 0
+    //
     // From examining program:
     // what basically happens is:
     // while a != 0:
