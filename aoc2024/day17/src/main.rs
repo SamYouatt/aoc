@@ -16,6 +16,36 @@ struct Puter {
 }
 
 impl Puter {
+    fn parse(input: &str) -> Self {
+        let (first, rest) = input.split_once('\n').unwrap();
+        let (_, a) = first.split_once(": ").unwrap();
+        let a = a.parse::<usize>().unwrap();
+
+        let (second, rest) = rest.split_once('\n').unwrap();
+        let (_, b) = second.split_once(": ").unwrap();
+        let b = b.parse::<usize>().unwrap();
+
+        let (third, rest) = rest.split_once("\n\n").unwrap();
+        let (_, c) = third.split_once(": ").unwrap();
+        let c = c.parse::<usize>().unwrap();
+
+        let (_, program) = rest.split_once(": ").unwrap();
+        let program = program
+            .trim()
+            .split(',')
+            .map(|p| p.parse::<usize>().unwrap())
+            .collect::<Vec<_>>();
+
+        Self {
+            ins_ptr: 0,
+            reg_a: a,
+            reg_b: b,
+            reg_c: c,
+            program,
+            out: vec![],
+        }
+    }
+
     fn run(&mut self) -> bool {
         let instruction = match self.program.get(self.ins_ptr) {
             Some(ins) => ins,
@@ -89,33 +119,7 @@ impl Puter {
 }
 
 fn part_1(input: &str) -> String {
-    let (first, rest) = input.split_once('\n').unwrap();
-    let (_, a) = first.split_once(": ").unwrap();
-    let a = a.parse::<usize>().unwrap();
-
-    let (second, rest) = rest.split_once('\n').unwrap();
-    let (_, b) = second.split_once(": ").unwrap();
-    let b = b.parse::<usize>().unwrap();
-
-    let (third, rest) = rest.split_once("\n\n").unwrap();
-    let (_, c) = third.split_once(": ").unwrap();
-    let c = c.parse::<usize>().unwrap();
-
-    let (_, program) = rest.split_once(": ").unwrap();
-    let program = program
-        .trim()
-        .split(',')
-        .map(|p| p.parse::<usize>().unwrap())
-        .collect::<Vec<_>>();
-
-    let mut puter = Puter {
-        ins_ptr: 0,
-        reg_a: a,
-        reg_b: b,
-        reg_c: c,
-        program,
-        out: vec![],
-    };
+    let mut puter = Puter::parse(input);
 
     while !puter.run() {}
 
@@ -128,33 +132,7 @@ fn part_1(input: &str) -> String {
 }
 
 fn part_2(input: &str) -> String {
-    let (first, rest) = input.split_once('\n').unwrap();
-    let (_, a) = first.split_once(": ").unwrap();
-    let a = a.parse::<usize>().unwrap();
-
-    let (second, rest) = rest.split_once('\n').unwrap();
-    let (_, b) = second.split_once(": ").unwrap();
-    let b = b.parse::<usize>().unwrap();
-
-    let (third, rest) = rest.split_once("\n\n").unwrap();
-    let (_, c) = third.split_once(": ").unwrap();
-    let c = c.parse::<usize>().unwrap();
-
-    let (_, program) = rest.split_once(": ").unwrap();
-    let program = program
-        .trim()
-        .split(',')
-        .map(|p| p.parse::<usize>().unwrap())
-        .collect::<Vec<_>>();
-
-    let base_puter = Puter {
-        ins_ptr: 0,
-        reg_a: a,
-        reg_b: b,
-        reg_c: c,
-        program: program.clone(),
-        out: vec![],
-    };
+    let base_puter = Puter::parse(input);
 
     // Observations:
     // ignore 0 its the same as 1 so consider 1 the base for searches
@@ -189,7 +167,7 @@ fn part_2(input: &str) -> String {
 
     let mut start_a = 0;
     for matching_nums in 1..=16 {
-        let a = find_suitable_a(start_a, matching_nums, &program, &base_puter);
+        let a = find_suitable_a(start_a, matching_nums, &base_puter.program, &base_puter);
         if matching_nums != 16 {
             start_a = 8 * a;
         } else {
