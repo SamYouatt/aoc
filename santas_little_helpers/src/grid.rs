@@ -15,6 +15,23 @@ impl<T: PartialEq> Grid<T> {
         }
     }
 
+    pub fn init(init_tile: T, width: usize, height: usize) -> Self
+    where
+        T: Clone,
+    {
+        let mut rows = Vec::new();
+        for _ in 0..height {
+            let row = vec![init_tile.clone(); width];
+            rows.push(row);
+        }
+
+        Self {
+            grid: rows,
+            width,
+            height,
+        }
+    }
+
     pub fn from_vecs(grid: Vec<Vec<T>>) -> Self {
         Self {
             width: grid[0].len(),
