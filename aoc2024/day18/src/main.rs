@@ -8,6 +8,7 @@ fn main() {
     let input = include_str!("input.txt");
 
     println!("Part 1: {}", part_1(input));
+    println!("Part 2: {}", part_2(input));
 }
 
 fn part_1(input: &str) -> usize {
@@ -25,10 +26,43 @@ fn part_1(input: &str) -> usize {
         map.set(coord, true);
     }
 
-    bfs(coord!(0, 0), &map, coord!(size - 1, size - 1))
+    bfs(coord!(0, 0), &map, coord!(size - 1, size - 1)).unwrap()
 }
 
-fn bfs(start: Coord, map: &Grid<bool>, goal: Coord) -> usize {
+fn part_2(input: &str) -> String {
+    let size = 71;
+
+    let coords = input
+        .lines()
+        .map(|line| {
+            let (x, y) = line.split_once(',').unwrap();
+            let x = x.parse::<isize>().unwrap();
+            let y = y.parse::<isize>().unwrap();
+            coord!(x, y)
+        })
+        .collect::<Vec<_>>();
+
+    let (mut left, mut right) = (1024, coords.len());
+
+    while left < right - 1 {
+        let mid = (left + right) / 2;
+
+        let mut map = Grid::init(false, size, size);
+
+        for &coord in &coords[..mid] {
+            map.set(coord, true);
+        }
+
+        match bfs(coord!(0, 0), &map, coord!(size - 1, size - 1)) {
+            Some(_) => left = mid,
+            None => right = mid,
+        }
+    }
+
+    format!("{},{}", coords[left].x, coords[left].y)
+}
+
+fn bfs(start: Coord, map: &Grid<bool>, goal: Coord) -> Option<usize> {
     let mut queue = VecDeque::new();
     let mut visited = HashSet::new();
 
@@ -37,7 +71,7 @@ fn bfs(start: Coord, map: &Grid<bool>, goal: Coord) -> usize {
 
     while let Some((pos, steps)) = queue.pop_front() {
         if pos == goal {
-            return steps;
+            return Some(steps);
         }
 
         for next in map.neighbours(pos) {
@@ -50,5 +84,5 @@ fn bfs(start: Coord, map: &Grid<bool>, goal: Coord) -> usize {
         }
     }
 
-    unreachable!("found no path");
+    None
 }
