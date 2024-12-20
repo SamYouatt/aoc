@@ -1,12 +1,17 @@
 use std::collections::{HashMap, VecDeque};
 
 use itertools::Itertools;
-use santas_little_helpers::{coord, grid::Grid};
+use santas_little_helpers::coord;
+use santas_little_helpers::{coord::Coord, grid::Grid};
 
 fn main() {
     let input = include_str!("input.txt");
 
-    println!("Part 1: {}", part_1(input));
+    let (grid, start, end) = parse(input);
+    let distances = distances(&grid, start, end);
+
+    println!("Part 1: {}", part_1(&distances));
+    println!("Part 2: {}", part_2(&distances));
 }
 
 #[derive(PartialEq, Eq)]
@@ -15,7 +20,37 @@ enum Tile {
     Wall,
 }
 
-fn part_1(input: &str) -> usize {
+fn part_1(distances: &HashMap<Coord, usize>) -> usize {
+    let mut possible_cheats = 0;
+
+    for ((pos1, cost1), (pos2, cost2)) in distances.iter().tuple_combinations() {
+        let dist = pos1.manhattan_dist(pos2);
+        let cost_saving = cost1.abs_diff(*cost2);
+
+        if dist <= 2 && cost_saving >= dist + 100 {
+            possible_cheats += 1;
+        }
+    }
+
+    possible_cheats
+}
+
+fn part_2(distances: &HashMap<Coord, usize>) -> usize {
+    let mut possible_cheats = 0;
+
+    for ((pos1, cost1), (pos2, cost2)) in distances.iter().tuple_combinations() {
+        let dist = pos1.manhattan_dist(pos2);
+        let cost_saving = cost1.abs_diff(*cost2);
+
+        if dist <= 20 && cost_saving >= dist + 100 {
+            possible_cheats += 1;
+        }
+    }
+
+    possible_cheats
+}
+
+fn parse(input: &str) -> (Grid<Tile>, Coord, Coord) {
     let mut start = coord!(0, 0);
     let mut end = coord!(0, 0);
 
@@ -42,6 +77,10 @@ fn part_1(input: &str) -> usize {
 
     let grid = Grid::from_vecs(grid);
 
+    (grid, start, end)
+}
+
+fn distances(grid: &Grid<Tile>, start: Coord, end: Coord) -> HashMap<Coord, usize> {
     let mut queue = VecDeque::new();
     let mut distances = HashMap::new();
     queue.push_back((start, 0_usize));
@@ -61,16 +100,5 @@ fn part_1(input: &str) -> usize {
         }
     }
 
-    let mut possible_cheats = 0;
-
-    for ((pos1, cost1), (pos2, cost2)) in distances.iter().tuple_combinations() {
-        let dist = pos1.manhattan_dist(pos2);
-        let cost_saving = cost1.abs_diff(*cost2);
-
-        if dist <= 2 && cost_saving >= dist + 100 {
-            possible_cheats += 1;
-        }
-    }
-
-    possible_cheats
+    distances
 }
