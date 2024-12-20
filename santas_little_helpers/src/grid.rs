@@ -67,7 +67,7 @@ impl<T: PartialEq> Grid<T> {
             && coord.y < self.height as isize
     }
 
-    // TODO: make this an iterator
+    /// An iterator over all neighbours that are in bounds. No checks about the tile are made
     pub fn neighbours<'a>(&'a self, current: Coord) -> impl Iterator<Item = Coord> + 'a {
         let mut neighbours = Vec::new();
         for delta in Direction::deltas() {
@@ -80,12 +80,10 @@ impl<T: PartialEq> Grid<T> {
         neighbours.into_iter()
     }
 
-    // TODO: make this an iterator
-    /// Like neighbours but only the ones with the same value as the current
-    pub fn matching_neighbours<'a>(&'a self, current: Coord) -> impl Iterator<Item = Coord> + 'a {
-        let current_val = self.get(&current);
+    /// An iterator over all in bound neibhbours that match the required tile value
+    pub fn matching_neighbours<'a>(&'a self, current: Coord, tile: T) -> impl Iterator<Item = Coord> + 'a {
         self.neighbours(current)
-            .filter(move |x| self.get(&x) == current_val)
+            .filter(move |x| self.get(&x) == &tile)
     }
 
     pub fn move_direction(&self, current: &Coord, direction: &Direction) -> Option<Coord> {
