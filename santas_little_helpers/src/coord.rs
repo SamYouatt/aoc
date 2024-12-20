@@ -23,6 +23,7 @@ impl Coord {
         Self { x, y }
     }
 
+    /// Compute the manhattan (taxi cab) distance between two points
     pub fn manhattan_dist(&self, other: &Coord) -> usize {
         self.x.abs_diff(other.x) + self.y.abs_diff(other.y)
     }
