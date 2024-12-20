@@ -10,8 +10,8 @@ fn main() {
     let (grid, start, end) = parse(input);
     let distances = distances(&grid, start, end);
 
-    println!("Part 1: {}", part_1(&distances));
-    println!("Part 2: {}", part_2(&distances));
+    println!("Part 1: {}", cheats(&distances, 2));
+    println!("Part 2: {}", cheats(&distances, 20));
 }
 
 #[derive(PartialEq, Eq)]
@@ -20,29 +20,14 @@ enum Tile {
     Wall,
 }
 
-fn part_1(distances: &HashMap<Coord, usize>) -> usize {
+fn cheats(distances: &HashMap<Coord, usize>, allowed_time: usize) -> usize {
     let mut possible_cheats = 0;
 
     for ((pos1, cost1), (pos2, cost2)) in distances.iter().tuple_combinations() {
         let dist = pos1.manhattan_dist(pos2);
         let cost_saving = cost1.abs_diff(*cost2);
 
-        if dist <= 2 && cost_saving >= dist + 100 {
-            possible_cheats += 1;
-        }
-    }
-
-    possible_cheats
-}
-
-fn part_2(distances: &HashMap<Coord, usize>) -> usize {
-    let mut possible_cheats = 0;
-
-    for ((pos1, cost1), (pos2, cost2)) in distances.iter().tuple_combinations() {
-        let dist = pos1.manhattan_dist(pos2);
-        let cost_saving = cost1.abs_diff(*cost2);
-
-        if dist <= 20 && cost_saving >= dist + 100 {
+        if dist <= allowed_time && cost_saving >= dist + 100 {
             possible_cheats += 1;
         }
     }
