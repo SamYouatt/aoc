@@ -22,6 +22,10 @@ impl Coord {
     pub fn new(x: isize, y: isize) -> Self {
         Self { x, y }
     }
+
+    pub fn manhattan_dist(&self, other: &Coord) -> usize {
+        self.x.abs_diff(other.x) + self.y.abs_diff(other.y)
+    }
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
