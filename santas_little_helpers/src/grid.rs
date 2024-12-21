@@ -1,5 +1,6 @@
-use crate::{coord::Coord, directions::Direction};
+use crate::{coord::Coord, directions::Direction, coord};
 
+#[derive(Debug)]
 pub struct Grid<T> {
     pub width: usize,
     pub height: usize,
@@ -86,12 +87,18 @@ impl<T: PartialEq> Grid<T> {
             .filter(move |x| self.get(&x) == &tile)
     }
 
-    pub fn move_direction(&self, current: &Coord, direction: &Direction) -> Option<Coord> {
-        todo!()
-    }
+    /// Scan in reading order from 0,0 and optionally return the first coord that matches the
+    /// requirement
+    pub fn find_first(&self, seeking: &T) -> Option<Coord> {
+        for (y, row) in self.grid.iter().enumerate() {
+            for (x, tile) in row.iter().enumerate() {
+                if tile == seeking {
+                    return Some(coord!(x, y));
+                }
+            }
+        }
 
-    pub fn coord_iter() {
-        todo!()
+        None
     }
 }
 

@@ -18,6 +18,10 @@ impl Direction {
         }
     }
 
+    pub fn iterator() -> impl Iterator<Item = Direction> {
+        [Direction::Up, Direction::Right, Direction::Down, Direction::Left].into_iter()
+    }
+
     pub fn deltas() -> impl Iterator<Item = Delta> {
         [delta!(-1, 0), delta!(1, 0), delta!(0, -1), delta!(0, 1)].into_iter()
     }
