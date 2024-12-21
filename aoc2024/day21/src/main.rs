@@ -1,4 +1,4 @@
-use std::collections::VecDeque;
+use std::collections::{HashMap, VecDeque};
 
 use santas_little_helpers::{directions::Direction, grid::Grid};
 
@@ -6,15 +6,12 @@ fn main() {
     let input = include_str!("input.txt");
 
     println!("Part 1: {}", part_1(input));
+    println!("Part 2: {}", part_2(input));
 }
 
 fn paths(start: char, end: char, pad: &Grid<char>) -> Vec<Vec<char>> {
     let start_pos = pad.find_first(&start).unwrap();
     let end_pos = pad.find_first(&end).unwrap();
-
-    if start_pos == end_pos {
-        return vec![vec!['A']];
-    }
 
     let mut paths = Vec::new();
     let mut queue = VecDeque::new();
@@ -65,7 +62,12 @@ fn form_code(
     num_pad: &Grid<char>,
     dir_pad: &Grid<char>,
     on_num_pad: bool,
+    cache: &mut HashMap<(Vec<char>, usize, char), usize>,
 ) -> usize {
+    if let Some(in_cache) = cache.get(&(sequence.to_vec(), depth, keypad_locations[depth])) {
+        return *in_cache;
+    }
+
     let mut length = 0;
 
     for key in sequence {
@@ -79,7 +81,17 @@ fn form_code(
         } else {
             length += paths
                 .iter()
-                .map(|path| form_code(path, depth - 1, keypad_locations, num_pad, dir_pad, false))
+                .map(|path| {
+                    form_code(
+                        path,
+                        depth - 1,
+                        keypad_locations,
+                        num_pad,
+                        dir_pad,
+                        false,
+                        cache,
+                    )
+                })
                 .min()
                 .unwrap();
         }
@@ -87,6 +99,7 @@ fn form_code(
         keypad_locations[depth] = *key;
     }
 
+    cache.insert((sequence.to_vec(), depth, keypad_locations[depth]), length);
     length
 }
 
@@ -101,12 +114,55 @@ fn part_1(input: &str) -> usize {
     let dir_pad = Grid::from(vec![vec![' ', '^', 'A'], vec!['<', 'v', '>']]);
 
     let mut total = 0;
+    let mut cache = HashMap::new();
 
     for line in input.lines() {
         let code = line.chars().collect::<Vec<_>>();
         let mut locations = vec!['A', 'A', 'A'];
 
-        let instructions_len = form_code(&code, 2, &mut locations, &num_pad, &dir_pad, true);
+        let instructions_len = form_code(
+            &code,
+            2,
+            &mut locations,
+            &num_pad,
+            &dir_pad,
+            true,
+            &mut cache,
+        );
+        let numeric_code = line[0..3].parse::<usize>().unwrap();
+
+        total += instructions_len * numeric_code;
+    }
+
+    total
+}
+
+fn part_2(input: &str) -> usize {
+    let num_pad = Grid::from_vecs(vec![
+        vec!['7', '8', '9'],
+        vec!['4', '5', '6'],
+        vec!['1', '2', '3'],
+        vec![' ', '0', 'A'],
+    ]);
+
+    let dir_pad = Grid::from(vec![vec![' ', '^', 'A'], vec!['<', 'v', '>']]);
+
+    let mut total = 0;
+    let mut cache = HashMap::new();
+
+    for line in input.lines() {
+        let code = line.chars().collect::<Vec<_>>();
+        let mut locations = vec!['A'; 26];
+
+        let instructions_len = form_code(
+            &code,
+            25,
+            &mut locations,
+            &num_pad,
+            &dir_pad,
+            true,
+            &mut cache,
+        );
         let numeric_code = line[0..3].parse::<usize>().unwrap();
 
         total += instructions_len * numeric_code;
