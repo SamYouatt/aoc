@@ -28,9 +28,6 @@ fn part_1(input: &str) -> usize {
             if graph
                 .get(n1)
                 .map_or(false, |n1_conns| n1_conns.contains(n2))
-                && graph
-                    .get(n2)
-                    .map_or(false, |n2_conns| n2_conns.contains(n1))
             {
                 let mut triangle = vec![node, n1, n2];
                 triangle.sort();
