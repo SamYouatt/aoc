@@ -89,12 +89,9 @@ fn run_circuit(circuit: &mut HashMap<&str, Gate<'_>>) {
 
 fn gate_logic(gate: &Gate<'_>, val_a: bool, val_b: bool) -> Option<bool> {
     match (&gate.gate_type, val_a, val_b) {
-        (Type::AND, true, true) => Some(true),
-        (Type::AND, _, _) => Some(false),
-        (Type::OR, false, false) => Some(false),
-        (Type::OR, _, _) => Some(true),
-        (Type::XOR, true, false) | (Type::XOR, false, true) => Some(true),
-        (Type::XOR, _, _) => Some(false),
+        (Type::AND, a, b) => Some(a & b),
+        (Type::OR, a, b) => Some(a | b),
+        (Type::XOR, a, b) => Some(a ^ b),
         (Type::NONE, _, _) => None,
     }
 }
