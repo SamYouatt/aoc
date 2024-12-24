@@ -1,5 +1,11 @@
 use std::collections::{HashMap, VecDeque};
 
+use graphviz_rust::{
+    attributes::{color_name, shape, NodeAttributes},
+    dot_structures::{Edge, EdgeTy, Graph, Id, Node, NodeId, Stmt, Vertex},
+    printer::{DotPrinter, PrinterContext},
+};
+
 fn main() {
     let input = include_str!("input.txt");
 
@@ -58,7 +64,61 @@ fn part_1(input: &str) -> usize {
 }
 
 fn part_2(input: &str) -> usize {
-    todo!()
+    let circuit = parse_circuit(input);
+
+    let mut graph = Graph::DiGraph {
+        id: Id::Plain("Day24Graph".into()),
+        strict: false,
+        stmts: vec![],
+    };
+
+    for (node, _) in circuit.iter() {
+        let mut attributes = vec![
+            NodeAttributes::shape(shape::circle),
+            NodeAttributes::label(node.to_string()),
+        ];
+
+        if node.starts_with('z') {
+            attributes.push(NodeAttributes::color(color_name::red));
+            attributes.push(NodeAttributes::style("filled".to_string()));
+        }
+
+        let stmt = Stmt::Node(Node {
+            id: NodeId(Id::Plain(node.to_string()), None),
+            attributes,
+        });
+        graph.add_stmt(stmt);
+    }
+
+    for (n, node) in circuit.iter() {
+        let to = NodeId(Id::Plain(n.to_string()), None);
+
+        if node.a.is_some() {
+            let from = NodeId(Id::Plain(node.a.unwrap().to_string()), None);
+            let edge = Edge {
+                ty: EdgeTy::Pair(Vertex::N(from), Vertex::N(to.clone())),
+                attributes: vec![],
+            };
+            let stmt = Stmt::Edge(edge);
+            graph.add_stmt(stmt);
+        }
+
+        if node.b.is_some() {
+            let from = NodeId(Id::Plain(node.b.unwrap().to_string()), None);
+            let edge = Edge {
+                ty: EdgeTy::Pair(Vertex::N(from), Vertex::N(to)),
+                attributes: vec![],
+            };
+            let stmt = Stmt::Edge(edge);
+            graph.add_stmt(stmt);
+        }
+    }
+
+    let dot_output = graph.print(&mut PrinterContext::default());
+
+    std::fs::write("graph.dot", dot_output).unwrap();
+
+    0
 }
 
 fn run_circuit(circuit: &mut HashMap<&str, Gate<'_>>) {
