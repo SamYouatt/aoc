@@ -13,7 +13,7 @@ fn main() {
     println!("Part 2: {}", part_2(input));
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum Type {
     AND,
     OR,
@@ -21,7 +21,7 @@ enum Type {
     NONE,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct Gate<'a> {
     a: Option<&'a str>,
     b: Option<&'a str>,
@@ -63,28 +63,88 @@ fn part_1(input: &str) -> usize {
     usize::from_str_radix(&bits, 2).unwrap()
 }
 
-fn part_2(input: &str) -> usize {
-    let circuit = parse_circuit(input);
+// Observations
+// - Every x and y input should go to an AND and an XOR
+// - Other than first and last z bits, they should all be XOR
+// - Sibling of z bit should be AND which is fed by OR and XOR
+//
+// Possibly wrong:
+// z10, gpr
+// krs, cpm
+// ghp, z33
+// z21, nks
+//
+// Note to future me:
+// This runs to create two graphviz dot files, unchanged.dot and modified.dot
+// Each node has its name and type, z nodes are coloured red to spot easily, input nodes are
+// blue
+// The modified graph will colour the changed pairs green so they can be double checked
+fn part_2(input: &str) -> String {
+    let original_circuit = parse_circuit(input);
+    let mut modified = original_circuit.clone();
 
+    output_graph(original_circuit, "unchanged.dot", &vec![]);
+
+    swap_values(&mut modified, "z10", "gpr");
+    swap_values(&mut modified, "krs", "cpm");
+    swap_values(&mut modified, "ghp", "z33");
+    swap_values(&mut modified, "z21", "nks");
+    let mut modifications = vec!["z10", "gpr", "krs", "cpm", "ghp", "z33", "z21", "nks"];
+
+    output_graph(modified, "modified.dot", &modifications);
+
+    modifications.sort();
+    modifications.join(",")
+}
+
+fn swap_values<'a>(map: &mut HashMap<&'a str, Gate>, a: &'a str, b: &'a str) {
+    let v1 = map.get_mut(&a).and_then(|val| Some(std::mem::take(val)));
+    let v2 = map.get_mut(&b).and_then(|val| Some(std::mem::take(val)));
+
+    if let (Some(v1), Some(v2)) = (v1, v2) {
+        map.insert(a, v2);
+        map.insert(b, v1);
+    }
+}
+
+fn output_graph(circuit: HashMap<&str, Gate<'_>>, filename: &str, modified: &Vec<&str>) {
     let mut graph = Graph::DiGraph {
         id: Id::Plain("Day24Graph".into()),
         strict: false,
         stmts: vec![],
     };
 
-    for (node, _) in circuit.iter() {
+    for (n, node) in circuit.iter() {
+        let node_type = String::from(match node.gate_type {
+            Type::AND => "AND",
+            Type::OR => "OR",
+            Type::XOR => "XOR",
+            Type::NONE => "in",
+        });
+
+        let label = format!(r#""{}: {}""#, n.to_string(), node_type);
         let mut attributes = vec![
             NodeAttributes::shape(shape::circle),
-            NodeAttributes::label(node.to_string()),
+            NodeAttributes::label(label),
         ];
 
-        if node.starts_with('z') {
-            attributes.push(NodeAttributes::color(color_name::red));
+        if n.starts_with('z') {
+            attributes.push(NodeAttributes::color(color_name::coral1));
+            attributes.push(NodeAttributes::style("filled".to_string()));
+        }
+
+        if n.starts_with('x') || n.starts_with('y') {
+            attributes.push(NodeAttributes::color(color_name::cornflowerblue));
+            attributes.push(NodeAttributes::style("filled".to_string()));
+        }
+
+        if modified.contains(n) {
+            attributes.push(NodeAttributes::color(color_name::darkseagreen1));
             attributes.push(NodeAttributes::style("filled".to_string()));
         }
 
         let stmt = Stmt::Node(Node {
-            id: NodeId(Id::Plain(node.to_string()), None),
+            id: NodeId(Id::Plain(n.to_string()), None),
             attributes,
         });
         graph.add_stmt(stmt);
@@ -116,9 +176,7 @@ fn part_2(input: &str) -> usize {
 
     let dot_output = graph.print(&mut PrinterContext::default());
 
-    std::fs::write("graph.dot", dot_output).unwrap();
-
-    0
+    std::fs::write(filename, dot_output).unwrap();
 }
 
 fn run_circuit(circuit: &mut HashMap<&str, Gate<'_>>) {
