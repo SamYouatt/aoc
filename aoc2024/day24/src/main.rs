@@ -1,0 +1,127 @@
+use std::collections::{HashMap, VecDeque};
+
+fn main() {
+    let input = include_str!("input.txt");
+
+    println!("Part 1: {}", part_1(input));
+}
+
+#[derive(Debug)]
+enum Type {
+    AND,
+    OR,
+    XOR,
+    NONE,
+}
+
+#[derive(Debug)]
+struct Gate<'a> {
+    a: Option<&'a str>,
+    b: Option<&'a str>,
+    gate_type: Type,
+    value: Option<bool>,
+}
+
+impl Default for Gate<'_> {
+    fn default() -> Self {
+        Self {
+            a: None,
+            b: None,
+            gate_type: Type::NONE,
+            value: None,
+        }
+    }
+}
+
+fn part_1(input: &str) -> usize {
+    let (wires, raw_circuit) = input.split_once("\n\n").unwrap();
+
+    let mut circuit = HashMap::new();
+    for chunk in raw_circuit.lines() {
+        let (a, rest) = chunk.split_once(' ').unwrap();
+        let (gate_type, rest) = rest.split_once(' ').unwrap();
+        let (b, rest) = rest.split_once(' ').unwrap();
+        let (_, gate_name) = rest.split_once(' ').unwrap();
+
+        circuit.entry(a).or_default();
+        circuit.entry(b).or_default();
+
+        let gate = Gate {
+            a: Some(a),
+            b: Some(b),
+            gate_type: match gate_type {
+                "AND" => Type::AND,
+                "OR" => Type::OR,
+                "XOR" => Type::XOR,
+                _ => panic!(),
+            },
+            value: None,
+        };
+
+        *circuit.entry(gate_name).or_default() = gate;
+    }
+
+    for wire in wires.lines() {
+        let (gate, signal) = wire.split_once(": ").unwrap();
+        let signal = match signal {
+            "0" => false,
+            "1" => true,
+            _ => panic!(),
+        };
+
+        circuit.get_mut(gate).unwrap().value = Some(signal);
+    }
+
+    let mut queue = VecDeque::new();
+    circuit.keys().for_each(|k| queue.push_back(*k));
+
+    while let Some(gate_key) = queue.pop_front() {
+        let gate = circuit.get(gate_key).unwrap();
+        if gate.value.is_some() {
+            continue;
+        }
+
+        let dep_a = circuit.get(gate.a.unwrap()).unwrap();
+        let dep_b = &circuit[gate.b.unwrap()];
+
+        if dep_a.value.is_none() || dep_b.value.is_none() {
+            queue.push_back(gate_key);
+            continue;
+        }
+
+        let val_a = dep_a.value.unwrap();
+        let val_b = dep_b.value.unwrap();
+
+        let gate = circuit.get_mut(gate_key).unwrap();
+        gate.value = gate_logic(gate, val_a, val_b);
+    }
+
+    let mut zs = circuit
+        .keys()
+        .filter(|k| k.starts_with('z'))
+        .collect::<Vec<_>>();
+    zs.sort();
+    let bits = zs.iter().rev().fold(String::new(), |mut b, z| {
+        let bit = match circuit[**z].value {
+            Some(true) => '1',
+            Some(false) => '0',
+            None => panic!(),
+        };
+        b.push(bit);
+        b
+    });
+
+    usize::from_str_radix(&bits, 2).unwrap()
+}
+
+fn gate_logic(gate: &Gate<'_>, val_a: bool, val_b: bool) -> Option<bool> {
+    match (&gate.gate_type, val_a, val_b) {
+        (Type::AND, true, true) => Some(true),
+        (Type::AND, _, _) => Some(false),
+        (Type::OR, false, false) => Some(false),
+        (Type::OR, _, _) => Some(true),
+        (Type::XOR, true, false) | (Type::XOR, false, true) => Some(true),
+        (Type::XOR, _, _) => Some(false),
+        (Type::NONE, _, _) => None,
+    }
+}
