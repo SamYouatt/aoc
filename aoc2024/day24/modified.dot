@@ -1,758 +1,758 @@
 digraph Day24Graph {
-  dwh[shape=circle,label="dwh: AND"]
-  hhc[shape=circle,label="hhc: OR"]
-  jtg[shape=circle,label="jtg: AND"]
-  nkp[shape=circle,label="nkp: OR"]
-  x05[shape=circle,label="x05: in",color=cornflowerblue,style=filled]
-  z17[shape=circle,label="z17: XOR",color=coral1,style=filled]
-  wmr[shape=circle,label="wmr: XOR"]
-  sbj[shape=circle,label="sbj: AND"]
-  z19[shape=circle,label="z19: XOR",color=coral1,style=filled]
-  y01[shape=circle,label="y01: in",color=cornflowerblue,style=filled]
-  x25[shape=circle,label="x25: in",color=cornflowerblue,style=filled]
-  mgp[shape=circle,label="mgp: AND"]
-  dpm[shape=circle,label="dpm: AND"]
-  bwn[shape=circle,label="bwn: AND"]
-  z22[shape=circle,label="z22: XOR",color=coral1,style=filled]
-  y05[shape=circle,label="y05: in",color=cornflowerblue,style=filled]
-  y37[shape=circle,label="y37: in",color=cornflowerblue,style=filled]
-  y28[shape=circle,label="y28: in",color=cornflowerblue,style=filled]
-  fbc[shape=circle,label="fbc: AND"]
-  z24[shape=circle,label="z24: XOR",color=coral1,style=filled]
-  ctr[shape=circle,label="ctr: XOR"]
-  x34[shape=circle,label="x34: in",color=cornflowerblue,style=filled]
-  x40[shape=circle,label="x40: in",color=cornflowerblue,style=filled]
-  gjs[shape=circle,label="gjs: AND"]
-  x32[shape=circle,label="x32: in",color=cornflowerblue,style=filled]
-  ndp[shape=circle,label="ndp: AND"]
-  y41[shape=circle,label="y41: in",color=cornflowerblue,style=filled]
-  jrj[shape=circle,label="jrj: OR"]
-  z14[shape=circle,label="z14: XOR",color=coral1,style=filled]
-  y33[shape=circle,label="y33: in",color=cornflowerblue,style=filled]
-  gmq[shape=circle,label="gmq: AND"]
-  rhk[shape=circle,label="rhk: AND"]
-  x22[shape=circle,label="x22: in",color=cornflowerblue,style=filled]
-  z26[shape=circle,label="z26: XOR",color=coral1,style=filled]
-  y25[shape=circle,label="y25: in",color=cornflowerblue,style=filled]
-  cpp[shape=circle,label="cpp: XOR"]
-  x15[shape=circle,label="x15: in",color=cornflowerblue,style=filled]
-  y31[shape=circle,label="y31: in",color=cornflowerblue,style=filled]
-  y44[shape=circle,label="y44: in",color=cornflowerblue,style=filled]
-  fkn[shape=circle,label="fkn: OR"]
-  mgr[shape=circle,label="mgr: OR"]
-  qkb[shape=circle,label="qkb: AND"]
-  skt[shape=circle,label="skt: XOR"]
-  x14[shape=circle,label="x14: in",color=cornflowerblue,style=filled]
-  mkh[shape=circle,label="mkh: AND"]
-  y12[shape=circle,label="y12: in",color=cornflowerblue,style=filled]
-  x43[shape=circle,label="x43: in",color=cornflowerblue,style=filled]
-  y19[shape=circle,label="y19: in",color=cornflowerblue,style=filled]
-  y23[shape=circle,label="y23: in",color=cornflowerblue,style=filled]
-  z31[shape=circle,label="z31: XOR",color=coral1,style=filled]
-  rcn[shape=circle,label="rcn: XOR"]
-  twg[shape=circle,label="twg: OR"]
-  tsj[shape=circle,label="tsj: XOR"]
-  fnb[shape=circle,label="fnb: OR"]
-  x35[shape=circle,label="x35: in",color=cornflowerblue,style=filled]
-  dws[shape=circle,label="dws: AND"]
-  x01[shape=circle,label="x01: in",color=cornflowerblue,style=filled]
-  z01[shape=circle,label="z01: XOR",color=coral1,style=filled]
-  fhd[shape=circle,label="fhd: AND"]
-  vdv[shape=circle,label="vdv: OR"]
-  z15[shape=circle,label="z15: XOR",color=coral1,style=filled]
-  kwq[shape=circle,label="kwq: XOR"]
-  z45[shape=circle,label="z45: OR",color=coral1,style=filled]
-  z03[shape=circle,label="z03: XOR",color=coral1,style=filled]
-  y32[shape=circle,label="y32: in",color=cornflowerblue,style=filled]
-  y26[shape=circle,label="y26: in",color=cornflowerblue,style=filled]
-  y00[shape=circle,label="y00: in",color=cornflowerblue,style=filled]
-  srf[shape=circle,label="srf: XOR"]
-  x12[shape=circle,label="x12: in",color=cornflowerblue,style=filled]
-  mnv[shape=circle,label="mnv: AND"]
-  smr[shape=circle,label="smr: AND"]
-  htv[shape=circle,label="htv: XOR"]
-  bcs[shape=circle,label="bcs: XOR"]
-  x08[shape=circle,label="x08: in",color=cornflowerblue,style=filled]
-  tvk[shape=circle,label="tvk: AND"]
-  mhr[shape=circle,label="mhr: OR"]
-  y13[shape=circle,label="y13: in",color=cornflowerblue,style=filled]
-  mwr[shape=circle,label="mwr: AND"]
-  z28[shape=circle,label="z28: XOR",color=coral1,style=filled]
-  x02[shape=circle,label="x02: in",color=cornflowerblue,style=filled]
-  bnn[shape=circle,label="bnn: XOR"]
-  cpm[shape=circle,label="cpm: AND",color=darkseagreen1,style=filled]
-  nbs[shape=circle,label="nbs: AND"]
-  ppq[shape=circle,label="ppq: AND"]
-  z38[shape=circle,label="z38: XOR",color=coral1,style=filled]
-  rtn[shape=circle,label="rtn: XOR"]
-  pcf[shape=circle,label="pcf: OR"]
-  dtg[shape=circle,label="dtg: AND"]
-  z33[shape=circle,label="z33: XOR",color=coral1,style=filled,color=darkseagreen1,style=filled]
-  y17[shape=circle,label="y17: in",color=cornflowerblue,style=filled]
-  y36[shape=circle,label="y36: in",color=cornflowerblue,style=filled]
-  y30[shape=circle,label="y30: in",color=cornflowerblue,style=filled]
-  jvd[shape=circle,label="jvd: AND"]
-  x04[shape=circle,label="x04: in",color=cornflowerblue,style=filled]
-  brh[shape=circle,label="brh: AND"]
-  pcg[shape=circle,label="pcg: XOR"]
-  y14[shape=circle,label="y14: in",color=cornflowerblue,style=filled]
-  z36[shape=circle,label="z36: XOR",color=coral1,style=filled]
-  x27[shape=circle,label="x27: in",color=cornflowerblue,style=filled]
-  kpf[shape=circle,label="kpf: XOR"]
-  vvm[shape=circle,label="vvm: XOR"]
-  y38[shape=circle,label="y38: in",color=cornflowerblue,style=filled]
-  fnw[shape=circle,label="fnw: AND"]
-  z18[shape=circle,label="z18: XOR",color=coral1,style=filled]
-  y08[shape=circle,label="y08: in",color=cornflowerblue,style=filled]
-  x23[shape=circle,label="x23: in",color=cornflowerblue,style=filled]
-  wdr[shape=circle,label="wdr: OR"]
-  y21[shape=circle,label="y21: in",color=cornflowerblue,style=filled]
-  tnd[shape=circle,label="tnd: AND"]
-  z21[shape=circle,label="z21: XOR",color=coral1,style=filled,color=darkseagreen1,style=filled]
-  x00[shape=circle,label="x00: in",color=cornflowerblue,style=filled]
-  fjt[shape=circle,label="fjt: XOR"]
-  z06[shape=circle,label="z06: XOR",color=coral1,style=filled]
-  sqt[shape=circle,label="sqt: XOR"]
-  jhd[shape=circle,label="jhd: OR"]
-  qtp[shape=circle,label="qtp: AND"]
-  z27[shape=circle,label="z27: XOR",color=coral1,style=filled]
-  wtc[shape=circle,label="wtc: AND"]
-  tfc[shape=circle,label="tfc: AND"]
-  ptf[shape=circle,label="ptf: XOR"]
-  x38[shape=circle,label="x38: in",color=cornflowerblue,style=filled]
-  nwk[shape=circle,label="nwk: OR"]
-  bjh[shape=circle,label="bjh: XOR"]
-  z20[shape=circle,label="z20: XOR",color=coral1,style=filled]
-  hnd[shape=circle,label="hnd: OR"]
-  y18[shape=circle,label="y18: in",color=cornflowerblue,style=filled]
-  fgk[shape=circle,label="fgk: AND"]
-  y15[shape=circle,label="y15: in",color=cornflowerblue,style=filled]
-  tkq[shape=circle,label="tkq: XOR"]
-  knd[shape=circle,label="knd: AND"]
-  qnj[shape=circle,label="qnj: XOR"]
-  y43[shape=circle,label="y43: in",color=cornflowerblue,style=filled]
-  x11[shape=circle,label="x11: in",color=cornflowerblue,style=filled]
-  gpr[shape=circle,label="gpr: AND",color=darkseagreen1,style=filled]
-  y03[shape=circle,label="y03: in",color=cornflowerblue,style=filled]
-  z07[shape=circle,label="z07: XOR",color=coral1,style=filled]
-  x17[shape=circle,label="x17: in",color=cornflowerblue,style=filled]
-  hnp[shape=circle,label="hnp: AND"]
-  y06[shape=circle,label="y06: in",color=cornflowerblue,style=filled]
-  pdq[shape=circle,label="pdq: OR"]
-  qdc[shape=circle,label="qdc: AND"]
-  z29[shape=circle,label="z29: XOR",color=coral1,style=filled]
-  brs[shape=circle,label="brs: AND"]
-  y29[shape=circle,label="y29: in",color=cornflowerblue,style=filled]
-  x20[shape=circle,label="x20: in",color=cornflowerblue,style=filled]
-  wpg[shape=circle,label="wpg: AND"]
-  hwr[shape=circle,label="hwr: AND"]
-  qsh[shape=circle,label="qsh: AND"]
-  sdj[shape=circle,label="sdj: AND"]
-  hsk[shape=circle,label="hsk: AND"]
-  drw[shape=circle,label="drw: AND"]
-  tff[shape=circle,label="tff: XOR"]
-  drb[shape=circle,label="drb: AND"]
-  rqp[shape=circle,label="rqp: XOR"]
-  ptd[shape=circle,label="ptd: XOR"]
-  x44[shape=circle,label="x44: in",color=cornflowerblue,style=filled]
-  x18[shape=circle,label="x18: in",color=cornflowerblue,style=filled]
-  z42[shape=circle,label="z42: XOR",color=coral1,style=filled]
-  qrw[shape=circle,label="qrw: AND"]
-  gnm[shape=circle,label="gnm: AND"]
-  qqm[shape=circle,label="qqm: AND"]
-  z35[shape=circle,label="z35: XOR",color=coral1,style=filled]
-  jsg[shape=circle,label="jsg: XOR"]
-  qfd[shape=circle,label="qfd: OR"]
-  gbn[shape=circle,label="gbn: AND"]
-  ngk[shape=circle,label="ngk: AND"]
-  x41[shape=circle,label="x41: in",color=cornflowerblue,style=filled]
-  dpd[shape=circle,label="dpd: AND"]
-  nsj[shape=circle,label="nsj: OR"]
-  kkb[shape=circle,label="kkb: OR"]
-  vmv[shape=circle,label="vmv: XOR"]
-  ktv[shape=circle,label="ktv: AND"]
-  scj[shape=circle,label="scj: OR"]
-  gdp[shape=circle,label="gdp: XOR"]
-  prt[shape=circle,label="prt: OR"]
-  x21[shape=circle,label="x21: in",color=cornflowerblue,style=filled]
-  jhh[shape=circle,label="jhh: AND"]
-  x09[shape=circle,label="x09: in",color=cornflowerblue,style=filled]
-  dqw[shape=circle,label="dqw: XOR"]
-  qmp[shape=circle,label="qmp: AND"]
-  y04[shape=circle,label="y04: in",color=cornflowerblue,style=filled]
-  tfg[shape=circle,label="tfg: OR"]
-  y35[shape=circle,label="y35: in",color=cornflowerblue,style=filled]
-  hsv[shape=circle,label="hsv: AND"]
-  wpw[shape=circle,label="wpw: XOR"]
-  krb[shape=circle,label="krb: AND"]
-  z25[shape=circle,label="z25: XOR",color=coral1,style=filled]
-  drt[shape=circle,label="drt: AND"]
-  z02[shape=circle,label="z02: XOR",color=coral1,style=filled]
-  z16[shape=circle,label="z16: XOR",color=coral1,style=filled]
-  y07[shape=circle,label="y07: in",color=cornflowerblue,style=filled]
-  mph[shape=circle,label="mph: AND"]
-  jmk[shape=circle,label="jmk: OR"]
-  nks[shape=circle,label="nks: AND",color=darkseagreen1,style=filled]
   y27[shape=circle,label="y27: in",color=cornflowerblue,style=filled]
-  gft[shape=circle,label="gft: OR"]
-  tqr[shape=circle,label="tqr: AND"]
-  vjj[shape=circle,label="vjj: AND"]
-  qgm[shape=circle,label="qgm: OR"]
-  cmn[shape=circle,label="cmn: XOR"]
-  vhs[shape=circle,label="vhs: OR"]
-  bgn[shape=circle,label="bgn: OR"]
-  rtj[shape=circle,label="rtj: OR"]
-  y24[shape=circle,label="y24: in",color=cornflowerblue,style=filled]
-  nwt[shape=circle,label="nwt: OR"]
-  x07[shape=circle,label="x07: in",color=cornflowerblue,style=filled]
-  dcd[shape=circle,label="dcd: OR"]
-  frb[shape=circle,label="frb: AND"]
-  y02[shape=circle,label="y02: in",color=cornflowerblue,style=filled]
-  x33[shape=circle,label="x33: in",color=cornflowerblue,style=filled]
-  z32[shape=circle,label="z32: XOR",color=coral1,style=filled]
-  y22[shape=circle,label="y22: in",color=cornflowerblue,style=filled]
-  y10[shape=circle,label="y10: in",color=cornflowerblue,style=filled]
-  bbr[shape=circle,label="bbr: AND"]
-  wfc[shape=circle,label="wfc: XOR"]
-  z10[shape=circle,label="z10: XOR",color=coral1,style=filled,color=darkseagreen1,style=filled]
-  z40[shape=circle,label="z40: XOR",color=coral1,style=filled]
-  sfc[shape=circle,label="sfc: XOR"]
-  z37[shape=circle,label="z37: XOR",color=coral1,style=filled]
-  cdh[shape=circle,label="cdh: XOR"]
-  x31[shape=circle,label="x31: in",color=cornflowerblue,style=filled]
-  bwd[shape=circle,label="bwd: AND"]
-  x29[shape=circle,label="x29: in",color=cornflowerblue,style=filled]
-  dfm[shape=circle,label="dfm: OR"]
-  khh[shape=circle,label="khh: AND"]
-  x42[shape=circle,label="x42: in",color=cornflowerblue,style=filled]
-  x06[shape=circle,label="x06: in",color=cornflowerblue,style=filled]
-  srq[shape=circle,label="srq: AND"]
-  tjg[shape=circle,label="tjg: AND"]
-  nwb[shape=circle,label="nwb: OR"]
-  ctw[shape=circle,label="ctw: AND"]
-  mvc[shape=circle,label="mvc: OR"]
-  bvg[shape=circle,label="bvg: OR"]
-  x26[shape=circle,label="x26: in",color=cornflowerblue,style=filled]
-  fpk[shape=circle,label="fpk: AND"]
-  y42[shape=circle,label="y42: in",color=cornflowerblue,style=filled]
-  hhg[shape=circle,label="hhg: AND"]
-  jjs[shape=circle,label="jjs: OR"]
-  ggv[shape=circle,label="ggv: XOR"]
-  hkn[shape=circle,label="hkn: AND"]
-  tdj[shape=circle,label="tdj: OR"]
-  z08[shape=circle,label="z08: XOR",color=coral1,style=filled]
-  gpg[shape=circle,label="gpg: AND"]
-  z05[shape=circle,label="z05: XOR",color=coral1,style=filled]
-  kdb[shape=circle,label="kdb: AND"]
-  nwv[shape=circle,label="nwv: XOR"]
-  z12[shape=circle,label="z12: XOR",color=coral1,style=filled]
-  rtc[shape=circle,label="rtc: AND"]
-  wgw[shape=circle,label="wgw: XOR"]
-  y34[shape=circle,label="y34: in",color=cornflowerblue,style=filled]
-  x10[shape=circle,label="x10: in",color=cornflowerblue,style=filled]
-  x30[shape=circle,label="x30: in",color=cornflowerblue,style=filled]
-  x37[shape=circle,label="x37: in",color=cornflowerblue,style=filled]
-  z11[shape=circle,label="z11: XOR",color=coral1,style=filled]
-  bqv[shape=circle,label="bqv: XOR"]
-  x19[shape=circle,label="x19: in",color=cornflowerblue,style=filled]
-  z23[shape=circle,label="z23: XOR",color=coral1,style=filled]
-  x03[shape=circle,label="x03: in",color=cornflowerblue,style=filled]
-  vjt[shape=circle,label="vjt: OR"]
-  bkw[shape=circle,label="bkw: AND"]
-  vrc[shape=circle,label="vrc: AND"]
-  x36[shape=circle,label="x36: in",color=cornflowerblue,style=filled]
-  y11[shape=circle,label="y11: in",color=cornflowerblue,style=filled]
-  x24[shape=circle,label="x24: in",color=cornflowerblue,style=filled]
-  z34[shape=circle,label="z34: XOR",color=coral1,style=filled]
-  ghp[shape=circle,label="ghp: OR",color=darkseagreen1,style=filled]
-  z13[shape=circle,label="z13: XOR",color=coral1,style=filled]
-  hrr[shape=circle,label="hrr: XOR"]
-  rpg[shape=circle,label="rpg: AND"]
-  sdk[shape=circle,label="sdk: OR"]
-  sqw[shape=circle,label="sqw: AND"]
-  z04[shape=circle,label="z04: XOR",color=coral1,style=filled]
-  hbg[shape=circle,label="hbg: XOR"]
-  tqn[shape=circle,label="tqn: AND"]
-  wdg[shape=circle,label="wdg: XOR"]
-  y20[shape=circle,label="y20: in",color=cornflowerblue,style=filled]
-  wcr[shape=circle,label="wcr: OR"]
-  z39[shape=circle,label="z39: XOR",color=coral1,style=filled]
-  x16[shape=circle,label="x16: in",color=cornflowerblue,style=filled]
-  mrq[shape=circle,label="mrq: XOR"]
   krs[shape=circle,label="krs: XOR",color=darkseagreen1,style=filled]
-  vdc[shape=circle,label="vdc: AND"]
-  x39[shape=circle,label="x39: in",color=cornflowerblue,style=filled]
-  y39[shape=circle,label="y39: in",color=cornflowerblue,style=filled]
-  y09[shape=circle,label="y09: in",color=cornflowerblue,style=filled]
-  shk[shape=circle,label="shk: OR"]
-  fsf[shape=circle,label="fsf: AND"]
-  dbf[shape=circle,label="dbf: AND"]
-  z30[shape=circle,label="z30: XOR",color=coral1,style=filled]
-  mbt[shape=circle,label="mbt: AND"]
-  nvr[shape=circle,label="nvr: AND"]
-  dnb[shape=circle,label="dnb: XOR"]
-  z00[shape=circle,label="z00: XOR",color=coral1,style=filled]
+  x11[shape=circle,label="x11: in",color=cornflowerblue,style=filled]
+  qdc[shape=circle,label="qdc: AND"]
   z41[shape=circle,label="z41: XOR",color=coral1,style=filled]
-  bws[shape=circle,label="bws: AND"]
-  x28[shape=circle,label="x28: in",color=cornflowerblue,style=filled]
-  trf[shape=circle,label="trf: AND"]
-  sdf[shape=circle,label="sdf: OR"]
-  ngv[shape=circle,label="ngv: AND"]
-  y40[shape=circle,label="y40: in",color=cornflowerblue,style=filled]
-  qcm[shape=circle,label="qcm: AND"]
-  z43[shape=circle,label="z43: XOR",color=coral1,style=filled]
-  ftb[shape=circle,label="ftb: OR"]
-  x13[shape=circle,label="x13: in",color=cornflowerblue,style=filled]
+  ptf[shape=circle,label="ptf: XOR"]
   z44[shape=circle,label="z44: XOR",color=coral1,style=filled]
-  whd[shape=circle,label="whd: OR"]
+  x23[shape=circle,label="x23: in",color=cornflowerblue,style=filled]
+  fsf[shape=circle,label="fsf: AND"]
+  khh[shape=circle,label="khh: AND"]
+  y36[shape=circle,label="y36: in",color=cornflowerblue,style=filled]
+  y31[shape=circle,label="y31: in",color=cornflowerblue,style=filled]
+  sbj[shape=circle,label="sbj: AND"]
+  nwk[shape=circle,label="nwk: OR"]
+  vmv[shape=circle,label="vmv: XOR"]
+  rtc[shape=circle,label="rtc: AND"]
+  ggv[shape=circle,label="ggv: XOR"]
+  y33[shape=circle,label="y33: in",color=cornflowerblue,style=filled]
+  dfm[shape=circle,label="dfm: OR"]
+  z35[shape=circle,label="z35: XOR",color=coral1,style=filled]
+  cdh[shape=circle,label="cdh: XOR"]
+  x21[shape=circle,label="x21: in",color=cornflowerblue,style=filled]
+  z04[shape=circle,label="z04: XOR",color=coral1,style=filled]
+  x03[shape=circle,label="x03: in",color=cornflowerblue,style=filled]
+  skt[shape=circle,label="skt: XOR"]
+  y24[shape=circle,label="y24: in",color=cornflowerblue,style=filled]
+  vdc[shape=circle,label="vdc: AND"]
+  drw[shape=circle,label="drw: AND"]
+  hnd[shape=circle,label="hnd: OR"]
+  rcn[shape=circle,label="rcn: XOR"]
+  nsj[shape=circle,label="nsj: OR"]
+  x37[shape=circle,label="x37: in",color=cornflowerblue,style=filled]
+  vdv[shape=circle,label="vdv: OR"]
+  tnd[shape=circle,label="tnd: AND"]
+  wpg[shape=circle,label="wpg: AND"]
   y16[shape=circle,label="y16: in",color=cornflowerblue,style=filled]
+  ghp[shape=circle,label="ghp: OR",color=darkseagreen1,style=filled]
+  x26[shape=circle,label="x26: in",color=cornflowerblue,style=filled]
+  y02[shape=circle,label="y02: in",color=cornflowerblue,style=filled]
+  fhd[shape=circle,label="fhd: AND"]
+  tkq[shape=circle,label="tkq: XOR"]
+  x16[shape=circle,label="x16: in",color=cornflowerblue,style=filled]
+  x30[shape=circle,label="x30: in",color=cornflowerblue,style=filled]
+  vrc[shape=circle,label="vrc: AND"]
+  cpp[shape=circle,label="cpp: XOR"]
+  x39[shape=circle,label="x39: in",color=cornflowerblue,style=filled]
   wgj[shape=circle,label="wgj: AND"]
-  z09[shape=circle,label="z09: XOR",color=coral1,style=filled]
+  x22[shape=circle,label="x22: in",color=cornflowerblue,style=filled]
+  shk[shape=circle,label="shk: OR"]
+  nwb[shape=circle,label="nwb: OR"]
+  bwd[shape=circle,label="bwd: AND"]
+  x15[shape=circle,label="x15: in",color=cornflowerblue,style=filled]
+  tsj[shape=circle,label="tsj: XOR"]
+  y13[shape=circle,label="y13: in",color=cornflowerblue,style=filled]
+  z28[shape=circle,label="z28: XOR",color=coral1,style=filled]
+  x35[shape=circle,label="x35: in",color=cornflowerblue,style=filled]
+  y14[shape=circle,label="y14: in",color=cornflowerblue,style=filled]
+  wdr[shape=circle,label="wdr: OR"]
+  ftb[shape=circle,label="ftb: OR"]
+  qqm[shape=circle,label="qqm: AND"]
+  dnb[shape=circle,label="dnb: XOR"]
+  z01[shape=circle,label="z01: XOR",color=coral1,style=filled]
+  z16[shape=circle,label="z16: XOR",color=coral1,style=filled]
+  mkh[shape=circle,label="mkh: AND"]
+  y29[shape=circle,label="y29: in",color=cornflowerblue,style=filled]
+  rhk[shape=circle,label="rhk: AND"]
+  wpw[shape=circle,label="wpw: XOR"]
+  sdj[shape=circle,label="sdj: AND"]
+  jtg[shape=circle,label="jtg: AND"]
+  sqw[shape=circle,label="sqw: AND"]
+  hsv[shape=circle,label="hsv: AND"]
+  z14[shape=circle,label="z14: XOR",color=coral1,style=filled]
+  x29[shape=circle,label="x29: in",color=cornflowerblue,style=filled]
+  nwt[shape=circle,label="nwt: OR"]
+  qkb[shape=circle,label="qkb: AND"]
+  mgp[shape=circle,label="mgp: AND"]
+  qrw[shape=circle,label="qrw: AND"]
+  mrq[shape=circle,label="mrq: XOR"]
+  ndp[shape=circle,label="ndp: AND"]
+  z20[shape=circle,label="z20: XOR",color=coral1,style=filled]
+  y28[shape=circle,label="y28: in",color=cornflowerblue,style=filled]
+  ngv[shape=circle,label="ngv: AND"]
+  x13[shape=circle,label="x13: in",color=cornflowerblue,style=filled]
+  wtc[shape=circle,label="wtc: AND"]
+  qsh[shape=circle,label="qsh: AND"]
+  kkb[shape=circle,label="kkb: OR"]
+  kwq[shape=circle,label="kwq: XOR"]
+  frb[shape=circle,label="frb: AND"]
+  jvd[shape=circle,label="jvd: AND"]
+  y12[shape=circle,label="y12: in",color=cornflowerblue,style=filled]
+  bjh[shape=circle,label="bjh: XOR"]
+  z31[shape=circle,label="z31: XOR",color=coral1,style=filled]
+  wmr[shape=circle,label="wmr: XOR"]
+  x28[shape=circle,label="x28: in",color=cornflowerblue,style=filled]
+  smr[shape=circle,label="smr: AND"]
+  prt[shape=circle,label="prt: OR"]
+  mgr[shape=circle,label="mgr: OR"]
+  y15[shape=circle,label="y15: in",color=cornflowerblue,style=filled]
+  wgw[shape=circle,label="wgw: XOR"]
+  qfd[shape=circle,label="qfd: OR"]
+  bqv[shape=circle,label="bqv: XOR"]
+  jrj[shape=circle,label="jrj: OR"]
+  nkp[shape=circle,label="nkp: OR"]
+  z00[shape=circle,label="z00: XOR",color=coral1,style=filled]
+  y42[shape=circle,label="y42: in",color=cornflowerblue,style=filled]
+  tqn[shape=circle,label="tqn: AND"]
+  z29[shape=circle,label="z29: XOR",color=coral1,style=filled]
+  bvg[shape=circle,label="bvg: OR"]
+  fkn[shape=circle,label="fkn: OR"]
+  x04[shape=circle,label="x04: in",color=cornflowerblue,style=filled]
+  x41[shape=circle,label="x41: in",color=cornflowerblue,style=filled]
+  z34[shape=circle,label="z34: XOR",color=coral1,style=filled]
+  tdj[shape=circle,label="tdj: OR"]
+  y37[shape=circle,label="y37: in",color=cornflowerblue,style=filled]
+  y20[shape=circle,label="y20: in",color=cornflowerblue,style=filled]
+  x42[shape=circle,label="x42: in",color=cornflowerblue,style=filled]
+  dbf[shape=circle,label="dbf: AND"]
+  z33[shape=circle,label="z33: XOR",color=coral1,style=filled,color=darkseagreen1,style=filled]
+  jhh[shape=circle,label="jhh: AND"]
+  tvk[shape=circle,label="tvk: AND"]
+  nbs[shape=circle,label="nbs: AND"]
+  x02[shape=circle,label="x02: in",color=cornflowerblue,style=filled]
+  pcg[shape=circle,label="pcg: XOR"]
+  ctr[shape=circle,label="ctr: XOR"]
+  mvc[shape=circle,label="mvc: OR"]
+  ppq[shape=circle,label="ppq: AND"]
+  y04[shape=circle,label="y04: in",color=cornflowerblue,style=filled]
+  vhs[shape=circle,label="vhs: OR"]
+  x40[shape=circle,label="x40: in",color=cornflowerblue,style=filled]
+  x31[shape=circle,label="x31: in",color=cornflowerblue,style=filled]
+  y44[shape=circle,label="y44: in",color=cornflowerblue,style=filled]
+  srf[shape=circle,label="srf: XOR"]
+  bnn[shape=circle,label="bnn: XOR"]
+  z26[shape=circle,label="z26: XOR",color=coral1,style=filled]
+  z06[shape=circle,label="z06: XOR",color=coral1,style=filled]
+  trf[shape=circle,label="trf: AND"]
+  z40[shape=circle,label="z40: XOR",color=coral1,style=filled]
+  z27[shape=circle,label="z27: XOR",color=coral1,style=filled]
+  y03[shape=circle,label="y03: in",color=cornflowerblue,style=filled]
+  cmn[shape=circle,label="cmn: XOR"]
+  x01[shape=circle,label="x01: in",color=cornflowerblue,style=filled]
+  sqt[shape=circle,label="sqt: XOR"]
+  mbt[shape=circle,label="mbt: AND"]
+  pdq[shape=circle,label="pdq: OR"]
+  y21[shape=circle,label="y21: in",color=cornflowerblue,style=filled]
+  y30[shape=circle,label="y30: in",color=cornflowerblue,style=filled]
+  whd[shape=circle,label="whd: OR"]
+  fgk[shape=circle,label="fgk: AND"]
+  x00[shape=circle,label="x00: in",color=cornflowerblue,style=filled]
+  ptd[shape=circle,label="ptd: XOR"]
+  bcs[shape=circle,label="bcs: XOR"]
+  z17[shape=circle,label="z17: XOR",color=coral1,style=filled]
+  kpf[shape=circle,label="kpf: XOR"]
+  mnv[shape=circle,label="mnv: AND"]
+  z12[shape=circle,label="z12: XOR",color=coral1,style=filled]
+  drb[shape=circle,label="drb: AND"]
   gnb[shape=circle,label="gnb: AND"]
-  nkw[shape=circle,label="nkw: AND"]
+  y39[shape=circle,label="y39: in",color=cornflowerblue,style=filled]
+  y43[shape=circle,label="y43: in",color=cornflowerblue,style=filled]
   tdq[shape=circle,label="tdq: XOR"]
-  rcn -> dwh
-  nsj -> dwh
-  rhk -> hhc
-  nks -> hhc
-  y33 -> jtg
-  x33 -> jtg
-  jvd -> nkp
-  bbr -> nkp
-  rcn -> z17
-  nsj -> z17
-  y28 -> wmr
-  x28 -> wmr
-  y41 -> sbj
-  x41 -> sbj
-  wpw -> z19
-  nwb -> z19
-  y14 -> mgp
-  x14 -> mgp
-  wfc -> dpm
-  bvg -> dpm
-  bjh -> bwn
-  wcr -> bwn
-  hrr -> z22
-  hhc -> z22
-  y15 -> fbc
-  x15 -> fbc
-  wfc -> z24
-  bvg -> z24
-  x02 -> ctr
-  y02 -> ctr
-  tff -> gjs
-  qfd -> gjs
-  wdg -> ndp
-  ftb -> ndp
-  hsk -> jrj
-  jhh -> jrj
-  dqw -> z14
-  jmk -> z14
-  jsg -> gmq
-  tfg -> gmq
-  y21 -> rhk
-  x21 -> rhk
-  mrq -> z26
-  pcf -> z26
-  x15 -> cpp
-  y15 -> cpp
-  mgp -> fkn
-  vrc -> fkn
-  mwr -> mgr
-  ngk -> mgr
-  cmn -> qkb
-  dcd -> qkb
-  y36 -> skt
-  x36 -> skt
-  y36 -> mkh
-  x36 -> mkh
-  ggv -> z31
-  dfm -> z31
-  y17 -> rcn
-  x17 -> rcn
-  wgj -> twg
-  gmq -> twg
-  x18 -> tsj
-  y18 -> tsj
-  dbf -> fnb
-  dwh -> fnb
-  x19 -> dws
-  y19 -> dws
-  cdh -> z01
-  bwd -> z01
-  y31 -> fhd
-  x31 -> fhd
-  bwn -> vdv
-  tqr -> vdv
-  fkn -> z15
-  cpp -> z15
-  y30 -> kwq
-  x30 -> kwq
-  wtc -> z45
-  ndp -> z45
-  bnn -> z03
-  jrj -> z03
-  y37 -> srf
-  x37 -> srf
-  x06 -> mnv
-  y06 -> mnv
-  cpp -> smr
-  fkn -> smr
-  y10 -> htv
-  x10 -> htv
-  x13 -> bcs
-  y13 -> bcs
-  nwk -> tvk
-  fjt -> tvk
-  mph -> mhr
-  sqw -> mhr
-  wmr -> mwr
-  shk -> mwr
-  wmr -> z28
-  shk -> z28
-  y03 -> bnn
-  x03 -> bnn
-  y39 -> cpm
-  x39 -> cpm
-  pcf -> nbs
-  mrq -> nbs
-  prt -> ppq
-  skt -> ppq
-  gft -> z38
-  vmv -> z38
-  x08 -> rtn
-  y08 -> rtn
-  rpg -> pcf
-  brs -> pcf
-  x20 -> dtg
-  y20 -> dtg
-  tkq -> z33
-  mvc -> z33
-  hrr -> jvd
-  hhc -> jvd
-  nwv -> brh
-  sdf -> brh
-  y42 -> pcg
-  x42 -> pcg
-  skt -> z36
-  prt -> z36
-  x12 -> kpf
-  y12 -> kpf
-  x40 -> vvm
-  y40 -> vvm
-  y32 -> fnw
-  x32 -> fnw
-  tsj -> z18
-  fnb -> z18
-  mkh -> wdr
-  ppq -> wdr
-  y09 -> tnd
-  x09 -> tnd
-  scj -> z21
-  ptd -> z21
-  x16 -> fjt
-  y16 -> fjt
-  rqp -> z06
-  vdv -> z06
-  y25 -> sqt
-  x25 -> sqt
-  krb -> jhd
-  cpm -> jhd
-  jrj -> qtp
-  bnn -> qtp
-  bqv -> z27
-  kkb -> z27
-  x44 -> wtc
-  y44 -> wtc
-  bcs -> tfc
-  vjt -> tfc
-  y43 -> ptf
-  x43 -> ptf
-  fbc -> nwk
-  smr -> nwk
-  x05 -> bjh
-  y05 -> bjh
-  qfd -> z20
-  tff -> z20
-  dpm -> hnd
-  hkn -> hnd
-  nwb -> fgk
-  wpw -> fgk
-  y33 -> tkq
-  x33 -> tkq
-  y01 -> knd
-  x01 -> knd
-  y32 -> qnj
-  x32 -> qnj
-  x10 -> gpr
-  y10 -> gpr
-  tfg -> z07
-  jsg -> z07
-  twg -> hnp
-  rtn -> hnp
-  knd -> pdq
-  hsv -> pdq
-  sdk -> qdc
-  pcg -> qdc
-  dnb -> z29
-  mgr -> z29
-  hnd -> brs
-  sqt -> brs
-  y43 -> wpg
-  x43 -> wpg
-  y34 -> hwr
-  x34 -> hwr
-  kpf -> qsh
-  jjs -> qsh
-  nwt -> sdj
-  qnj -> sdj
-  x02 -> hsk
-  y02 -> hsk
-  x13 -> drw
-  y13 -> drw
-  y20 -> tff
-  x20 -> tff
-  x12 -> drb
-  y12 -> drb
-  x06 -> rqp
-  y06 -> rqp
-  y21 -> ptd
-  x21 -> ptd
-  sdk -> z42
-  pcg -> z42
-  y29 -> qrw
-  x29 -> qrw
-  y42 -> gnm
-  x42 -> gnm
-  x18 -> qqm
-  y18 -> qqm
-  wgw -> z35
-  rtj -> z35
-  x07 -> jsg
-  y07 -> jsg
-  dws -> qfd
-  fgk -> qfd
-  jhd -> gbn
-  vvm -> gbn
-  y28 -> ngk
-  x28 -> ngk
-  x27 -> dpd
-  y27 -> dpd
-  tqn -> nsj
-  tvk -> nsj
-  ctw -> kkb
-  nbs -> kkb
-  x38 -> vmv
-  y38 -> vmv
-  x04 -> ktv
-  y04 -> ktv
-  dtg -> scj
-  gjs -> scj
-  x09 -> gdp
-  y09 -> gdp
-  nvr -> prt
-  srq -> prt
-  pdq -> jhh
-  ctr -> jhh
-  x14 -> dqw
-  y14 -> dqw
-  srf -> qmp
-  wdr -> qmp
-  mnv -> tfg
-  vdc -> tfg
-  cdh -> hsv
-  bwd -> hsv
-  y19 -> wpw
-  x19 -> wpw
-  mhr -> krb
-  krs -> krb
-  hnd -> z25
-  sqt -> z25
-  fnb -> drt
-  tsj -> drt
-  ctr -> z02
-  pdq -> z02
-  nwk -> z16
-  fjt -> z16
-  x38 -> mph
-  y38 -> mph
-  drw -> jmk
-  tfc -> jmk
-  ptd -> nks
-  scj -> nks
-  bkw -> gft
-  qmp -> gft
-  x05 -> tqr
-  y05 -> tqr
-  bgn -> vjj
-  gdp -> vjj
-  qdc -> qgm
-  gnm -> qgm
-  x41 -> cmn
-  y41 -> cmn
-  qrw -> vhs
-  nkw -> vhs
-  hnp -> bgn
-  mbt -> bgn
-  hwr -> rtj
-  khh -> rtj
-  fhd -> nwt
-  bws -> nwt
-  gbn -> dcd
-  qcm -> dcd
-  ptf -> frb
-  qgm -> frb
-  qnj -> z32
-  nwt -> z32
-  x22 -> bbr
-  y22 -> bbr
-  y24 -> wfc
-  x24 -> wfc
-  htv -> z10
-  whd -> z10
-  vvm -> z40
-  jhd -> z40
-  y23 -> sfc
-  x23 -> sfc
-  srf -> z37
-  wdr -> z37
-  x01 -> cdh
-  y01 -> cdh
-  y00 -> bwd
-  x00 -> bwd
-  kdb -> dfm
-  fpk -> dfm
-  ghp -> khh
-  hbg -> khh
-  y35 -> srq
-  x35 -> srq
-  tdq -> tjg
-  tdj -> tjg
-  drt -> nwb
-  qqm -> nwb
-  x26 -> ctw
-  y26 -> ctw
-  fnw -> mvc
-  sdj -> mvc
-  rtc -> bvg
-  hhg -> bvg
-  vhs -> fpk
-  kwq -> fpk
-  y23 -> hhg
-  x23 -> hhg
-  gpg -> jjs
-  tjg -> jjs
-  y31 -> ggv
-  x31 -> ggv
-  x24 -> hkn
-  y24 -> hkn
-  fsf -> tdj
-  gpr -> tdj
-  twg -> z08
-  rtn -> z08
-  x11 -> gpg
-  y11 -> gpg
-  wcr -> z05
-  bjh -> z05
-  x30 -> kdb
-  y30 -> kdb
-  y04 -> nwv
-  x04 -> nwv
-  jjs -> z12
-  kpf -> z12
-  sfc -> rtc
-  nkp -> rtc
-  x35 -> wgw
-  y35 -> wgw
-  tdq -> z11
-  tdj -> z11
-  y27 -> bqv
-  x27 -> bqv
-  nkp -> z23
-  sfc -> z23
-  drb -> vjt
-  qsh -> vjt
-  x37 -> bkw
-  y37 -> bkw
-  dqw -> vrc
-  jmk -> vrc
-  ghp -> z34
-  hbg -> z34
-  jtg -> ghp
-  trf -> ghp
-  bcs -> z13
-  vjt -> z13
-  y22 -> hrr
-  x22 -> hrr
-  y25 -> rpg
-  x25 -> rpg
-  qkb -> sdk
-  sbj -> sdk
-  vmv -> sqw
-  gft -> sqw
-  nwv -> z04
-  sdf -> z04
-  x34 -> hbg
-  y34 -> hbg
-  x16 -> tqn
-  y16 -> tqn
-  x44 -> wdg
-  y44 -> wdg
-  ktv -> wcr
-  brh -> wcr
-  krs -> z39
-  mhr -> z39
-  y26 -> mrq
-  x26 -> mrq
+  gnm[shape=circle,label="gnm: AND"]
+  z45[shape=circle,label="z45: OR",color=coral1,style=filled]
+  dwh[shape=circle,label="dwh: AND"]
+  bgn[shape=circle,label="bgn: OR"]
+  mph[shape=circle,label="mph: AND"]
+  x07[shape=circle,label="x07: in",color=cornflowerblue,style=filled]
+  x24[shape=circle,label="x24: in",color=cornflowerblue,style=filled]
+  y22[shape=circle,label="y22: in",color=cornflowerblue,style=filled]
+  jjs[shape=circle,label="jjs: OR"]
+  hkn[shape=circle,label="hkn: AND"]
+  drt[shape=circle,label="drt: AND"]
+  dcd[shape=circle,label="dcd: OR"]
+  dws[shape=circle,label="dws: AND"]
+  x08[shape=circle,label="x08: in",color=cornflowerblue,style=filled]
+  sdf[shape=circle,label="sdf: OR"]
+  tfg[shape=circle,label="tfg: OR"]
+  hhc[shape=circle,label="hhc: OR"]
+  y41[shape=circle,label="y41: in",color=cornflowerblue,style=filled]
+  z15[shape=circle,label="z15: XOR",color=coral1,style=filled]
+  mwr[shape=circle,label="mwr: AND"]
+  ktv[shape=circle,label="ktv: AND"]
+  z22[shape=circle,label="z22: XOR",color=coral1,style=filled]
+  y26[shape=circle,label="y26: in",color=cornflowerblue,style=filled]
+  y25[shape=circle,label="y25: in",color=cornflowerblue,style=filled]
+  x25[shape=circle,label="x25: in",color=cornflowerblue,style=filled]
+  hrr[shape=circle,label="hrr: XOR"]
+  twg[shape=circle,label="twg: OR"]
+  qmp[shape=circle,label="qmp: AND"]
+  gft[shape=circle,label="gft: OR"]
+  gbn[shape=circle,label="gbn: AND"]
+  z07[shape=circle,label="z07: XOR",color=coral1,style=filled]
+  qtp[shape=circle,label="qtp: AND"]
+  y17[shape=circle,label="y17: in",color=cornflowerblue,style=filled]
+  brh[shape=circle,label="brh: AND"]
+  brs[shape=circle,label="brs: AND"]
+  y07[shape=circle,label="y07: in",color=cornflowerblue,style=filled]
+  y34[shape=circle,label="y34: in",color=cornflowerblue,style=filled]
+  rpg[shape=circle,label="rpg: AND"]
+  z10[shape=circle,label="z10: XOR",color=coral1,style=filled,color=darkseagreen1,style=filled]
+  y09[shape=circle,label="y09: in",color=cornflowerblue,style=filled]
+  y40[shape=circle,label="y40: in",color=cornflowerblue,style=filled]
+  fjt[shape=circle,label="fjt: XOR"]
+  gpr[shape=circle,label="gpr: AND",color=darkseagreen1,style=filled]
+  y35[shape=circle,label="y35: in",color=cornflowerblue,style=filled]
+  htv[shape=circle,label="htv: XOR"]
+  x34[shape=circle,label="x34: in",color=cornflowerblue,style=filled]
+  krb[shape=circle,label="krb: AND"]
+  knd[shape=circle,label="knd: AND"]
+  dpd[shape=circle,label="dpd: AND"]
+  fnb[shape=circle,label="fnb: OR"]
+  vvm[shape=circle,label="vvm: XOR"]
+  srq[shape=circle,label="srq: AND"]
+  z43[shape=circle,label="z43: XOR",color=coral1,style=filled]
+  bbr[shape=circle,label="bbr: AND"]
+  y06[shape=circle,label="y06: in",color=cornflowerblue,style=filled]
+  x20[shape=circle,label="x20: in",color=cornflowerblue,style=filled]
+  gdp[shape=circle,label="gdp: XOR"]
+  tff[shape=circle,label="tff: XOR"]
+  fpk[shape=circle,label="fpk: AND"]
+  jmk[shape=circle,label="jmk: OR"]
+  tfc[shape=circle,label="tfc: AND"]
+  hbg[shape=circle,label="hbg: XOR"]
+  fnw[shape=circle,label="fnw: AND"]
+  scj[shape=circle,label="scj: OR"]
+  x05[shape=circle,label="x05: in",color=cornflowerblue,style=filled]
+  kdb[shape=circle,label="kdb: AND"]
+  x09[shape=circle,label="x09: in",color=cornflowerblue,style=filled]
+  y10[shape=circle,label="y10: in",color=cornflowerblue,style=filled]
+  y18[shape=circle,label="y18: in",color=cornflowerblue,style=filled]
+  jsg[shape=circle,label="jsg: XOR"]
+  z13[shape=circle,label="z13: XOR",color=coral1,style=filled]
+  nwv[shape=circle,label="nwv: XOR"]
+  gpg[shape=circle,label="gpg: AND"]
+  y00[shape=circle,label="y00: in",color=cornflowerblue,style=filled]
+  vjt[shape=circle,label="vjt: OR"]
+  qgm[shape=circle,label="qgm: OR"]
+  z21[shape=circle,label="z21: XOR",color=coral1,style=filled,color=darkseagreen1,style=filled]
+  z08[shape=circle,label="z08: XOR",color=coral1,style=filled]
+  nks[shape=circle,label="nks: AND",color=darkseagreen1,style=filled]
+  rtj[shape=circle,label="rtj: OR"]
+  z03[shape=circle,label="z03: XOR",color=coral1,style=filled]
+  y01[shape=circle,label="y01: in",color=cornflowerblue,style=filled]
+  pcf[shape=circle,label="pcf: OR"]
+  dqw[shape=circle,label="dqw: XOR"]
+  mhr[shape=circle,label="mhr: OR"]
+  dtg[shape=circle,label="dtg: AND"]
+  y38[shape=circle,label="y38: in",color=cornflowerblue,style=filled]
+  x44[shape=circle,label="x44: in",color=cornflowerblue,style=filled]
+  rtn[shape=circle,label="rtn: XOR"]
+  fbc[shape=circle,label="fbc: AND"]
+  x17[shape=circle,label="x17: in",color=cornflowerblue,style=filled]
+  z19[shape=circle,label="z19: XOR",color=coral1,style=filled]
+  sdk[shape=circle,label="sdk: OR"]
+  x10[shape=circle,label="x10: in",color=cornflowerblue,style=filled]
+  x14[shape=circle,label="x14: in",color=cornflowerblue,style=filled]
+  wfc[shape=circle,label="wfc: XOR"]
+  nvr[shape=circle,label="nvr: AND"]
+  y32[shape=circle,label="y32: in",color=cornflowerblue,style=filled]
+  z09[shape=circle,label="z09: XOR",color=coral1,style=filled]
+  x19[shape=circle,label="x19: in",color=cornflowerblue,style=filled]
+  bws[shape=circle,label="bws: AND"]
+  z42[shape=circle,label="z42: XOR",color=coral1,style=filled]
+  hwr[shape=circle,label="hwr: AND"]
+  x33[shape=circle,label="x33: in",color=cornflowerblue,style=filled]
+  rqp[shape=circle,label="rqp: XOR"]
+  x43[shape=circle,label="x43: in",color=cornflowerblue,style=filled]
+  nkw[shape=circle,label="nkw: AND"]
+  wdg[shape=circle,label="wdg: XOR"]
+  dpm[shape=circle,label="dpm: AND"]
+  jhd[shape=circle,label="jhd: OR"]
+  z38[shape=circle,label="z38: XOR",color=coral1,style=filled]
+  x32[shape=circle,label="x32: in",color=cornflowerblue,style=filled]
+  tqr[shape=circle,label="tqr: AND"]
+  z18[shape=circle,label="z18: XOR",color=coral1,style=filled]
+  z36[shape=circle,label="z36: XOR",color=coral1,style=filled]
+  z37[shape=circle,label="z37: XOR",color=coral1,style=filled]
+  z30[shape=circle,label="z30: XOR",color=coral1,style=filled]
+  tjg[shape=circle,label="tjg: AND"]
+  z32[shape=circle,label="z32: XOR",color=coral1,style=filled]
+  z24[shape=circle,label="z24: XOR",color=coral1,style=filled]
+  x06[shape=circle,label="x06: in",color=cornflowerblue,style=filled]
+  x18[shape=circle,label="x18: in",color=cornflowerblue,style=filled]
+  z11[shape=circle,label="z11: XOR",color=coral1,style=filled]
+  x27[shape=circle,label="x27: in",color=cornflowerblue,style=filled]
+  z05[shape=circle,label="z05: XOR",color=coral1,style=filled]
+  ngk[shape=circle,label="ngk: AND"]
+  z23[shape=circle,label="z23: XOR",color=coral1,style=filled]
+  x12[shape=circle,label="x12: in",color=cornflowerblue,style=filled]
+  y11[shape=circle,label="y11: in",color=cornflowerblue,style=filled]
+  y08[shape=circle,label="y08: in",color=cornflowerblue,style=filled]
+  x38[shape=circle,label="x38: in",color=cornflowerblue,style=filled]
+  y23[shape=circle,label="y23: in",color=cornflowerblue,style=filled]
+  x36[shape=circle,label="x36: in",color=cornflowerblue,style=filled]
+  hsk[shape=circle,label="hsk: AND"]
+  qnj[shape=circle,label="qnj: XOR"]
+  y05[shape=circle,label="y05: in",color=cornflowerblue,style=filled]
+  z39[shape=circle,label="z39: XOR",color=coral1,style=filled]
+  gmq[shape=circle,label="gmq: AND"]
+  hhg[shape=circle,label="hhg: AND"]
+  bwn[shape=circle,label="bwn: AND"]
+  ctw[shape=circle,label="ctw: AND"]
+  sfc[shape=circle,label="sfc: XOR"]
+  qcm[shape=circle,label="qcm: AND"]
+  z25[shape=circle,label="z25: XOR",color=coral1,style=filled]
+  hnp[shape=circle,label="hnp: AND"]
+  z02[shape=circle,label="z02: XOR",color=coral1,style=filled]
+  vjj[shape=circle,label="vjj: AND"]
+  wcr[shape=circle,label="wcr: OR"]
+  gjs[shape=circle,label="gjs: AND"]
+  y19[shape=circle,label="y19: in",color=cornflowerblue,style=filled]
+  cpm[shape=circle,label="cpm: AND",color=darkseagreen1,style=filled]
+  bkw[shape=circle,label="bkw: AND"]
   x39 -> krs
   y39 -> krs
-  rqp -> vdc
-  vdv -> vdc
-  dpd -> shk
-  gnb -> shk
-  whd -> fsf
-  htv -> fsf
-  y17 -> dbf
-  x17 -> dbf
-  vhs -> z30
-  kwq -> z30
-  x08 -> mbt
-  y08 -> mbt
-  rtj -> nvr
-  wgw -> nvr
-  x29 -> dnb
-  y29 -> dnb
-  y00 -> z00
-  x00 -> z00
+  sdk -> qdc
+  pcg -> qdc
   dcd -> z41
   cmn -> z41
-  dfm -> bws
-  ggv -> bws
-  mvc -> trf
-  tkq -> trf
-  ngv -> sdf
-  qtp -> sdf
-  y03 -> ngv
-  x03 -> ngv
-  x40 -> qcm
-  y40 -> qcm
-  qgm -> z43
-  ptf -> z43
-  wpg -> ftb
-  frb -> ftb
+  y43 -> ptf
+  x43 -> ptf
   ftb -> z44
   wdg -> z44
-  tnd -> whd
-  vjj -> whd
+  whd -> fsf
+  htv -> fsf
+  ghp -> khh
+  hbg -> khh
+  y41 -> sbj
+  x41 -> sbj
+  fbc -> nwk
+  smr -> nwk
+  x38 -> vmv
+  y38 -> vmv
+  sfc -> rtc
+  nkp -> rtc
+  y31 -> ggv
+  x31 -> ggv
+  kdb -> dfm
+  fpk -> dfm
+  wgw -> z35
+  rtj -> z35
+  x01 -> cdh
+  y01 -> cdh
+  nwv -> z04
+  sdf -> z04
+  y36 -> skt
+  x36 -> skt
+  rqp -> vdc
+  vdv -> vdc
+  x13 -> drw
+  y13 -> drw
+  dpm -> hnd
+  hkn -> hnd
+  y17 -> rcn
+  x17 -> rcn
+  tqn -> nsj
+  tvk -> nsj
+  bwn -> vdv
+  tqr -> vdv
+  y09 -> tnd
+  x09 -> tnd
+  y43 -> wpg
+  x43 -> wpg
+  jtg -> ghp
+  trf -> ghp
+  y31 -> fhd
+  x31 -> fhd
+  y33 -> tkq
+  x33 -> tkq
+  dqw -> vrc
+  jmk -> vrc
+  x15 -> cpp
+  y15 -> cpp
   y07 -> wgj
   x07 -> wgj
-  bgn -> z09
-  gdp -> z09
+  dpd -> shk
+  gnb -> shk
+  drt -> nwb
+  qqm -> nwb
+  y00 -> bwd
+  x00 -> bwd
+  x18 -> tsj
+  y18 -> tsj
+  wmr -> z28
+  shk -> z28
+  mkh -> wdr
+  ppq -> wdr
+  wpg -> ftb
+  frb -> ftb
+  x18 -> qqm
+  y18 -> qqm
+  x29 -> dnb
+  y29 -> dnb
+  cdh -> z01
+  bwd -> z01
+  nwk -> z16
+  fjt -> z16
+  y36 -> mkh
+  x36 -> mkh
+  y21 -> rhk
+  x21 -> rhk
+  y19 -> wpw
+  x19 -> wpw
+  nwt -> sdj
+  qnj -> sdj
+  y33 -> jtg
+  x33 -> jtg
+  vmv -> sqw
+  gft -> sqw
+  cdh -> hsv
+  bwd -> hsv
+  dqw -> z14
+  jmk -> z14
+  fhd -> nwt
+  bws -> nwt
+  cmn -> qkb
+  dcd -> qkb
+  y14 -> mgp
+  x14 -> mgp
+  y29 -> qrw
+  x29 -> qrw
+  y26 -> mrq
+  x26 -> mrq
+  wdg -> ndp
+  ftb -> ndp
+  qfd -> z20
+  tff -> z20
+  y03 -> ngv
+  x03 -> ngv
+  x44 -> wtc
+  y44 -> wtc
+  kpf -> qsh
+  jjs -> qsh
+  ctw -> kkb
+  nbs -> kkb
+  y30 -> kwq
+  x30 -> kwq
+  ptf -> frb
+  qgm -> frb
+  hrr -> jvd
+  hhc -> jvd
+  x05 -> bjh
+  y05 -> bjh
+  ggv -> z31
+  dfm -> z31
+  y28 -> wmr
+  x28 -> wmr
+  cpp -> smr
+  fkn -> smr
+  nvr -> prt
+  srq -> prt
+  mwr -> mgr
+  ngk -> mgr
+  x35 -> wgw
+  y35 -> wgw
+  dws -> qfd
+  fgk -> qfd
+  y27 -> bqv
+  x27 -> bqv
+  hsk -> jrj
+  jhh -> jrj
+  jvd -> nkp
+  bbr -> nkp
+  y00 -> z00
+  x00 -> z00
+  x16 -> tqn
+  y16 -> tqn
+  dnb -> z29
+  mgr -> z29
+  rtc -> bvg
+  hhg -> bvg
+  mgp -> fkn
+  vrc -> fkn
+  ghp -> z34
+  hbg -> z34
+  fsf -> tdj
+  gpr -> tdj
+  y17 -> dbf
+  x17 -> dbf
+  tkq -> z33
+  mvc -> z33
+  pdq -> jhh
+  ctr -> jhh
+  nwk -> tvk
+  fjt -> tvk
+  pcf -> nbs
+  mrq -> nbs
+  y42 -> pcg
+  x42 -> pcg
+  x02 -> ctr
+  y02 -> ctr
+  fnw -> mvc
+  sdj -> mvc
+  prt -> ppq
+  skt -> ppq
+  qrw -> vhs
+  nkw -> vhs
+  y37 -> srf
+  x37 -> srf
+  y03 -> bnn
+  x03 -> bnn
+  mrq -> z26
+  pcf -> z26
+  rqp -> z06
+  vdv -> z06
+  mvc -> trf
+  tkq -> trf
+  vvm -> z40
+  jhd -> z40
+  bqv -> z27
+  kkb -> z27
+  x41 -> cmn
+  y41 -> cmn
+  y25 -> sqt
+  x25 -> sqt
+  x08 -> mbt
+  y08 -> mbt
+  knd -> pdq
+  hsv -> pdq
+  tnd -> whd
+  vjj -> whd
+  nwb -> fgk
+  wpw -> fgk
+  y21 -> ptd
+  x21 -> ptd
+  x13 -> bcs
+  y13 -> bcs
+  rcn -> z17
+  nsj -> z17
+  x12 -> kpf
+  y12 -> kpf
+  x06 -> mnv
+  y06 -> mnv
+  jjs -> z12
+  kpf -> z12
+  x12 -> drb
+  y12 -> drb
   kkb -> gnb
   bqv -> gnb
-  mgr -> nkw
-  dnb -> nkw
   x11 -> tdq
   y11 -> tdq
+  y42 -> gnm
+  x42 -> gnm
+  wtc -> z45
+  ndp -> z45
+  rcn -> dwh
+  nsj -> dwh
+  hnp -> bgn
+  mbt -> bgn
+  x38 -> mph
+  y38 -> mph
+  gpg -> jjs
+  tjg -> jjs
+  x24 -> hkn
+  y24 -> hkn
+  fnb -> drt
+  tsj -> drt
+  gbn -> dcd
+  qcm -> dcd
+  x19 -> dws
+  y19 -> dws
+  ngv -> sdf
+  qtp -> sdf
+  mnv -> tfg
+  vdc -> tfg
+  rhk -> hhc
+  nks -> hhc
+  fkn -> z15
+  cpp -> z15
+  wmr -> mwr
+  shk -> mwr
+  x04 -> ktv
+  y04 -> ktv
+  hrr -> z22
+  hhc -> z22
+  y22 -> hrr
+  x22 -> hrr
+  wgj -> twg
+  gmq -> twg
+  srf -> qmp
+  wdr -> qmp
+  bkw -> gft
+  qmp -> gft
+  jhd -> gbn
+  vvm -> gbn
+  tfg -> z07
+  jsg -> z07
+  jrj -> qtp
+  bnn -> qtp
+  nwv -> brh
+  sdf -> brh
+  hnd -> brs
+  sqt -> brs
+  y25 -> rpg
+  x25 -> rpg
+  htv -> z10
+  whd -> z10
+  x16 -> fjt
+  y16 -> fjt
+  x10 -> gpr
+  y10 -> gpr
+  y10 -> htv
+  x10 -> htv
+  mhr -> krb
+  krs -> krb
+  y01 -> knd
+  x01 -> knd
+  x27 -> dpd
+  y27 -> dpd
+  dbf -> fnb
+  dwh -> fnb
+  x40 -> vvm
+  y40 -> vvm
+  y35 -> srq
+  x35 -> srq
+  qgm -> z43
+  ptf -> z43
+  x22 -> bbr
+  y22 -> bbr
+  x09 -> gdp
+  y09 -> gdp
+  y20 -> tff
+  x20 -> tff
+  vhs -> fpk
+  kwq -> fpk
+  drw -> jmk
+  tfc -> jmk
+  bcs -> tfc
+  vjt -> tfc
+  x34 -> hbg
+  y34 -> hbg
+  y32 -> fnw
+  x32 -> fnw
+  dtg -> scj
+  gjs -> scj
+  x30 -> kdb
+  y30 -> kdb
+  x07 -> jsg
+  y07 -> jsg
+  bcs -> z13
+  vjt -> z13
+  y04 -> nwv
+  x04 -> nwv
+  x11 -> gpg
+  y11 -> gpg
+  drb -> vjt
+  qsh -> vjt
+  qdc -> qgm
+  gnm -> qgm
+  scj -> z21
+  ptd -> z21
+  twg -> z08
+  rtn -> z08
+  ptd -> nks
+  scj -> nks
+  hwr -> rtj
+  khh -> rtj
+  bnn -> z03
+  jrj -> z03
+  rpg -> pcf
+  brs -> pcf
+  x14 -> dqw
+  y14 -> dqw
+  mph -> mhr
+  sqw -> mhr
+  x20 -> dtg
+  y20 -> dtg
+  x08 -> rtn
+  y08 -> rtn
+  y15 -> fbc
+  x15 -> fbc
+  wpw -> z19
+  nwb -> z19
+  qkb -> sdk
+  sbj -> sdk
+  y24 -> wfc
+  x24 -> wfc
+  rtj -> nvr
+  wgw -> nvr
+  bgn -> z09
+  gdp -> z09
+  dfm -> bws
+  ggv -> bws
+  sdk -> z42
+  pcg -> z42
+  y34 -> hwr
+  x34 -> hwr
+  x06 -> rqp
+  y06 -> rqp
+  mgr -> nkw
+  dnb -> nkw
+  x44 -> wdg
+  y44 -> wdg
+  wfc -> dpm
+  bvg -> dpm
+  krb -> jhd
+  cpm -> jhd
+  gft -> z38
+  vmv -> z38
+  x05 -> tqr
+  y05 -> tqr
+  tsj -> z18
+  fnb -> z18
+  skt -> z36
+  prt -> z36
+  srf -> z37
+  wdr -> z37
+  vhs -> z30
+  kwq -> z30
+  tdq -> tjg
+  tdj -> tjg
+  qnj -> z32
+  nwt -> z32
+  wfc -> z24
+  bvg -> z24
+  tdq -> z11
+  tdj -> z11
+  wcr -> z05
+  bjh -> z05
+  y28 -> ngk
+  x28 -> ngk
+  nkp -> z23
+  sfc -> z23
+  x02 -> hsk
+  y02 -> hsk
+  y32 -> qnj
+  x32 -> qnj
+  krs -> z39
+  mhr -> z39
+  jsg -> gmq
+  tfg -> gmq
+  y23 -> hhg
+  x23 -> hhg
+  bjh -> bwn
+  wcr -> bwn
+  x26 -> ctw
+  y26 -> ctw
+  y23 -> sfc
+  x23 -> sfc
+  x40 -> qcm
+  y40 -> qcm
+  hnd -> z25
+  sqt -> z25
+  twg -> hnp
+  rtn -> hnp
+  ctr -> z02
+  pdq -> z02
+  bgn -> vjj
+  gdp -> vjj
+  ktv -> wcr
+  brh -> wcr
+  tff -> gjs
+  qfd -> gjs
+  y39 -> cpm
+  x39 -> cpm
+  x37 -> bkw
+  y37 -> bkw
 }
