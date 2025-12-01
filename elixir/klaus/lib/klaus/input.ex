@@ -10,4 +10,16 @@ defmodule Klaus.Input do
     |> then(&"inputs/day#{&1}.txt")
     |> File.read!()
   end
+
+  @doc """
+  Reads the given day input and maps a function over each line.
+  Expects inputs in `/inputs` of the format `dayXX.txt`.
+  """
+  @spec parse_lines(integer(), (String.t() -> any())) :: list()
+  def parse_lines(day, parser_fn) do
+    day
+    |> read!()
+    |> String.split("\n", trim: true)
+    |> Enum.map(parser_fn)
+  end
 end

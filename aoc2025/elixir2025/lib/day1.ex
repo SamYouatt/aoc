@@ -1,7 +1,7 @@
 defmodule Day01 do
   def part1() do
     {origins, _dial} =
-      turns()
+      Klaus.Input.parse_lines(1, &parse_line/1)
       |> Enum.reduce({0, 50}, fn move, {origins, current} ->
         new_pos = Integer.mod(current + move, 100)
         new_origins = origins + if new_pos == 0, do: 1, else: 0
@@ -13,7 +13,7 @@ defmodule Day01 do
 
   def part2() do
     {origins, _dial} =
-      turns()
+      Klaus.Input.parse_lines(1, &parse_line/1)
       |> Enum.reduce({0, 50}, fn move, {count, current} ->
         new_raw_pos = current + move
         new_pos = Integer.mod(new_raw_pos, 100)
@@ -25,12 +25,6 @@ defmodule Day01 do
       end)
 
     origins
-  end
-
-  defp turns() do
-    Klaus.Input.read!(1)
-    |> String.split("\n", trim: true)
-    |> Enum.map(&parse_line/1)
   end
 
   defp parse_line("R" <> turns), do: String.to_integer(turns)
