@@ -12,7 +12,19 @@ defmodule Day01 do
   end
 
   def part2() do
-    0
+    {origins, _dial} =
+      turns()
+      |> Enum.reduce({0, 50}, fn move, {count, current} ->
+        new_raw_pos = current + move
+        new_pos = Integer.mod(new_raw_pos, 100)
+
+        passed_origin = abs(div(new_raw_pos, 100))
+        partial_reverse_correction = if new_raw_pos <= 0 && current != 0, do: 1, else: 0
+
+        {count + passed_origin + partial_reverse_correction, new_pos}
+      end)
+
+    origins
   end
 
   defp turns() do
