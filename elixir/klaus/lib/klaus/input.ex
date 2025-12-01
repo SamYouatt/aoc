@@ -1,4 +1,7 @@
 defmodule Klaus.Input do
+  @doc """
+  Reads the given day input. Expects inputs in `/inputs` of the format `dayXX.txt`.
+  """
   @spec read!(integer()) :: String.t()
   def read!(day) do
     day
