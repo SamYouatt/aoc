@@ -1,16 +1,20 @@
 defmodule Day2 do
   def part1() do
-    Klaus.Input.read!(2)
-    |> String.split(",")
-    |> Enum.map(&parse_range/1)
-    |> Enum.sum_by(&find_patterns/1)
+    parse_input()
+    |> Task.async_stream(&find_patterns/1, max_concurrency: System.schedulers_online())
+    |> Enum.sum_by(fn {:ok, sum} -> sum end)
   end
 
   def part2() do
+    parse_input()
+    |> Task.async_stream(&find_complex_patterns/1, max_concurrency: System.schedulers_online())
+    |> Enum.sum_by(fn {:ok, sum} -> sum end)
+  end
+
+  defp parse_input() do
     Klaus.Input.read!(2)
     |> String.split(",")
     |> Enum.map(&parse_range/1)
-    |> Enum.sum_by(&find_complex_patterns/1)
   end
 
   defp parse_range(range) do
@@ -41,7 +45,8 @@ defmodule Day2 do
 
       has_pattern =
         Enum.any?(1..mid//1, fn chunk_size ->
-          all_chunks_match(as_text, chunk_size)
+          chunks = to_chunks(as_text, chunk_size)
+          length(chunks) > 1 && length(Enum.uniq(chunks)) == 1
         end)
 
       if has_pattern, do: id, else: 0
@@ -56,9 +61,4 @@ defmodule Day2 do
   end
 
   defp range(start, last), do: String.to_integer(start)..String.to_integer(last)
-
-  defp all_chunks_match(id, size) do
-    chunks = to_chunks(id, size)
-    length(chunks) > 1 && length(Enum.uniq(chunks)) == 1
-  end
 end
