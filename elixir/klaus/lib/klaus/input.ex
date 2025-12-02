@@ -9,6 +9,7 @@ defmodule Klaus.Input do
     |> String.pad_leading(2, "0")
     |> then(&"inputs/day#{&1}.txt")
     |> File.read!()
+    |> String.trim()
   end
 
   @doc """
