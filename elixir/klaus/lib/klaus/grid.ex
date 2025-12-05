@@ -67,6 +67,16 @@ defmodule Klaus.Grid do
     for y <- 0..(height - 1), do: row(grid, y)
   end
 
+  @spec filter(t(), (coord(), any() -> boolean())) :: [{coord(), any()}]
+  def filter(%__MODULE__{data: data}, pred) do
+    Enum.filter(data, fn {coord, val} -> pred.(coord, val) end)
+  end
+
+  @spec count(t(), (coord(), any() -> boolean())) :: [{coord(), any()}]
+  def count(%__MODULE__{data: data}, pred) do
+    Enum.count(data, fn {coord, val} -> pred.(coord, val) end)
+  end
+
   @neighbours [{-1, 0}, {1, 0}, {0, -1}, {0, 1}]
   @all_neighbours for dy <- -1..1, dx <- -1..1, {dx, dy} != {0, 0}, do: {dx, dy}
 
