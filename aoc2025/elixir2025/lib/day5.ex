@@ -4,9 +4,32 @@ defmodule Day5 do
     Enum.count(ids, &within_ranges(&1, ranges))
   end
 
+  def part2() do
+    {ranges, _} = parse_input()
+
+    ranges
+    |> Enum.sort(fn {a, _}, {b, _} -> a <= b end)
+    |> then(fn r ->
+      {from, to} = hd(r)
+      ranges_sum(r, from, to, 0)
+    end)
+  end
+
   defp within_ranges(id, ranges) do
     ranges
     |> Enum.any?(fn {from, to} -> id >= from && id <= to end)
+  end
+
+  defp ranges_sum([], from, to, sum), do: sum + (to + 1 - from)
+
+  defp ranges_sum(ranges, from, to, sum) do
+    [{new_from, new_to} | rest] = ranges
+
+    cond do
+      new_from > to -> ranges_sum(rest, new_from, new_to, sum + (to + 1 - from))
+      new_to > to -> ranges_sum(rest, from, new_to, sum)
+      true -> ranges_sum(rest, from, to, sum)
+    end
   end
 
   defp parse_input() do
