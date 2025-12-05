@@ -8,7 +8,7 @@ defmodule Day5 do
     {ranges, _} = parse_input()
 
     ranges
-    |> Enum.sort(fn {a, _}, {b, _} -> a <= b end)
+    |> Enum.sort_by(&elem(&1, 0))
     |> then(fn r ->
       {from, to} = hd(r)
       ranges_sum(r, from, to, 0)
