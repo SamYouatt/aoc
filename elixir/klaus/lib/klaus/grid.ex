@@ -72,7 +72,7 @@ defmodule Klaus.Grid do
     Enum.filter(data, fn {coord, val} -> pred.(coord, val) end)
   end
 
-  @spec count(t(), (coord(), any() -> boolean())) :: [{coord(), any()}]
+  @spec count(t(), (coord(), any() -> boolean())) :: non_neg_integer()
   def count(%__MODULE__{data: data}, pred) do
     Enum.count(data, fn {coord, val} -> pred.(coord, val) end)
   end
