@@ -13,6 +13,18 @@ defmodule Klaus.Input do
   end
 
   @doc """
+  Reads the given day as input but doesn't perform any trimming
+  """
+  @spec read_raw!(integer()) :: String.t()
+  def read_raw!(day) do
+    day
+    |> Integer.to_string()
+    |> String.pad_leading(2, "0")
+    |> then(&"inputs/day#{&1}.txt")
+    |> File.read!()
+  end
+
+  @doc """
   Reads the given day input and maps a function over each line.
   Expects inputs in `/inputs` of the format `dayXX.txt`.
   """
