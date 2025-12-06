@@ -15,7 +15,8 @@ Cargo.lock
 
 # Ignore aoc inputs
 input.txt
+inputs/
+**/input/*.txt
 
 # Ignore ocaml
 _build/
-inputs/
