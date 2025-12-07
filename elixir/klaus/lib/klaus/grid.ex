@@ -45,6 +45,19 @@ defmodule Klaus.Grid do
     %{grid | data: Map.put(data, coord, value)}
   end
 
+  @doc "Set a complete row in the grid to the given list"
+  @spec put_row(t(), integer(), [any()]) :: t()
+  def put_row(%__MODULE__{data: data} = grid, y, row) do
+    new_data =
+      row
+      |> Enum.with_index()
+      |> Enum.reduce(data, fn {val, x}, acc ->
+        Map.put(acc, {x, y}, val)
+      end)
+
+    %{grid | data: new_data}
+  end
+
   @spec update(t(), coord(), any(), (any() -> any())) :: t()
   def update(%__MODULE__{data: data} = grid, coord, default, fun) do
     %{grid | data: Map.update(data, coord, default, fun)}
@@ -59,6 +72,12 @@ defmodule Klaus.Grid do
   @spec row(t(), integer()) :: [any()]
   def row(%__MODULE__{data: data, width: width}, y) do
     for x <- 0..(width - 1), do: Map.get(data, {x, y})
+  end
+
+  @doc "Get all the values and coords in a single row at y"
+  @spec row_coords(t(), integer()) :: [{coord(), any()}]
+  def row_coords(%__MODULE__{data: data, width: width}, y) do
+    for x <- 0..(width - 1), do: {{x, y}, Map.get(data, {x, y})}
   end
 
   @doc "Get all row as list of lists"
