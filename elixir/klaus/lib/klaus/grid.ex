@@ -63,6 +63,12 @@ defmodule Klaus.Grid do
     %{grid | data: Map.update(data, coord, default, fun)}
   end
 
+  @spec map(t(), (any() -> any())) :: t()
+  def map(%__MODULE__{data: data} = grid, mapping_fun) do
+    new_data = Map.new(data, fn {coord, val} -> {coord, mapping_fun.(val)} end)
+    %{grid | data: new_data}
+  end
+
   @spec in_bounds?(t(), coord()) :: boolean()
   def in_bounds?(%__MODULE__{width: width, height: height}, {x, y}) do
     x >= 0 and x < width and y >= 0 and y < height

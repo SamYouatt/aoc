@@ -14,13 +14,28 @@ defmodule Day7 do
     splits
   end
 
-  defp advance_manifold(manifold, iteration) do
-    tachyons =
-      Klaus.Grid.row_coords(manifold, iteration)
-      |> Enum.filter(fn {_, val} -> val == "S" || val == "|" end)
-      |> Enum.map(&elem(&1, 0))
+  def part2() do
+    manifold =
+      Klaus.Input.read!(7)
+      |> Klaus.Grid.from_string(fn
+        "S" -> 1
+        "." -> 0
+        _ -> "^"
+      end)
 
-    tachyons
+    0..(manifold.height - 2)
+    |> Enum.reduce(manifold, fn iteration, man ->
+      advance_quantum(man, iteration)
+    end)
+    |> Klaus.Grid.row(manifold.height - 1)
+    |> Enum.sum()
+  end
+
+  defp advance_manifold(manifold, iteration) do
+    manifold
+    |> Klaus.Grid.row_coords(iteration)
+    |> Enum.filter(fn {_, val} -> val == "S" || val == "|" end)
+    |> Enum.map(&elem(&1, 0))
     |> Enum.reduce({manifold, 0}, fn {x, y}, {man, splits} ->
       case Klaus.Grid.get(man, {x, y + 1}) do
         "." ->
@@ -38,6 +53,27 @@ defmodule Day7 do
 
         "|" ->
           {man, splits}
+      end
+    end)
+  end
+
+  defp advance_quantum(manifold, iteration) do
+    manifold
+    |> Klaus.Grid.row_coords(iteration)
+    |> Enum.filter(fn {_, val} -> is_integer(val) && val != 0 end)
+    |> Enum.reduce(manifold, fn {{x, y}, val}, man ->
+      case Klaus.Grid.get(man, {x, y + 1}) do
+        0 ->
+          Klaus.Grid.put(man, {x, y + 1}, val)
+
+        # ASSUMPTION: I won't have to do bounds checking
+        "^" ->
+            man
+            |> Klaus.Grid.update({x - 1, y + 1}, 0, fn x -> x + val end)
+            |> Klaus.Grid.update({x + 1, y + 1}, 0, fn x -> x + val end)
+
+        _ ->
+          Klaus.Grid.update(man, {x, y + 1}, 0, fn x -> x + val end)
       end
     end)
   end
