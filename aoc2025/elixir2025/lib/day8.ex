@@ -47,6 +47,58 @@ defmodule Day8 do
     |> Enum.product()
   end
 
+  def part2() do
+    boxes = Klaus.Input.parse_lines(8, &parse_box/1)
+
+    sorted_pairs =
+      boxes
+      |> then(fn boxes ->
+        for a <- boxes,
+            b <- boxes,
+            a < b,
+            do: {a, b, distance(a, b)}
+      end)
+      |> Enum.sort_by(&elem(&1, 2))
+      |> Enum.map(fn {a, b, _} -> {a, b} end)
+
+    initial_sets = Enum.map(boxes, &MapSet.new([&1]))
+
+    collapse_circuits(initial_sets, sorted_pairs)
+  end
+
+  defp collapse_circuits(circuits, [{a, b} | rem]) do
+    new_circuits =
+      case {containing(circuits, a), containing(circuits, b)} do
+        {nil, nil} ->
+          [MapSet.new([a, b]) | circuits]
+
+        {found_a, nil} ->
+          circuits
+          |> List.delete(found_a)
+          |> then(fn rest -> [MapSet.put(found_a, b) | rest] end)
+
+        {nil, found_b} ->
+          circuits
+          |> List.delete(found_b)
+          |> then(fn rest -> [MapSet.put(found_b, a) | rest] end)
+
+        {found_a, found_b} when found_a == found_b ->
+          circuits
+
+        {found_a, found_b} ->
+          circuits
+          |> List.delete(found_a)
+          |> List.delete(found_b)
+          |> then(fn rest -> [MapSet.union(found_a, found_b) | rest] end)
+      end
+
+    if length(new_circuits) == 1 do
+      elem(a, 0) * elem(b, 0)
+    else
+      collapse_circuits(new_circuits, rem)
+    end
+  end
+
   defp parse_box(line) do
     line
     |> String.split(",", parts: 3)
