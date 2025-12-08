@@ -68,9 +68,9 @@ defmodule Day7 do
 
         # ASSUMPTION: I won't have to do bounds checking
         "^" ->
-            man
-            |> Klaus.Grid.update({x - 1, y + 1}, 0, fn x -> x + val end)
-            |> Klaus.Grid.update({x + 1, y + 1}, 0, fn x -> x + val end)
+          man
+          |> Klaus.Grid.update({x - 1, y + 1}, 0, fn x -> x + val end)
+          |> Klaus.Grid.update({x + 1, y + 1}, 0, fn x -> x + val end)
 
         _ ->
           Klaus.Grid.update(man, {x, y + 1}, 0, fn x -> x + val end)
