@@ -15,9 +15,7 @@ defmodule Day9 do
     end
     |> Enum.sort_by(fn {_, _, area} -> area end, :desc)
     |> Enum.find_value(fn {a, b, area} ->
-      if rectangle_in_polygon(a, b, red_tiles) do
-        area
-      end
+      if rectangle_in_polygon(a, b, red_tiles), do: area
     end)
   end
 
@@ -46,7 +44,7 @@ defmodule Day9 do
         point_on_line(point, edge1, edge2) -> {:halt, true}
         # if the edge is horizonal then skip it, ray casting only outwards to the right so this is wasted computation
         y1 > y == y2 > y or y1 == y2 -> {:cont, inside}
-        # do the actual rightwards ray casting
+        # check if the edge is to the right of the point in question, i.e. it would be hit by a raycast to the right
         x < (x2 - x1) * (y - y1) / (y2 - y1) + x1 -> {:cont, not inside}
         true -> {:cont, inside}
       end
