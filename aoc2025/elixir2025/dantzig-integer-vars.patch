@@ -1,0 +1,25 @@
+diff --git a/lib/dantzig/highs.ex b/lib/dantzig/highs.ex
+index 1234567..abcdefg 100644
+--- a/lib/dantzig/highs.ex
++++ b/lib/dantzig/highs.ex
+@@ -112,6 +112,11 @@ defmodule Dantzig.HiGHS do
+
+     bounds = all_variable_bounds(Map.values(problem.variables))
+
++    integer_vars =
++      problem.variables
++      |> Map.values()
++      |> Enum.filter(fn v -> v.type == :integer end)
++      |> Enum.map(fn v -> "  #{v.name}\n" end)
++
+     [
+       direction_to_iodata(problem.direction),
+       "\n  ",
+@@ -122,6 +127,7 @@ defmodule Dantzig.HiGHS do
+       "Bounds\n",
+       bounds,
+       "General\n",
++      integer_vars,
+       "End\n"
+     ]
+   end

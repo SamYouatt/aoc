@@ -1,4 +1,7 @@
 defmodule Day10 do
+  use Dantzig.Polynomial.Operators
+  alias Dantzig.{Problem, Constraint, Solution, Polynomial}
+
   def part1() do
     Klaus.Input.parse_lines(10, &parse_line/1)
     |> Enum.map(fn {goal, buttons, _} ->
@@ -11,10 +14,8 @@ defmodule Day10 do
 
   def part2() do
     Klaus.Input.parse_lines(10, &parse_line/1)
-    |> Enum.map(fn {_, buttons, goal} ->
-      initial = List.duplicate(0, length(goal))
-      visited = MapSet.new([initial])
-      search2([{initial, 0}], buttons, goal, visited)
+    |> Enum.map(fn {_, buttons, joltages} ->
+      solve_ilp(buttons, joltages)
     end)
     |> Enum.sum()
   end
@@ -43,35 +44,61 @@ defmodule Day10 do
     end)
   end
 
-  defp search2([{indicator, depth} | _rest], _buttons, goal, _visited) when indicator == goal do
-    depth
-  end
+  # General solver approach is:
+  # b0,b1,b2,b3 ... is the number of times we press each button
+  # we are aiming to minimise b0 + b1 + b2 + ... which is the sum of all buttons pressed
+  # out constraints are based on how the buttons affect the different joltages, and what the target joltage is for each position
+  defp solve_ilp(buttons, joltages) do
+    problem = Problem.new(direction: :minimize)
 
-  defp search2([], _buttons, _goal, _visited), do: raise("Something wrong we ran out of states")
-
-  defp search2([{indicator, depth} | rest], buttons, goal, visited) do
-    next_states =
+    {problem, button_vars} =
       buttons
-      |> Enum.map(fn mask -> {increment(indicator, mask), depth + 1} end)
-      |> Enum.reject(fn {indicators, _} ->
-        MapSet.member?(visited, indicators) or exceeds(goal, indicators)
+      |> Enum.with_index()
+      |> Enum.reduce({problem, []}, fn {_button, idx}, {prob, vars} ->
+        # Create a variable which is the number of times the button is pressed, buttons must be pressed 0 or more times, never negative
+        {prob, var} = Problem.new_variable(prob, "b#{idx}", min: 0, type: :integer)
+        {prob, [var | vars]}
       end)
 
-    new_visited =
-      Enum.reduce(next_states, visited, fn {state, _}, acc -> MapSet.put(acc, state) end)
+    button_vars = Enum.reverse(button_vars)
 
-    search2(rest ++ next_states, buttons, goal, new_visited)
-  end
+    problem =
+      joltages
+      |> Enum.with_index()
+      |> Enum.reduce(problem, fn {target_joltage, joltage_idx}, prob ->
+        left =
+          buttons
+          |> Enum.zip(button_vars)
+          |> Enum.reduce(Polynomial.const(0), fn {affected_joltage, var}, acc ->
+            if joltage_idx in affected_joltage do
+              acc + var
+            else
+              acc
+            end
+          end)
 
-  defp increment(counters, mask) do
-    Enum.reduce(mask, counters, fn index, acc ->
-      List.update_at(acc, index, &(&1 + 1))
-    end)
-  end
+        # Essentially, for a joltage indicator we would say something like: b4 + b5 = 5
+        # In that example it means the number of button 4 pressed plus button 5 presses must achieve the goal of 5 joltage
+        # Each button press increases the specified joltages by 1, so the count of whatever buttons affect that joltage is good enough
+        constraint = Constraint.new_linear(left, :==, target_joltage)
+        Problem.add_constraint(prob, constraint)
+      end)
 
-  defp exceeds(goal, counters) do
-    Enum.zip(counters, goal)
-    |> Enum.any?(fn {a, b} -> a > b end)
+    # This is where we define out objective as b1 + b2 + b3 + ...
+    objective =
+      Enum.reduce(button_vars, Polynomial.const(0), fn var, acc ->
+        acc + var
+      end)
+
+    # Not sure why we need both to call .minimize and specify direction: :minimize when we created the problem but its what the docs say
+    problem = Problem.minimize(problem, objective)
+
+    {:ok, solution} = Dantzig.solve(problem)
+
+    button_vars
+    |> Enum.map(&Solution.evaluate(solution, &1))
+    |> Enum.map(&round/1)
+    |> Enum.sum()
   end
 
   defp parse_line(line) do

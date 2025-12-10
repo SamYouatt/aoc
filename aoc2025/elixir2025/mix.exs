@@ -22,7 +22,8 @@ defmodule Elixir2025.MixProject do
   defp deps do
     [
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:klaus, path: "../../elixir/klaus"}
+      {:klaus, path: "../../elixir/klaus"},
+      {:dantzig, "~> 0.2.0"}
     ]
   end
 end

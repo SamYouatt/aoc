@@ -24,3 +24,6 @@ elixir2025-*.tar
 
 # AoC inputs should not be committed
 /inputs/
+
+# Day 10 I used a constraint solver which outputs logs
+HiGHS.log
