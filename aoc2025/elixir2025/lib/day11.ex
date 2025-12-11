@@ -1,17 +1,13 @@
 defmodule Day11 do
   def part1() do
     Klaus.Input.parse_lines(11, &parse_line/1)
-    |> Enum.reduce(%{}, fn {node, edges}, graph ->
-      Map.put(graph, node, edges)
-    end)
+    |> Enum.into(%{})
     |> traverse("you", MapSet.new())
   end
 
   def part2() do
     Klaus.Input.parse_lines(11, &parse_line/1)
-    |> Enum.reduce(%{}, fn {node, edges}, graph ->
-      Map.put(graph, node, edges)
-    end)
+    |> Enum.into(%{})
     |> dag_traverse("svr", false, false, %{})
     |> then(&elem(&1, 0))
   end
