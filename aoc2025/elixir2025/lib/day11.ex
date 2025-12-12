@@ -15,10 +15,9 @@ defmodule Day11 do
   defp traverse(_graph, "out", _visited), do: 1
 
   defp traverse(graph, current, visited) do
-    next = Map.get(graph, current)
     new_visited = MapSet.put(visited, current)
 
-    next
+    Map.get(graph, current)
     |> Enum.filter(fn n -> not MapSet.member?(visited, n) end)
     |> Enum.reduce(0, fn n, count ->
       count + traverse(graph, n, new_visited)
@@ -37,10 +36,9 @@ defmodule Day11 do
       nil ->
         new_seen_dac = seen_dac or current == "dac"
         new_seen_fft = seen_fft or current == "fft"
-        next = Map.get(graph, current)
 
         {result, new_cache} =
-          next
+          Map.get(graph, current)
           |> Enum.reduce({0, cache}, fn n, {count, acc_cache} ->
             {n_result, updated_cache} =
               dag_traverse(graph, n, new_seen_dac, new_seen_fft, acc_cache)
