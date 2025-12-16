@@ -29,7 +29,7 @@ defmodule Day10 do
   defp search([{indicator, depth} | rest], buttons, goal, visited) do
     next_states =
       buttons
-      |> Enum.map(fn mask -> {flip(indicator, mask), depth + 1} end)
+      |> Enum.map(fn mask -> {flip(indicator, mask), Kernel.+(depth, 1)} end)
       |> Enum.reject(fn {indicators, _} -> MapSet.member?(visited, indicators) end)
 
     new_visited =
