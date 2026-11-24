@@ -11,5 +11,10 @@ defmodule Tape do
     %Tape{tape | data: data}
   end
 
+  def right(%Tape{} = tape), do: %Tape{tape | head: tape.head + 1}
+
+  def left(%Tape{head: 0}), do: raise(ArgumentError, "tape head moved left of 0")
+  def left(%Tape{} = tape), do: %Tape{tape | head: tape.head - 1}
+
   defp mod(num), do: Integer.mod(num, 256)
 end

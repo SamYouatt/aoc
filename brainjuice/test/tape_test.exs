@@ -44,4 +44,22 @@ defmodule TapeTest do
       assert tape.data == %{0 => 5, 1 => 2}
     end
   end
+
+  describe "right" do
+    test "right advances head by 1" do
+      tape = Tape.right(%Tape{head: 3})
+      assert tape.head == 4
+    end
+  end
+
+  describe "left" do
+    test "left rewinds head by 1" do
+      tape = Tape.left(%Tape{head: 3})
+      assert tape.head == 2
+    end
+
+    test "left at 0 raises" do
+      assert_raise ArgumentError, fn -> Tape.left(%Tape{}) end
+    end
+  end
 end
