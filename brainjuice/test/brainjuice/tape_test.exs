@@ -1,6 +1,8 @@
 defmodule Brainjuice.TapeTest do
   use ExUnit.Case
 
+  alias Brainjuice.Tape
+
   describe "inc" do
     test "inc on init gives 1" do
       tape = Tape.inc(%Tape{})

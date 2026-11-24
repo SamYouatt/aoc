@@ -1,5 +1,5 @@
 defmodule Brainjuice do
   def interpret(program) do
-    tape = %Tape{}
+    tape = %Brainjuice.Tape{}
   end
 end

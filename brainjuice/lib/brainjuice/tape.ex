@@ -1,4 +1,6 @@
 defmodule Brainjuice.Tape do
+  alias Brainjuice.Tape
+
   defstruct data: %{}, head: 0
 
   def inc(%Tape{} = tape), do: write(tape, read(tape) + 1)
