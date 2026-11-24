@@ -62,4 +62,16 @@ defmodule TapeTest do
       assert_raise ArgumentError, fn -> Tape.left(%Tape{}) end
     end
   end
+
+  describe "read" do
+    test "reads the value at the current head" do
+      tape = %Tape{data: %{0 => 2, 1 => 3, 2 => 4}, head: 1}
+      assert Tape.read(tape) == 3
+    end
+
+    test "reads 0 when an unchanged cell" do
+      tape = %Tape{data: %{0 => 2, 1 => 3}, head: 2}
+      assert Tape.read(tape) == 0
+    end
+  end
 end
