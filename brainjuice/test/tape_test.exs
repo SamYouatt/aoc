@@ -1,4 +1,4 @@
-defmodule TapeTest do
+defmodule Brainjuice.TapeTest do
   use ExUnit.Case
 
   describe "inc" do
@@ -72,6 +72,40 @@ defmodule TapeTest do
     test "reads 0 when an unchanged cell" do
       tape = %Tape{data: %{0 => 2, 1 => 3}, head: 2}
       assert Tape.read(tape) == 0
+    end
+  end
+
+  describe "write" do
+    test "writes the value at the current head changing current" do
+      tape =
+        %Tape{data: %{0 => 2, 1 => 3, 2 => 4}, head: 1}
+        |> Tape.write(9)
+
+      assert tape.data == %{0 => 2, 1 => 9, 2 => 4}
+    end
+
+    test "writes the value at an unchanged head" do
+      tape =
+        %Tape{data: %{0 => 2}, head: 1}
+        |> Tape.write(6)
+
+      assert tape.data == %{0 => 2, 1 => 6}
+    end
+
+    test "wraps big inputs before writing" do
+      tape =
+        %Tape{data: %{0 => 2}, head: 0}
+        |> Tape.write(278)
+
+      assert tape.data == %{0 => 22}
+    end
+
+    test "wraps underflow inputs before writing" do
+      tape =
+        %Tape{data: %{0 => 2}, head: 0}
+        |> Tape.write(-1)
+
+      assert tape.data == %{0 => 255}
     end
   end
 end

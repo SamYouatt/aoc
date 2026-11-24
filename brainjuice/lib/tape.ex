@@ -1,15 +1,8 @@
-defmodule Tape do
+defmodule Brainjuice.Tape do
   defstruct data: %{}, head: 0
 
-  def inc(%Tape{} = tape) do
-    data = Map.update(tape.data, tape.head, 1, &mod(&1 + 1))
-    %Tape{tape | data: data}
-  end
-
-  def dec(%Tape{} = tape) do
-    data = Map.update(tape.data, tape.head, 255, &mod(&1 - 1))
-    %Tape{tape | data: data}
-  end
+  def inc(%Tape{} = tape), do: write(tape, read(tape) + 1)
+  def dec(%Tape{} = tape), do: write(tape, read(tape) - 1)
 
   def right(%Tape{} = tape), do: %Tape{tape | head: tape.head + 1}
 
@@ -17,6 +10,11 @@ defmodule Tape do
   def left(%Tape{} = tape), do: %Tape{tape | head: tape.head - 1}
 
   def read(%Tape{} = tape), do: Map.get(tape.data, tape.head, 0)
+
+  def write(%Tape{} = tape, value) when is_integer(value) do
+    data = Map.put(tape.data, tape.head, mod(value))
+    %Tape{tape | data: data}
+  end
 
   defp mod(num), do: Integer.mod(num, 256)
 end
