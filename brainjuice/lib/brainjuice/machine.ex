@@ -3,6 +3,8 @@ defmodule Brainjuice.Machine do
 
   defstruct program: %Program{}, pc: 0, tape: %Tape{}, input: "", output: ""
 
+  def new(program, input), do: %Machine{program: program, input: input}
+
   def run(%Machine{} = machine), do: if(halted?(machine), do: machine, else: run(step(machine)))
 
   def step(%Machine{} = machine) do
